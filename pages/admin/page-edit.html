@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>About Us Editor — Panayana Admin</title>
+    
+    <script>
+        if (localStorage.getItem('panayana_sidebar_collapsed') === 'true') {
+            document.documentElement.classList.add('sidebar-is-collapsed');
+        }
+    </script>
+    
+    <!-- Browser Favicon -->
+    <link rel="icon" href="../../assets/images/Panayana_logo.jpg" type="image/jpeg">
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/about-us.css">
+    <link rel="stylesheet" href="../../assets/css/admin-dash.css">
+    <link rel="stylesheet" href="../../assets/css/admin-about.css">
+</head>
+<body class="admin-view-body">
+
+<div class="container" id="appContainer">
+
+    <!-- =====================================================
+         ADMIN-EXCLUSIVE SIDEBAR
+         ===================================================== -->
+    <aside class="sidebar admin-sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-logo-badge admin-badge-glow">
+                <img src="../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+            </div>
+            <div class="brand-info">
+                <span class="brand-title">WVSU Panayana</span>
+                <span class="brand-badge">Cultural Group</span>
+            </div>
+            <button id="sidebarToggle" class="toggle-btn" aria-label="Toggle Sidebar">
+                <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="sidebar-nav">
+            <span class="nav-label">Operations Console</span>
+            <a href="admin-dash.html" class="nav-item">
+                <i class="fa-solid fa-gauge-high nav-icon"></i>
+                <span class="nav-text">Dispatch & Logs</span>
+            </a>
+            <a href="costume-cat.html" class="nav-item">
+                <i class="fa-solid fa-shirt nav-icon"></i>
+                <span class="nav-text">Costume Catalog</span>
+            </a>
+            <a href="schedule-master.html" class="nav-item">
+                <i class="fa-regular fa-calendar-days nav-icon"></i>
+                <span class="nav-text">Schedule Master</span>
+            </a>
+            <a href="archive.html" class="nav-item">
+                <i class="fa-solid fa-music nav-icon"></i>
+                <span class="nav-text">Scores Archive</span>
+            </a>
+            <a href="page-edit.html" class="nav-item active">
+                <i class="fa-solid fa-circle-info nav-icon"></i>
+                <span class="nav-text">About Us</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="setting.html" class="nav-item">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span class="nav-text">Settings</span>
+            </a>
+            <button id="logout-btn" class="nav-item logout-item">
+                <i class="fa-solid fa-arrow-right-from-bracket nav-icon"></i>
+                <span class="nav-text">Sign Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- =====================================================
+         MAIN ADMIN ABOUT EDITOR VIEWPORT
+         ===================================================== -->
+    <main class="main-content">
+        
+        <!-- Header -->
+        <header class="header admin-header">
+            <div class="header-brand-mobile">
+                <div class="brand-logo-badge mobile-only">
+                    <img src="../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+                </div>
+                <div class="header-title">
+                    <h1>About Us Editor</h1>
+                    <span>Manage Troupe Story, Former Advisers & Public Contacts</span>
+                </div>
+            </div>
+            
+            <div class="user-profile-top">
+                <div class="profile-info desktop-only">
+                    <strong>Lead Custodian / Officer</strong><br>
+                    <span class="admin-live-badge"><span class="pulse-dot"></span> Content Control</span>
+                </div>
+                <button class="profile-icon" aria-label="Alerts">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Admin Mobile Top Navigation Bar -->
+        <nav class="pill-nav admin-pills mobile-only">
+            <a href="admin-dash.html" class="nav-pill"><i class="fa-solid fa-qrcode"></i> Dispatch</a>
+            <a href="costume-cat.html" class="nav-pill"><i class="fa-solid fa-shirt"></i> Catalog</a>
+            <a href="schedule-master.html" class="nav-pill"><i class="fa-regular fa-calendar-days"></i> Schedule</a>
+            <a href="archive.html" class="nav-pill"><i class="fa-solid fa-music"></i> Archive</a>
+            <a href="page-edit.html" class="nav-pill active"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="setting.html" class="nav-pill"><i class="fa-solid fa-gear"></i> Settings</a>
+        </nav>
+
+        <!-- Content Body -->
+        <div class="content-body">
+            
+            <!-- Quick Save Feedback Banner -->
+            <div id="saveFeedbackBanner" class="scan-status-alert" style="display: none; background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; margin-bottom: 18px;">
+                <i class="fa-solid fa-circle-check"></i>
+                <div>
+                    <strong>Changes Saved Successfully</strong>
+                    <p>The Member About Us page has been updated with your latest changes.</p>
+                </div>
+            </div>
+
+            <!-- Form 1: Hero & Heritage Narrative -->
+            <div class="card" style="padding: 24px; margin-bottom: 24px;">
+                <div class="section-head" style="margin-bottom: 18px;">
+                    <div class="section-title-combo">
+                        <i class="fa-solid fa-feather-pointed title-icon"></i>
+                        <div>
+                            <h3>Hero Narrative & Statements</h3>
+                            <p>Update troupe intro, historical background, and mission/vision.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="heroNarrativeForm" class="admin-form">
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label for="heroTagInput">Hero Subtitle / Tagline</label>
+                            <input type="text" id="heroTagInput" value="Official Cultural Performing Arts Arm" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="heroTitleInput">Main Heading</label>
+                            <input type="text" id="heroTitleInput" value="West Visayas State University Panayana Cultural Group" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="heroDescInput">Hero Overview Paragraph</label>
+                        <textarea id="heroDescInput" rows="3" required>Preserving, promoting, and staging the rich cultural heritage of Western Visayas and the Philippines through world-class folk dancing, authentic indigenous instrumentation, and theatrical repertoires.</textarea>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label for="historyDescInput">Our History & Roots</label>
+                            <textarea id="historyDescInput" rows="5" required>Founded at West Visayas State University in Iloilo City, the Panayana Cultural Group has served as a beacon of artistic excellence and Philippine folkloric heritage. From traditional Panay Bukidnon epic chanting and dances to Spanish-influenced suites, Maria Clara court dances, and Cordillera rituals, the troupe brings the authentic stories of the archipelago to university, regional, and national stages.</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="missionDescInput">Mission & Vision</label>
+                            <textarea id="missionDescInput" rows="5" required>To cultivate disciplined student performers who embody the cultural soul of Ilonggo tradition and Philippine heritage. We champion cultural preservation by training young artists in accurate dance choreography, live rondalla musicianship, indigenous costume preservation, and dynamic stagecraft.</textarea>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                        <button type="submit" class="admin-action-btn">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Narrative Details
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Section 2: Former Advisers & Directors Management -->
+            <div class="card" style="padding: 24px; margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: gap; gap: 12px;">
+                    <div class="section-title-combo">
+                        <i class="fa-solid fa-user-graduate title-icon"></i>
+                        <div>
+                            <h3>Former Advisers & Artistic Directors</h3>
+                            <p>Manage the leadership tribute showcase displayed to members.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="modal-btn primary" id="openAddAdviserBtn">
+                        <i class="fa-solid fa-plus"></i> Add Adviser
+                    </button>
+                </div>
+
+                <div class="advisers-grid" id="adminAdvisersGrid"></div>
+            </div>
+
+            <!-- Form 3: Institutional Contacts & Social Links -->
+            <div class="card" style="padding: 24px;">
+                <div class="section-head" style="margin-bottom: 18px;">
+                    <div class="section-title-combo">
+                        <i class="fa-solid fa-address-book title-icon"></i>
+                        <div>
+                            <h3>Contact Directory & Channels</h3>
+                            <p>Update physical address, direct email, phone extension, and links.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="contactsForm" class="admin-form">
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label for="contactEmailInput">Official Email Address</label>
+                            <input type="email" id="contactEmailInput" value="panayana@wvsu.edu.ph" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactPhoneInput">Phone & Extension</label>
+                            <input type="text" id="contactPhoneInput" value="+63 (033) 320 0870 loc. 1145" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contactLocationInput">Campus Location</label>
+                        <input type="text" id="contactLocationInput" value="Cultural Center, WVSU Main Campus, Luna St., La Paz, Iloilo City" required>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label for="socialFbInput">Facebook Page URL</label>
+                            <input type="url" id="socialFbInput" value="https://facebook.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="socialIgInput">Instagram Profile URL</label>
+                            <input type="url" id="socialIgInput" value="https://instagram.com">
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label for="socialYtInput">YouTube Channel URL</label>
+                            <input type="url" id="socialYtInput" value="https://youtube.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="socialDriveInput">Google Drive Archive URL</label>
+                            <input type="url" id="socialDriveInput" value="https://drive.google.com">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                        <button type="submit" class="admin-action-btn">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Contacts & Links
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Admin Mobile Bottom Dock -->
+    <nav class="bottom-dock admin-bottom-dock mobile-only">
+        <a href="admin-dash.html" class="dock-item" aria-label="Dispatch"><i class="fa-solid fa-qrcode"></i></a>
+        <a href="costume-cat.html" class="dock-item" aria-label="Catalog"><i class="fa-solid fa-shirt"></i></a>
+        <a href="schedule-master.html" class="dock-item" aria-label="Schedule"><i class="fa-regular fa-calendar-days"></i></a>
+        <a href="archive.html" class="dock-item" aria-label="Archive"><i class="fa-solid fa-music"></i></a>
+        <a href="page-edit.html" class="dock-item active" aria-label="About"><i class="fa-solid fa-circle-info"></i></a>
+        <a href="setting.html" class="dock-item" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
+    </nav>
+</div>
+
+<!-- =====================================================
+     ADD / EDIT ADVISER MODAL
+     ===================================================== -->
+<div class="modal-overlay" id="adviserModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <div class="modal-title-group">
+                <span class="modal-badge">Directory Manager</span>
+                <h3 id="adviserModalTitle">Add Former Adviser</h3>
+            </div>
+            <button class="modal-close-btn" id="closeAdviserModalBtn" aria-label="Close Modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="adviserManageForm">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="adviserNameInput">Full Name & Title</label>
+                    <input type="text" id="adviserNameInput" placeholder="e.g. Prof. Corazon S. Solas" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="adviserRoleInput">Designation / Troupe Role</label>
+                    <input type="text" id="adviserRoleInput" placeholder="e.g. Faculty Adviser & Artistic Founder" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="adviserTermInput">Tenure Term</label>
+                        <input type="text" id="adviserTermInput" placeholder="e.g. 1998 – 2008" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adviserTagInput">Specialization Award / Tag</label>
+                        <input type="text" id="adviserTagInput" placeholder="e.g. Folk Dance Pioneer" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="modal-btn secondary" id="cancelAdviserModalBtn">Cancel</button>
+                <button type="submit" class="modal-btn primary"><i class="fa-solid fa-floppy-disk"></i> Save Adviser</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="module" src="../../assets/js/sidebar.js"></script>
+<script type="module" src="../../assets/js/admin-about.js"></script>
+</body>
+</html>

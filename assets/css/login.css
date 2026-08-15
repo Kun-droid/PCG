@@ -1,0 +1,432 @@
+/* ==========================================================================
+   PANAYANA SLIDING DUAL AUTHENTICATION SYSTEM
+   ========================================================================== */
+
+.auth-page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--bg-canvas);
+  padding: 24px;
+}
+
+/* Master Container */
+.auth-card-container {
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.08), 0 10px 10px rgba(0,0,0,0.04);
+  position: relative;
+  overflow: hidden;
+  width: 900px;
+  max-width: 100%;
+  min-height: 620px;
+  border: 1px solid var(--border-light);
+}
+
+/* Generic Form Container positioning */
+.form-container {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.auth-form-content {
+  background-color: var(--bg-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 44px;
+  height: 100%;
+  text-align: left;
+  gap: 14px;
+}
+
+/* Sign In Container */
+.sign-in-container {
+  left: 0;
+  width: 50%;
+  z-index: 2;
+}
+
+.auth-card-container.right-panel-active .sign-in-container {
+  transform: translateX(100%);
+}
+
+/* Sign Up Container */
+.sign-up-container {
+  left: 0;
+  width: 50%;
+  opacity: 0;
+  z-index: 1;
+}
+
+.auth-card-container.right-panel-active .sign-up-container {
+  transform: translateX(100%);
+  opacity: 1;
+  z-index: 5;
+  animation: show 0.6s;
+}
+
+@keyframes show {
+  0%, 49.99% {
+    opacity: 0;
+    z-index: 1;
+  }
+  50%, 100% {
+    opacity: 1;
+    z-index: 5;
+  }
+}
+
+/* Form Titles & Inputs */
+.form-title-box {
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.form-title-box h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.form-title-box p {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.form-input-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-input-group label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.input-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forgot-pass-link {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary-maroon);
+  text-decoration: none;
+}
+
+.input-with-icon {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--text-muted);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.input-with-icon input,
+.custom-select-field {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  color: var(--text-dark);
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.custom-select-field {
+  appearance: none;
+  cursor: pointer;
+}
+
+.input-with-icon input:focus,
+.custom-select-field:focus {
+  border-color: var(--primary-maroon);
+  background: #ffffff;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* Role Selector */
+.role-selector-group {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  background: var(--bg-canvas);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+}
+
+.role-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.role-tab input[type="radio"] {
+  display: none;
+}
+
+.role-tab.active {
+  background: var(--bg-surface);
+  color: var(--primary-maroon);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* Submit Button */
+.auth-submit-btn {
+  width: 100%;
+  background: var(--primary-maroon);
+  color: #ffffff;
+  border: none;
+  padding: 11px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-top: 4px;
+  box-shadow: 0 4px 12px rgba(112, 19, 29, 0.25);
+  transition: all 0.2s ease;
+}
+
+.auth-submit-btn:hover {
+  background: var(--maroon-dark);
+}
+
+/* ==========================================================================
+   SLIDING OVERLAY CONTAINER
+   ========================================================================== */
+.overlay-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 100;
+}
+
+.auth-card-container.right-panel-active .overlay-container {
+  transform: translateX(-100%);
+}
+
+.overlay {
+  background: linear-gradient(145deg, var(--primary-maroon), var(--maroon-dark));
+  color: #ffffff;
+  position: relative;
+  left: -100%;
+  height: 100%;
+  width: 200%;
+  transform: translateX(0);
+  transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.auth-card-container.right-panel-active .overlay {
+  transform: translateX(50%);
+}
+
+.overlay-panel {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 40px;
+  text-align: center;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  transform: translateX(0);
+  transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.overlay-left {
+  transform: translateX(-20%);
+}
+
+.auth-card-container.right-panel-active .overlay-left {
+  transform: translateX(0);
+}
+
+.overlay-right {
+  right: 0;
+  transform: translateX(0);
+}
+
+.auth-card-container.right-panel-active .overlay-right {
+  transform: translateX(20%);
+}
+
+.brand-badge-large {
+  width: 72px;
+  height: 72px;
+  background: #ffffff;
+  border-radius: 50%;
+  padding: 3px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.overlay-panel h2 {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.overlay-panel p {
+  font-size: 13px;
+  line-height: 1.5;
+  opacity: 0.85;
+  margin-bottom: 28px;
+}
+
+.ghost-btn {
+  background: transparent;
+  border: 1.5px solid #ffffff;
+  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.ghost-btn:hover {
+  background: #ffffff;
+  color: var(--primary-maroon);
+}
+
+.login-header-mobile,
+.mobile-switch-text {
+  display: none;
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS (<= 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .auth-page-wrapper {
+    padding: 12px;
+  }
+
+  .auth-card-container {
+    width: 100%;
+    min-height: auto;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .overlay-container {
+    display: none;
+  }
+
+  .form-container {
+    position: relative;
+    width: 100% !important;
+    transform: none !important;
+  }
+
+  .auth-form-content {
+    padding: 24px 16px;
+    background: var(--bg-surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--neumorphic-light);
+  }
+
+  .sign-up-container {
+    display: none;
+  }
+
+  .auth-card-container.right-panel-active .sign-in-container {
+    display: none;
+  }
+
+  .auth-card-container.right-panel-active .sign-up-container {
+    display: block;
+    opacity: 1;
+    animation: none;
+  }
+
+  .login-header-mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .login-header-mobile h3 {
+    font-size: 16px;
+    font-weight: 800;
+    margin-top: 8px;
+  }
+
+  .login-header-mobile span {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .mobile-switch-text {
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  .mobile-switch-text a {
+    color: var(--primary-maroon);
+    font-weight: 700;
+    text-decoration: none;
+  }
+}

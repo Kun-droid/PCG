@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Authentication — WVSU Panayana Portal</title>
+    
+    <!-- Browser Favicon -->
+    <link rel="icon" href="../assets/images/Panayana_logo.jpg" type="image/jpeg">
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/login.css">
+</head>
+<body>
+
+<div class="auth-page-wrapper">
+    <div class="auth-card-container" id="authContainer">
+
+        <!-- =====================================================
+             SLIDING BRAND HERO OVERLAY (DESKTOP)
+             ===================================================== -->
+        <div class="overlay-container">
+            <div class="overlay">
+                
+                <!-- Left Overlay Panel (Visible during Sign Up mode) -->
+                <div class="overlay-panel overlay-left">
+                    <div class="brand-badge-large">
+                        <img src="../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+                    </div>
+                    <h2>Already Registered?</h2>
+                    <p>Sign in to access your troupe calendar, costumes inventory, and rehearsal schedules.</p>
+                    <button class="ghost-btn" id="signInBtn">
+                        <i class="fa-solid fa-arrow-left"></i> Sign In
+                    </button>
+                </div>
+
+                <!-- Right Overlay Panel (Visible during Sign In mode) -->
+                <div class="overlay-panel overlay-right">
+                    <div class="brand-badge-large">
+                        <img src="../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+                    </div>
+                    <h2>New Troupe Member?</h2>
+                    <p>Register your student profile to reserve costumes and join Panayana production suites.</p>
+                    <button class="ghost-btn" id="signUpBtn">
+                        Sign Up <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- =====================================================
+             SIGN IN FORM CONTAINER
+             ===================================================== -->
+        <div class="form-container sign-in-container">
+            <form id="loginForm" class="auth-form-content">
+                <!-- Mobile Brand Header -->
+                <div class="login-header-mobile">
+                    <div class="brand-logo-badge">
+                        <img src="../assets/images/Panayana_logo.jpg" alt="Panayana Logo" class="brand-logo-img">
+                    </div>
+                    <h3>WVSU Panayana</h3>
+                    <span>Cultural Group Portal</span>
+                </div>
+
+                <div class="form-title-box">
+                    <h2>Welcome Back</h2>
+                    <p>Sign in to your troupe member dashboard.</p>
+                </div>
+
+                <!-- Role Selector -->
+                <div class="role-selector-group">
+                    <label class="role-tab active">
+                        <input type="radio" name="loginRole" value="member" checked>
+                        <i class="fa-solid fa-user"></i>
+                        <span>Member</span>
+                    </label>
+                    <label class="role-tab">
+                        <input type="radio" name="loginRole" value="admin">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Admin</span>
+                    </label>
+                </div>
+
+                <!-- Email Input -->
+                <div class="form-input-group">
+                    <label for="loginEmail">WVSU Email or Member ID</label>
+                    <div class="input-with-icon">
+                        <i class="fa-regular fa-envelope input-icon"></i>
+                        <input type="text" id="loginEmail" placeholder="e.g. member@wvsu.edu.ph" required autocomplete="username">
+                    </div>
+                </div>
+
+                <!-- Password Input -->
+                <div class="form-input-group">
+                    <div class="input-label-row">
+                        <label for="loginPassword">Password</label>
+                        <a href="#" class="forgot-pass-link">Forgot?</a>
+                    </div>
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-lock input-icon"></i>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+                        <button type="button" class="toggle-password-btn" aria-label="Toggle password">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-submit-btn">
+                    <span>Sign In</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+                <!-- Mobile Switch to Sign Up -->
+                <div class="mobile-switch-text">
+                    <p>Don't have an account? <a href="#" id="mobileSignUpLink">Sign Up</a></p>
+                </div>
+            </form>
+        </div>
+
+        <!-- =====================================================
+             SIGN UP FORM CONTAINER
+             ===================================================== -->
+        <div class="form-container sign-up-container">
+            <form id="signupForm" class="auth-form-content">
+                <!-- Mobile Brand Header -->
+                <div class="login-header-mobile">
+                    <div class="brand-logo-badge">
+                        <img src="../assets/images/Panayana_logo.jpg" alt="Panayana Logo" class="brand-logo-img">
+                    </div>
+                    <h3>WVSU Panayana</h3>
+                    <span>Cultural Group Portal</span>
+                </div>
+
+                <div class="form-title-box">
+                    <h2>Join the Troupe</h2>
+                    <p>Create your performer profile and account.</p>
+                </div>
+
+                <!-- Full Name -->
+                <div class="form-input-group">
+                    <label for="regFullName">Full Name</label>
+                    <div class="input-with-icon">
+                        <i class="fa-regular fa-user input-icon"></i>
+                        <input type="text" id="regFullName" placeholder="e.g. Kirk Johnray" required>
+                    </div>
+                </div>
+
+                <!-- WVSU Student Email -->
+                <div class="form-input-group">
+                    <label for="regEmail">WVSU Student Email</label>
+                    <div class="input-with-icon">
+                        <i class="fa-regular fa-envelope input-icon"></i>
+                        <input type="email" id="regEmail" placeholder="student@wvsu.edu.ph" required>
+                    </div>
+                </div>
+
+                <!-- Suite / Section -->
+                <div class="form-input-group">
+                    <label for="regSuite">Primary Repertoire Suite</label>
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-masks-theater input-icon"></i>
+                        <select id="regSuite" class="custom-select-field" required>
+                            <option value="" disabled selected>Select Performing Suite</option>
+                            <option value="Maria Clara">Maria Clara Ensemble</option>
+                            <option value="Muslim/Singkil">Muslim / Singkil Suite</option>
+                            <option value="Cordillera">Cordillera Dance Troupe</option>
+                            <option value="Rural/Barrio">Rural & Fiesta Suite</option>
+                            <option value="Rondalla">Rondalla Instrumentalists</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="form-input-group">
+                    <label for="regPassword">Create Password</label>
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-lock input-icon"></i>
+                        <input type="password" id="regPassword" placeholder="Minimum 8 characters" required minlength="8">
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-submit-btn">
+                    <span>Complete Registration</span>
+                    <i class="fa-solid fa-user-plus"></i>
+                </button>
+
+                <!-- Mobile Switch to Sign In -->
+                <div class="mobile-switch-text">
+                    <p>Already have an account? <a href="#" id="mobileSignInLink">Sign In</a></p>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script type="module" src="../assets/js/login.js"></script>
+</body>
+</html>

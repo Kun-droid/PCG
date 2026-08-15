@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Command Center — WVSU Panayana</title>
+    
+    <script>
+        if (localStorage.getItem('panayana_sidebar_collapsed') === 'true') {
+            document.documentElement.classList.add('sidebar-is-collapsed');
+        }
+    </script>
+    
+    <!-- Browser Favicon -->
+    <link rel="icon" href="../../assets/images/Panayana_logo.jpg" type="image/jpeg">
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/officers.css">
+</head>
+<body class="admin-view-body">
+
+<div class="container" id="appContainer">
+
+    <!-- =====================================================
+         ADMIN-EXCLUSIVE SIDEBAR
+         ===================================================== -->
+    <aside class="sidebar admin-sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-logo-badge admin-badge-glow">
+                <img src="../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+            </div>
+            <div class="brand-info">
+                <span class="brand-title">WVSU Panayana</span>
+                <span class="brand-badge">Cultural Group</span>
+            </div>
+            <button id="sidebarToggle" class="toggle-btn" aria-label="Toggle Sidebar">
+                <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="sidebar-nav">
+            <span class="nav-label">Operations Console</span>
+            <a href="admin-dash.html" class="nav-item active">
+                <i class="fa-solid fa-gauge-high nav-icon"></i>
+                <span class="nav-text">Dispatch & Logs</span>
+            </a>
+            <a href="costume-cat.html" class="nav-item">
+                <i class="fa-solid fa-shirt nav-icon"></i>
+                <span class="nav-text">Costume Catalog</span>
+            </a>
+            <a href="schedule-master.html" class="nav-item">
+                <i class="fa-regular fa-calendar-days nav-icon"></i>
+                <span class="nav-text">Schedule Master</span>
+            </a>
+            <a href="archive.html" class="nav-item">
+                <i class="fa-solid fa-music nav-icon"></i>
+                <span class="nav-text">Scores Archive</span>
+            </a>
+            <a href="page-edit.html" class="nav-item">
+                <i class="fa-solid fa-circle-info nav-icon"></i>
+                <span class="nav-text">About Us</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="setting.html" class="nav-item">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span class="nav-text">Settings</span>
+            </a>
+            <button id="logout-btn" class="nav-item logout-item">
+                <i class="fa-solid fa-arrow-right-from-bracket nav-icon"></i>
+                <span class="nav-text">Sign Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- =====================================================
+         MAIN ADMIN CONSOLE
+         ===================================================== -->
+    <main class="main-content">
+        
+        <!-- Header -->
+        <header class="header admin-header">
+            <div class="header-brand-mobile">
+                <div class="brand-logo-badge mobile-only">
+                    <img src="../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+                </div>
+                <div class="header-title">
+                    <h1>Admin Control Console</h1>
+                    <span>Costume Circulation & Custodian Operations</span>
+                </div>
+            </div>
+            
+            <div class="user-profile-top">
+                <div class="profile-info desktop-only">
+                    <strong>Lead Custodian / Officer</strong><br>
+                    <span class="admin-live-badge"><span class="pulse-dot"></span> System Live</span>
+                </div>
+                <button class="profile-icon" aria-label="Alerts">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Admin Mobile Top Navigation Bar -->
+        <nav class="pill-nav admin-pills mobile-only">
+            <a href="admin-dash.html" class="nav-pill active"><i class="fa-solid fa-qrcode"></i> Dispatch</a>
+            <a href="costume-cat.html" class="nav-pill"><i class="fa-solid fa-shirt"></i> Catalog</a>
+            <a href="schedule-master.html" class="nav-pill"><i class="fa-regular fa-calendar-days"></i> Schedule</a>
+            <a href="archive.html" class="nav-pill"><i class="fa-solid fa-music"></i> Archive</a>
+            <a href="page-edit.html" class="nav-pill"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="setting.html" class="nav-pill"><i class="fa-solid fa-gear"></i> Settings</a>
+        </nav>
+
+        <!-- Content Body -->
+        <div class="content-body">
+            
+            <!-- Quick Stat KPIs -->
+            <div class="metrics">
+                <div class="card metric-card admin-metric">
+                    <div class="metric-icon maroon"><i class="fa-solid fa-users"></i></div>
+                    <div class="metric-info">
+                        <span class="metric-label">Total Members</span>
+                        <div class="value" id="totalMembersCount">42</div>
+                        <span class="metric-subtitle">Registered troupe artists</span>
+                    </div>
+                </div>
+                <div class="card metric-card admin-metric">
+                    <div class="metric-icon gold"><i class="fa-regular fa-calendar-check"></i></div>
+                    <div class="metric-info">
+                        <span class="metric-label">Total Schedules</span>
+                        <div class="value" id="totalSchedulesCount">18</div>
+                        <span class="metric-subtitle">Rehearsals & performances</span>
+                    </div>
+                </div>
+                <div class="card metric-card admin-metric">
+                    <div class="metric-icon purple"><i class="fa-solid fa-shirt"></i></div>
+                    <div class="metric-info">
+                        <span class="metric-label">Total Costumes</span>
+                        <div class="value" id="totalCostumesCount">68</div>
+                        <span class="metric-subtitle">Across 4 cultural suites</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-Column Workstation: Manual Entry & Registry -->
+            <div class="admin-workspace-grid">
+                
+                <!-- Left: Quick Dispatch Workstation -->
+                <div class="card scanner-module-card">
+                    <div class="section-head">
+                        <div class="section-title-combo">
+                            <i class="fa-solid fa-boxes-packing title-icon"></i>
+                            <div>
+                                <h3>Quick Dispatch & Return Workstation</h3>
+                                <p>Scan student QR to automatically Issue or Return.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile-Only Launch Button for Camera Scanner -->
+                    <button type="button" class="mobile-scan-trigger-btn mobile-only" id="openMobileScannerBtn">
+                        <i class="fa-solid fa-camera"></i> Open Phone QR Scanner
+                    </button>
+
+                    <!-- Dynamic Return/Issue Status Banner -->
+                    <div id="scanStatusBanner" class="scan-status-alert" style="display: none;"></div>
+
+                    <!-- Dispatch / Return Form -->
+                    <form id="adminDispatchForm" class="admin-form">
+                        <div class="form-grid-2">
+                            <div class="field-block">
+                                <label for="dispatchStudentId">Student ID # / QR Payload</label>
+                                <div class="field-input-box">
+                                    <i class="fa-regular fa-id-card"></i>
+                                    <input type="text" id="dispatchStudentId" placeholder="Type or scan Student ID..." required autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="field-block">
+                                <label for="dispatchMemberName">Borrower Name</label>
+                                <div class="field-input-box">
+                                    <i class="fa-regular fa-user"></i>
+                                    <input type="text" id="dispatchMemberName" placeholder="Borrower full name..." required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Only shown during new checkout; auto-hidden if returning -->
+                        <div class="field-block" id="costumeSelectGroup">
+                            <label for="dispatchCostumeSelect">Select Costume & Suite to Issue</label>
+                            <div class="field-input-box">
+                                <i class="fa-solid fa-shirt"></i>
+                                <select id="dispatchCostumeSelect" required>
+                                    <option value="" disabled selected>Select costume unit to issue...</option>
+                                    <option value="Maria Clara Formal Ensemble|Maria Clara">Maria Clara Formal Ensemble (Rack A-1)</option>
+                                    <option value="Singkil Princess Regal Attire|Muslim/Singkil">Singkil Princess Regal Attire (Rack B-2)</option>
+                                    <option value="Singkil Prince & Warriors Set|Muslim/Singkil">Singkil Prince & Warriors Set (Rack B-3)</option>
+                                    <option value="Cordillera Tadek / Bendian Set|Cordillera">Cordillera Tadek / Bendian Set (Rack C-1)</option>
+                                    <option value="Rural Tinikling / Balitaw Costumes|Rural/Barrio">Rural Tinikling / Balitaw Costumes (Rack D-1)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="admin-action-btn" id="dispatchSubmitBtn" data-mode="checkout">
+                            <i class="fa-solid fa-arrow-right-arrow-left"></i> Confirm Costume Checkout
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Right: Active Circulation Registry -->
+                <div class="card circulation-log-card">
+                    <div class="section-head">
+                        <div class="section-title-combo">
+                            <i class="fa-solid fa-clipboard-check title-icon"></i>
+                            <div>
+                                <h3>Circulation Log</h3>
+                                <p>Manage active loans and view return logs.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="log-search-bar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="registrySearchInput" placeholder="Filter by name, ID, or costume...">
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Borrower</th>
+                                    <th>Attire Set</th>
+                                    <th>Issued Date</th>
+                                    <th class="text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminRegistryTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Admin Mobile Bottom Dock -->
+    <nav class="bottom-dock admin-bottom-dock mobile-only">
+        <a href="admin-dash.html" class="dock-item active" aria-label="Dispatch"><i class="fa-solid fa-qrcode"></i></a>
+        <a href="costume-cat.html" class="dock-item" aria-label="Catalog"><i class="fa-solid fa-shirt"></i></a>
+        <a href="schedule-master.html" class="dock-item" aria-label="Schedule"><i class="fa-regular fa-calendar-days"></i></a>
+        <a href="archive.html" class="dock-item" aria-label="Archive"><i class="fa-solid fa-music"></i></a>
+        <a href="page-edit.html" class="dock-item" aria-label="About"><i class="fa-solid fa-circle-info"></i></a>
+        <a href="setting.html" class="dock-item" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
+    </nav>
+</div>
+
+<!-- =====================================================
+     MOBILE CAMERA SCANNER MODAL
+     ===================================================== -->
+<div class="modal-overlay" id="mobileScannerModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <div class="modal-title-group">
+                <span class="modal-badge">Phone Camera</span>
+                <h3>Scan Member Pass</h3>
+            </div>
+            <button class="modal-close-btn" id="closeMobileScannerBtn" aria-label="Close Scanner">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div class="active-camera-box">
+                <div class="active-laser"></div>
+                <i class="fa-solid fa-camera"></i>
+                <p>Align QR code to automatically Issue or Return</p>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
+                <button type="button" class="modal-btn secondary" id="simulateScanNewBtn">
+                    <i class="fa-solid fa-plus"></i> Simulate: Scan New Borrower (Issue)
+                </button>
+                <button type="button" class="modal-btn secondary" id="simulateScanReturnBtn" style="border-color: #f9d8dd; color: var(--primary-maroon);">
+                    <i class="fa-solid fa-rotate-left"></i> Simulate: Return Borrower (Return)
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="../../assets/js/sidebar.js"></script>
+<script type="module" src="../../assets/js/admin.js"></script>
+</body>
+</html>

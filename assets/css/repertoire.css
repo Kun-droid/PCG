@@ -1,0 +1,296 @@
+/* ==========================================================================
+   PANAYANA REPERTOIRE & GOOGLE DRIVE HUB STYLES
+   ========================================================================== */
+
+/* Hero Drive Banner */
+.repertoire-hero-card {
+  background: linear-gradient(135deg, var(--primary-maroon), var(--maroon-dark));
+  color: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 24px rgba(112, 19, 29, 0.2);
+}
+
+.hero-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.gdrive-icon-badge {
+  width: 54px;
+  height: 54px;
+  background: #ffffff;
+  color: var(--primary-maroon);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.hero-text h2 {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.hero-text p {
+  font-size: 13px;
+  opacity: 0.85;
+  line-height: 1.4;
+}
+
+.drive-open-btn {
+  background: #ffffff;
+  color: var(--primary-maroon);
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.drive-open-btn:hover {
+  background: #fdf5e8;
+  transform: translateY(-2px);
+}
+
+/* Category Folders Grid */
+.drive-folders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.folder-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.folder-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+.folder-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.folder-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.folder-icon.maroon { background: #fbebee; color: var(--primary-maroon); }
+.folder-icon.gold { background: #fef6eb; color: var(--sunset-gold); }
+.folder-icon.purple { background: #f3eefb; color: #7c3aed; }
+
+.folder-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg-canvas);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.folder-card h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+.folder-card p {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+.folder-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-light);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.folder-link {
+  color: var(--primary-maroon);
+  font-size: 14px;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.folder-card:hover .folder-link {
+  transform: translateX(3px);
+}
+
+/* Embedded Drive Preview Card */
+.drive-embed-card {
+  padding: 24px;
+}
+
+.embed-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  color: var(--primary-maroon);
+}
+
+.embed-title-group h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.sync-status {
+  font-size: 11px;
+  font-weight: 700;
+  color: #15803d;
+  background: #dcfce7;
+  padding: 4px 10px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.drive-frame-wrapper {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  background: var(--bg-canvas);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+}
+
+.drive-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Fallback card banner */
+.drive-fallback-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.fallback-content {
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.fallback-content i {
+  font-size: 48px;
+  color: var(--primary-maroon);
+  margin-bottom: 6px;
+}
+
+.fallback-content h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.fallback-content p {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.fallback-content code {
+  background: var(--bg-canvas);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--primary-maroon);
+  font-weight: 700;
+}
+
+.fallback-btn {
+  margin-top: 10px;
+  background: var(--primary-maroon);
+  color: #ffffff;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(112, 19, 29, 0.25);
+  transition: all 0.2s ease;
+}
+
+.fallback-btn:hover {
+  background: var(--maroon-dark);
+}
+
+/* Responsive (Mobile <= 768px) */
+@media (max-width: 768px) {
+  .repertoire-hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px;
+  }
+
+  .drive-open-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .drive-embed-card {
+    padding: 16px;
+  }
+
+  .drive-frame-wrapper {
+    height: 420px;
+  }
+}

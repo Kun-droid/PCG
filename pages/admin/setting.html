@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Account & System Settings — WVSU Panayana Admin</title>
+    
+    <script>
+        if (localStorage.getItem('panayana_sidebar_collapsed') === 'true') {
+            document.documentElement.classList.add('sidebar-is-collapsed');
+        }
+        if (localStorage.getItem('panayana_dark_mode') === 'true') {
+            document.documentElement.classList.add('dark-theme');
+        }
+    </script>
+    
+    <!-- Browser Favicon -->
+    <link rel="icon" href="../../assets/images/Panayana_logo.jpg" type="image/jpeg">
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/setting.css">
+</head>
+<body class="admin-view-body">
+
+<div class="container" id="appContainer">
+
+    <!-- =====================================================
+         ADMIN-EXCLUSIVE SIDEBAR
+         ===================================================== -->
+    <aside class="sidebar admin-sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-logo-badge admin-badge-glow">
+                <img src="../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+            </div>
+            <div class="brand-info">
+                <span class="brand-title">WVSU Panayana</span>
+                <span class="brand-badge">Cultural Group</span>
+            </div>
+            <button id="sidebarToggle" class="toggle-btn" aria-label="Toggle Sidebar">
+                <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="sidebar-nav">
+            <span class="nav-label">Operations Console</span>
+            <a href="admin-dash.html" class="nav-item">
+                <i class="fa-solid fa-gauge-high nav-icon"></i>
+                <span class="nav-text">Dispatch & Logs</span>
+            </a>
+            <a href="costume-cat.html" class="nav-item">
+                <i class="fa-solid fa-shirt nav-icon"></i>
+                <span class="nav-text">Costume Catalog</span>
+            </a>
+            <a href="schedule-master.html" class="nav-item">
+                <i class="fa-regular fa-calendar-days nav-icon"></i>
+                <span class="nav-text">Schedule Master</span>
+            </a>
+            <a href="archive.html" class="nav-item">
+                <i class="fa-solid fa-music nav-icon"></i>
+                <span class="nav-text">Scores Archive</span>
+            </a>
+            <a href="page-edit.html" class="nav-item">
+                <i class="fa-solid fa-circle-info nav-icon"></i>
+                <span class="nav-text">About Us</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="setting.html" class="nav-item active">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span class="nav-text">Settings</span>
+            </a>
+            <button id="logout-btn" class="nav-item logout-item">
+                <i class="fa-solid fa-arrow-right-from-bracket nav-icon"></i>
+                <span class="nav-text">Sign Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- =====================================================
+         MAIN VIEWPORT
+         ===================================================== -->
+    <main class="main-content">
+        
+        <!-- Universal Header -->
+        <header class="header admin-header">
+            <div class="header-brand-mobile">
+                <div class="brand-logo-badge mobile-only">
+                    <img src="../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+                </div>
+                <div class="header-title">
+                    <h1>Settings & Preferences</h1>
+                    <span>Manage profile, security, and portal configurations</span>
+                </div>
+            </div>
+            
+            <div class="user-profile-top">
+                <div class="profile-info desktop-only">
+                    <strong>Lead Custodian / Officer</strong><br>
+                    <span class="admin-live-badge"><span class="pulse-dot"></span> System Live</span>
+                </div>
+                <button class="profile-icon" aria-label="Settings">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Admin Mobile Top Navigation Bar -->
+        <nav class="pill-nav admin-pills mobile-only">
+            <a href="admin-dash.html" class="nav-pill"><i class="fa-solid fa-qrcode"></i> Dispatch</a>
+            <a href="costume-cat.html" class="nav-pill"><i class="fa-solid fa-shirt"></i> Catalog</a>
+            <a href="schedule-master.html" class="nav-pill"><i class="fa-regular fa-calendar-days"></i> Schedule</a>
+            <a href="archive.html" class="nav-pill"><i class="fa-solid fa-music"></i> Archive</a>
+            <a href="page-edit.html" class="nav-pill"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="setting.html" class="nav-pill active"><i class="fa-solid fa-gear"></i> Settings</a>
+        </nav>
+
+        <!-- Content Body -->
+        <div class="content-body">
+            
+            <div id="settingsToast" class="settings-toast" style="display: none;">
+                <i class="fa-solid fa-circle-check"></i>
+                <span id="settingsToastMsg">Settings updated successfully.</span>
+            </div>
+
+            <div class="settings-layout">
+                
+                <div class="card settings-nav-card">
+                    <button class="settings-tab-btn active" data-tab="profile">
+                        <i class="fa-regular fa-user"></i>
+                        <span>Profile & Account</span>
+                    </button>
+                    <button class="settings-tab-btn" data-tab="appearance">
+                        <i class="fa-solid fa-palette"></i>
+                        <span>Appearance & View</span>
+                    </button>
+                    <button class="settings-tab-btn" data-tab="notifications">
+                        <i class="fa-regular fa-bell"></i>
+                        <span>Alerts & Notifications</span>
+                    </button>
+                    <button class="settings-tab-btn" data-tab="security">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Security & Password</span>
+                    </button>
+                </div>
+
+                <div class="settings-content-pane">
+                    
+                    <!-- PANE 1: PROFILE & ACCOUNT -->
+                    <div class="card settings-pane active" id="pane-profile">
+                        <div class="pane-header">
+                            <h3>Profile & Member Details</h3>
+                            <p>Update your personal information and cultural troupe role.</p>
+                        </div>
+
+                        <form id="profileSettingsForm">
+                            <div class="avatar-upload-row">
+                                <div class="avatar-preview">
+                                    <img src="../../assets/images/Panayana_logo.jpg" alt="Profile Avatar" id="settingsAvatarImg">
+                                </div>
+                                <div class="avatar-actions">
+                                    <strong>Troupe Profile Picture</strong>
+                                    <p>Recommended square JPG or PNG format.</p>
+                                    <button type="button" class="btn-secondary" id="changeAvatarBtn">Change Photo</button>
+                                </div>
+                            </div>
+
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label for="profFullName">Full Name</label>
+                                    <input type="text" id="profFullName" value="Kirk Johnray" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profStudentId">Student ID #</label>
+                                    <input type="text" id="profStudentId" value="2023-10492" required>
+                                </div>
+                            </div>
+
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label for="profEmail">University Email</label>
+                                    <input type="email" id="profEmail" value="kirk.menez@wvsu.edu.ph" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profRole">Troupe Designation</label>
+                                    <select id="profRole">
+                                        <option value="Lead Folk Dancer">Lead Folk Dancer</option>
+                                        <option value="Rondalla Musician">Rondalla Musician</option>
+                                        <option value="Apprentice Dancer">Apprentice Dancer</option>
+                                        <option value="Costume Custodian">Costume Custodian</option>
+                                        <option value="Troupe Officer" selected>Troupe Officer / Admin</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="pane-footer">
+                                <button type="submit" class="btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Profile</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- PANE 2: APPEARANCE & PREFERENCES -->
+                    <div class="card settings-pane" id="pane-appearance">
+                        <div class="pane-header">
+                            <h3>Appearance & System Preferences</h3>
+                            <p>Customize portal theme and interface behaviors.</p>
+                        </div>
+
+                        <div class="setting-toggle-list">
+                            <div class="setting-toggle-item">
+                                <div class="toggle-info">
+                                    <strong>Dark Theme</strong>
+                                    <p>Switch between light and high-contrast dark theme.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="darkModeToggle">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-toggle-item">
+                                <div class="toggle-info">
+                                    <strong>Default Collapsed Sidebar</strong>
+                                    <p>Keep desktop sidebar compact by default on page load.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="sidebarCollapsedToggle">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="pane-footer">
+                            <button type="button" class="btn-primary" id="saveAppearanceBtn"><i class="fa-solid fa-floppy-disk"></i> Save Preferences</button>
+                        </div>
+                    </div>
+
+                    <!-- PANE 3: NOTIFICATIONS -->
+                    <div class="card settings-pane" id="pane-notifications">
+                        <div class="pane-header">
+                            <h3>Alerts & Rehearsal Reminders</h3>
+                            <p>Select which schedule and costume loan updates you receive.</p>
+                        </div>
+
+                        <div class="setting-toggle-list">
+                            <div class="setting-toggle-item">
+                                <div class="toggle-info">
+                                    <strong>Rehearsal Schedule Alerts</strong>
+                                    <p>Get notified when a new rehearsal date or blocking session is posted.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="notifyRehearsalToggle" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-toggle-item">
+                                <div class="toggle-info">
+                                    <strong>Costume Return Reminders</strong>
+                                    <p>Receive return deadline reminders after rehearsals or performances.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="notifyCostumeToggle" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-toggle-item">
+                                <div class="toggle-info">
+                                    <strong>Major Gala Announcements</strong>
+                                    <p>Email summaries of upcoming staging dates and call times.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="notifyAnnounceToggle" checked>
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="pane-footer">
+                            <button type="button" class="btn-primary" id="saveNotificationsBtn"><i class="fa-solid fa-floppy-disk"></i> Save Notifications</button>
+                        </div>
+                    </div>
+
+                    <!-- PANE 4: SECURITY & PASSWORD -->
+                    <div class="card settings-pane" id="pane-security">
+                        <div class="pane-header">
+                            <h3>Security & Authentication</h3>
+                            <p>Update your password and manage active login sessions.</p>
+                        </div>
+
+                        <form id="securitySettingsForm">
+                            <div class="form-group">
+                                <label for="secCurrentPass">Current Password</label>
+                                <input type="password" id="secCurrentPass" placeholder="Enter current password" required>
+                            </div>
+
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label for="secNewPass">New Password</label>
+                                    <input type="password" id="secNewPass" placeholder="At least 8 characters" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="secConfirmPass">Confirm New Password</label>
+                                    <input type="password" id="secConfirmPass" placeholder="Re-enter new password" required>
+                                </div>
+                            </div>
+
+                            <div class="pane-footer">
+                                <button type="submit" class="btn-primary"><i class="fa-solid fa-lock"></i> Update Password</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Admin Mobile Bottom Dock -->
+    <nav class="bottom-dock admin-bottom-dock mobile-only">
+        <a href="admin-dash.html" class="dock-item" aria-label="Dispatch"><i class="fa-solid fa-qrcode"></i></a>
+        <a href="costume-cat.html" class="dock-item" aria-label="Catalog"><i class="fa-solid fa-shirt"></i></a>
+        <a href="schedule-master.html" class="dock-item" aria-label="Schedule"><i class="fa-regular fa-calendar-days"></i></a>
+        <a href="archive.html" class="dock-item" aria-label="Archive"><i class="fa-solid fa-music"></i></a>
+        <a href="page-edit.html" class="dock-item" aria-label="About"><i class="fa-solid fa-circle-info"></i></a>
+        <a href="setting.html" class="dock-item active" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
+    </nav>
+</div>
+
+<script type="module" src="../../assets/js/sidebar.js"></script>
+<script type="module" src="../../assets/js/setting.js"></script>
+</body>
+</html>

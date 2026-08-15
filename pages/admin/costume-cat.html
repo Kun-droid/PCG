@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Costume Catalog — WVSU Panayana Admin</title>
+    
+    <script>
+        if (localStorage.getItem('panayana_sidebar_collapsed') === 'true') {
+            document.documentElement.classList.add('sidebar-is-collapsed');
+        }
+    </script>
+
+    <!-- Browser Favicon -->
+    <link rel="icon" href="../../assets/images/Panayana_logo.jpg" type="image/jpeg">
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/costumes-inventory.css">
+    <link rel="stylesheet" href="../../assets/css/catalog.css">
+</head>
+<body class="admin-view-body">
+
+<div class="container" id="appContainer">
+
+    <!-- =====================================================
+         DESKTOP SAAS SIDEBAR
+         ===================================================== -->
+    <aside class="sidebar admin-sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-logo-badge admin-badge-glow">
+                <img src="../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+            </div>
+            <div class="brand-info">
+                <span class="brand-title">WVSU Panayana</span>
+                <span class="brand-badge">Cultural Group</span>
+            </div>
+            <button id="sidebarToggle" class="toggle-btn" aria-label="Toggle Sidebar">
+                <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="sidebar-nav">
+            <span class="nav-label">Operations Console</span>
+            <a href="admin-dash.html" class="nav-item">
+                <i class="fa-solid fa-gauge-high nav-icon"></i>
+                <span class="nav-text">Dispatch & Logs</span>
+            </a>
+            <a href="costume-cat.html" class="nav-item active">
+                <i class="fa-solid fa-shirt nav-icon"></i>
+                <span class="nav-text">Costume Catalog</span>
+            </a>
+            <a href="schedule-master.html" class="nav-item">
+                <i class="fa-regular fa-calendar-days nav-icon"></i>
+                <span class="nav-text">Schedule Master</span>
+            </a>
+            <a href="archive.html" class="nav-item">
+                <i class="fa-solid fa-music nav-icon"></i>
+                <span class="nav-text">Scores Archive</span>
+            </a>
+            <a href="page-edit.html" class="nav-item">
+                <i class="fa-solid fa-circle-info nav-icon"></i>
+                <span class="nav-text">About Us</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="setting.html" class="nav-item">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span class="nav-text">Settings</span>
+            </a>
+            <button id="logout-btn" class="nav-item logout-item">
+                <i class="fa-solid fa-arrow-right-from-bracket nav-icon"></i>
+                <span class="nav-text">Sign Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- =====================================================
+         MAIN VIEWPORT
+         ===================================================== -->
+    <main class="main-content">
+        
+        <header class="header admin-header">
+            <div class="header-brand-mobile">
+                <div class="brand-logo-badge mobile-only">
+                    <img src="../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+                </div>
+                <div class="header-title">
+                    <h1>Costume Catalog</h1>
+                    <span>Attire Vault Management & QR Circulation</span>
+                </div>
+            </div>
+            
+            <div class="user-profile-top">
+                <div class="profile-info desktop-only">
+                    <strong>Lead Custodian / Officer</strong><br>
+                    <span class="admin-live-badge"><span class="pulse-dot"></span> Vault Live</span>
+                </div>
+                <button class="profile-icon" aria-label="Notifications">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Admin Mobile Top Navigation Bar -->
+        <nav class="pill-nav admin-pills mobile-only">
+            <a href="admin-dash.html" class="nav-pill"><i class="fa-solid fa-qrcode"></i> Dispatch</a>
+            <a href="costume-cat.html" class="nav-pill active"><i class="fa-solid fa-shirt"></i> Catalog</a>
+            <a href="schedule-master.html" class="nav-pill"><i class="fa-regular fa-calendar-days"></i> Schedule</a>
+            <a href="archive.html" class="nav-pill"><i class="fa-solid fa-music"></i> Archive</a>
+            <a href="page-edit.html" class="nav-pill"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="setting.html" class="nav-pill"><i class="fa-solid fa-gear"></i> Settings</a>
+        </nav>
+
+        <!-- Content Body -->
+        <div class="content-body">
+            
+            <div class="metrics">
+                <div class="card metric-card admin-metric">
+                    <div class="metric-icon maroon"><i class="fa-solid fa-vest"></i></div>
+                    <div class="metric-info">
+                        <span class="metric-label">Total Units</span>
+                        <div class="value" id="totalCostumesCount">68</div>
+                        <span class="metric-subtitle">Across 4 Cultural Suites</span>
+                    </div>
+                </div>
+                <div class="card metric-card admin-metric">
+                    <div class="metric-icon gold"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="metric-info">
+                        <span class="metric-label">Available in Vault</span>
+                        <div class="value" id="availableCostumesCount">54</div>
+                        <span class="metric-subtitle">Ready for staging</span>
+                    </div>
+                </div>
+                <div class="card metric-card admin-metric">
+                    <div class="metric-icon purple"><i class="fa-solid fa-user-tag"></i></div>
+                    <div class="metric-info">
+                        <span class="metric-label">Active Loans</span>
+                        <div class="value" id="borrowedCostumesCount">14</div>
+                        <span class="metric-subtitle">In active rehearsal</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custodian Management Action Bar -->
+            <div class="admin-management-bar">
+                <div class="management-text">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <div>
+                        <strong>Custodian Workstation Active</strong>
+                        <p>You have permissions to add costumes, edit stock counts, and scan member passes.</p>
+                    </div>
+                </div>
+                <div class="management-actions">
+                    <button class="add-costume-btn" id="openAddCostumeBtn">
+                        <i class="fa-solid fa-plus"></i> Add New Costume
+                    </button>
+                    <button class="launch-qr-scanner-btn" id="openInventoryScannerBtn">
+                        <i class="fa-solid fa-qrcode"></i> Scan Member Pass
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Inventory Card -->
+            <div class="card inventory-main-card">
+                <div class="inventory-controls">
+                    <div class="search-input-box">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="costumeSearchInput" placeholder="Search costume by name...">
+                    </div>
+                </div>
+
+                <div class="costumes-grid" id="costumesGrid"></div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Admin Mobile Bottom Dock -->
+    <nav class="bottom-dock admin-bottom-dock mobile-only">
+        <a href="admin-dash.html" class="dock-item" aria-label="Dispatch"><i class="fa-solid fa-qrcode"></i></a>
+        <a href="costume-cat.html" class="dock-item active" aria-label="Catalog"><i class="fa-solid fa-shirt"></i></a>
+        <a href="schedule-master.html" class="dock-item" aria-label="Schedule"><i class="fa-regular fa-calendar-days"></i></a>
+        <a href="archive.html" class="dock-item" aria-label="Archive"><i class="fa-solid fa-music"></i></a>
+        <a href="page-edit.html" class="dock-item" aria-label="About"><i class="fa-solid fa-circle-info"></i></a>
+        <a href="setting.html" class="dock-item" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
+    </nav>
+</div>
+
+<!-- =====================================================
+     ADD / EDIT COSTUME MODAL (NAME & QUANTITY ONLY)
+     ===================================================== -->
+<div class="modal-overlay" id="addCostumeModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <div class="modal-title-group">
+                <span class="modal-badge">Custodian Tool</span>
+                <h3 id="addCostumeModalTitle">Add New Costume</h3>
+            </div>
+            <button class="modal-close-btn" id="closeAddCostumeBtn" aria-label="Close Modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="costumeManageForm">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="newCostumeName">Costume Name</label>
+                    <input type="text" id="newCostumeName" placeholder="e.g. Maria Clara Court Gown" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="newCostumeQuantity">Quantity</label>
+                    <input type="number" id="newCostumeQuantity" min="1" placeholder="e.g. 10" value="10" required>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="modal-btn secondary" id="cancelAddCostumeBtn">Cancel</button>
+                <button type="submit" class="modal-btn primary"><i class="fa-solid fa-floppy-disk"></i> Save Costume</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- =====================================================
+     QR PASS SCANNER MODAL
+     ===================================================== -->
+<div class="modal-overlay" id="qrScannerModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <div class="modal-title-group">
+                <span class="modal-badge">Custodian Dispatch</span>
+                <h3>Scan Member Pass</h3>
+            </div>
+            <button class="modal-close-btn" id="closeQrScannerBtn" aria-label="Close Scanner">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div class="active-camera-box">
+                <div class="active-laser"></div>
+                <i class="fa-solid fa-camera"></i>
+                <p>Align Member QR Code to Issue or Return</p>
+            </div>
+
+            <div id="scannerFeedback" class="scanner-feedback-box" style="display: none;"></div>
+
+            <div class="scan-simulate-group">
+                <button type="button" class="modal-btn secondary" id="simBorrowBtn">
+                    <i class="fa-solid fa-arrow-up-from-bracket"></i> Simulate: Issue Costume (Borrow)
+                </button>
+                <button type="button" class="modal-btn secondary return-sim-btn" id="simReturnBtn">
+                    <i class="fa-solid fa-rotate-left"></i> Simulate: Return Costume
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="../../assets/js/sidebar.js"></script>
+<script type="module" src="../../assets/js/costumes-inventory.js"></script>
+<script type="module" src="../../assets/js/catalog.js"></script>
+</body>
+</html>

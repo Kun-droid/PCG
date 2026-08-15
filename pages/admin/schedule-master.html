@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Schedule Master — Panayana Admin</title>
+
+    <script>
+        if (localStorage.getItem('panayana_sidebar_collapsed') === 'true') {
+            document.documentElement.classList.add('sidebar-is-collapsed');
+        }
+    </script>
+    
+    <!-- Browser Favicon -->
+    <link rel="icon" href="../../assets/images/Panayana_logo.jpg" type="image/jpeg">
+    
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Core Stylesheets -->
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/event-calendar.css">
+    <link rel="stylesheet" href="../../assets/css/admin-dash.css">
+</head>
+<body class="admin-view-body">
+
+<div class="container" id="appContainer">
+
+    <!-- =====================================================
+         ADMIN-EXCLUSIVE SIDEBAR
+         ===================================================== -->
+    <aside class="sidebar admin-sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-logo-badge admin-badge-glow">
+                <img src="../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+            </div>
+            <div class="brand-info">
+                <span class="brand-title">WVSU Panayana</span>
+                <span class="brand-badge">Cultural Group</span>
+            </div>
+            <button id="sidebarToggle" class="toggle-btn" aria-label="Toggle Sidebar">
+                <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="sidebar-nav">
+            <span class="nav-label">Operations Console</span>
+            <a href="admin-dash.html" class="nav-item">
+                <i class="fa-solid fa-gauge-high nav-icon"></i>
+                <span class="nav-text">Dispatch & Logs</span>
+            </a>
+            <a href="costume-cat.html" class="nav-item">
+                <i class="fa-solid fa-shirt nav-icon"></i>
+                <span class="nav-text">Costume Catalog</span>
+            </a>
+            <a href="schedule-master.html" class="nav-item active">
+                <i class="fa-regular fa-calendar-days nav-icon"></i>
+                <span class="nav-text">Schedule Master</span>
+            </a>
+            <a href="archive.html" class="nav-item">
+                <i class="fa-solid fa-music nav-icon"></i>
+                <span class="nav-text">Scores Archive</span>
+            </a>
+            <a href="page-edit.html" class="nav-item">
+                <i class="fa-solid fa-circle-info nav-icon"></i>
+                <span class="nav-text">About Us</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="setting.html" class="nav-item">
+                <i class="fa-solid fa-gear nav-icon"></i>
+                <span class="nav-text">Settings</span>
+            </a>
+            <button id="logout-btn" class="nav-item logout-item">
+                <i class="fa-solid fa-arrow-right-from-bracket nav-icon"></i>
+                <span class="nav-text">Sign Out</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- =====================================================
+         MAIN VIEWPORT
+         ===================================================== -->
+    <main class="main-content">
+        
+        <header class="header admin-header">
+            <div class="header-brand-mobile">
+                <div class="brand-logo-badge mobile-only">
+                    <img src="../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+                </div>
+                <div class="header-title">
+                    <h1>Schedule Master</h1>
+                    <span>Troupe Rehearsals, Blocking & Performance Management</span>
+                </div>
+            </div>
+            
+            <div class="user-profile-top">
+                <div class="profile-info desktop-only">
+                    <strong>Lead Custodian / Officer</strong><br>
+                    <span class="admin-live-badge"><span class="pulse-dot"></span> Calendar Control</span>
+                </div>
+                <button class="profile-icon" aria-label="Alerts">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Admin Mobile Top Navigation Bar -->
+        <nav class="pill-nav admin-pills mobile-only">
+            <a href="admin-dash.html" class="nav-pill"><i class="fa-solid fa-qrcode"></i> Dispatch</a>
+            <a href="costume-cat.html" class="nav-pill"><i class="fa-solid fa-shirt"></i> Catalog</a>
+            <a href="schedule-master.html" class="nav-pill active"><i class="fa-regular fa-calendar-days"></i> Schedule</a>
+            <a href="archive.html" class="nav-pill"><i class="fa-solid fa-music"></i> Archive</a>
+            <a href="page-edit.html" class="nav-pill"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="setting.html" class="nav-pill"><i class="fa-solid fa-gear"></i> Settings</a>
+        </nav>
+
+        <!-- Content Body -->
+        <div class="content-body">
+            <div class="card full-calendar-card">
+                
+                <div class="calendar-toolbar">
+                    <div class="cal-title-section">
+                        <button class="cal-year-select-btn" id="yearSelectorBtn" title="Click to change year">
+                            <span id="currentMonthYear">August 2026</span>
+                            <i class="fa-solid fa-chevron-down year-dropdown-icon"></i>
+                        </button>
+                        <span class="cal-status-badge" id="calendarBadge">Current Month</span>
+                    </div>
+
+                    <div class="cal-controls">
+                        <button class="modal-btn primary" id="openAddEventBtn" style="margin-right: 6px; padding: 7px 14px;">
+                            <i class="fa-solid fa-plus"></i> Add Event
+                        </button>
+                        <button class="cal-nav-btn" id="prevMonthBtn" aria-label="Previous Month"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="cal-today-btn" id="todayBtn">Today</button>
+                        <button class="cal-nav-btn" id="nextMonthBtn" aria-label="Next Month"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="calendar-weekdays-full" id="calendarWeekdays">
+                    <span>Sun</span>
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                </div>
+
+                <div class="calendar-grid-full" id="calendarDaysGrid"></div>
+                <div class="years-picker-grid" id="yearsPickerGrid" style="display: none;"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Admin Mobile Bottom Dock -->
+    <nav class="bottom-dock admin-bottom-dock mobile-only">
+        <a href="admin-dash.html" class="dock-item" aria-label="Dispatch"><i class="fa-solid fa-qrcode"></i></a>
+        <a href="costume-cat.html" class="dock-item" aria-label="Catalog"><i class="fa-solid fa-shirt"></i></a>
+        <a href="schedule-master.html" class="dock-item active" aria-label="Schedule"><i class="fa-regular fa-calendar-days"></i></a>
+        <a href="archive.html" class="dock-item" aria-label="Archive"><i class="fa-solid fa-music"></i></a>
+        <a href="page-edit.html" class="dock-item" aria-label="About"><i class="fa-solid fa-circle-info"></i></a>
+        <a href="setting.html" class="dock-item" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
+    </nav>
+</div>
+
+<!-- =====================================================
+     1. ADMIN EVENT DETAIL & MANAGEMENT MODAL
+     ===================================================== -->
+<div class="modal-overlay" id="eventModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <div class="modal-title-group">
+                <span class="modal-badge" id="modalTag">Schedule Details</span>
+                <h3 id="modalDateTitle">August 15, 2026</h3>
+            </div>
+            <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close Modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div class="event-detail-box" id="eventDetailBox">
+                <div class="event-detail-icon">
+                    <i class="fa-solid fa-masks-theater"></i>
+                </div>
+                <div class="event-detail-text">
+                    <strong id="modalEventTitle">General Rehearsal</strong>
+                    <p id="modalEventDesc">Full cast blocking and choreography.</p>
+                    <span class="event-time-pill"><i class="fa-regular fa-clock"></i> <span id="modalEventTime">4:00 PM – 7:00 PM</span></span>
+                </div>
+            </div>
+
+            <div class="no-event-state" id="noEventState" style="display: none;">
+                <i class="fa-regular fa-calendar-check"></i>
+                <p>No rehearsals or performances scheduled for this date.</p>
+            </div>
+        </div>
+
+        <div class="modal-footer" style="justify-content: space-between;">
+            <div>
+                <button class="modal-btn secondary" id="deleteEventBtn" style="color: #b91c1c; border-color: #f9d8dd; display: none;">
+                    <i class="fa-solid fa-trash-can"></i> Delete
+                </button>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button class="modal-btn secondary" id="editEventBtn" style="display: none;">
+                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                </button>
+                <button class="modal-btn secondary" id="modalCloseAction">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =====================================================
+     2. ADMIN ADD / EDIT SCHEDULE MODAL
+     ===================================================== -->
+<div class="modal-overlay" id="eventManageModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <div class="modal-title-group">
+                <span class="modal-badge">Admin Scheduler</span>
+                <h3 id="manageModalTitle">Add Rehearsal / Event</h3>
+            </div>
+            <button class="modal-close-btn" id="closeManageModalBtn" aria-label="Close Modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="eventManageForm">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="eventDateInput">Event Date</label>
+                    <input type="date" id="eventDateInput" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventTitleInput">Event / Rehearsal Title</label>
+                    <input type="text" id="eventTitleInput" placeholder="e.g. Singkil Blocking & Technical Run" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="eventTimeInput">Time Window</label>
+                        <input type="text" id="eventTimeInput" placeholder="e.g. 4:00 PM – 7:00 PM" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventTagInput">Category Color</label>
+                        <select id="eventTagInput">
+                            <option value="maroon">Maroon (Major Performance)</option>
+                            <option value="gold">Gold (Rehearsal / Fitting)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventDescInput">Location & Details</label>
+                    <input type="text" id="eventDescInput" placeholder="e.g. Main Theater Auditorium &bull; Complete Cast">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="modal-btn secondary" id="cancelManageModalBtn">Cancel</button>
+                <button type="submit" class="modal-btn primary"><i class="fa-solid fa-floppy-disk"></i> Save Schedule</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="module" src="../../assets/js/sidebar.js"></script>
+<script type="module" src="../../assets/js/sched-master.js"></script>
+</body>
+</html>
