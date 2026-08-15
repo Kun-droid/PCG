@@ -1,23 +1,34 @@
 import { supabase } from './supabaseClient.js';
 
+// Predefined Admin Emails
+const ADMIN_EMAILS = [
+    'kjkirkjohnray@gmail.com',
+    'admin@wvsu.edu.ph'
+];
+
 export async function loginUser(email, password, selectedRole = 'member') {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) return { error };
 
-    // Fetch user role profile
-    const { data: profile } = await supabase
+    // Fetch user profile
+    let { data: profile } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', data.user.id)
         .maybeSingle();
+
+    // Determine role (prioritize whitelist or profile)
+    const assignedRole = ADMIN_EMAILS.includes(email.toLowerCase()) 
+        ? 'admin' 
+        : (profile?.role || selectedRole);
 
     const userSession = {
         id: data.user.id,
         email: data.user.email,
         name: profile?.full_name || email.split('@')[0],
         studentId: profile?.student_id || '',
-        role: profile?.role || selectedRole,
-        designation: profile?.designation || 'Lead Folk Dancer',
+        role: assignedRole,
+        designation: profile?.designation || (assignedRole === 'admin' ? 'Lead Custodian / Officer' : 'Lead Folk Dancer'),
         isLoggedIn: true
     };
 
@@ -26,11 +37,14 @@ export async function loginUser(email, password, selectedRole = 'member') {
 }
 
 export async function registerUser(fullName, email, password, suite) {
+    const isAdmin = ADMIN_EMAILS.includes(email.toLowerCase());
+    const assignedRole = isAdmin ? 'admin' : 'member';
+
     const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-            data: { full_name: fullName, suite }
+            data: { full_name: fullName, suite, role: assignedRole }
         }
     });
 
@@ -38,15 +52,14 @@ export async function registerUser(fullName, email, password, suite) {
 
     const studentId = `2026-${Date.now().toString().slice(-5)}`;
 
-    // Create profile entry
     if (data.user) {
         await supabase.from('profiles').upsert([{
             id: data.user.id,
             full_name: fullName,
             email,
             student_id: studentId,
-            role: 'member',
-            designation: `${suite} Troupe`
+            role: assignedRole,
+            designation: isAdmin ? 'Lead Custodian / Officer' : `${suite} Troupe`
         }]);
     }
 
@@ -55,8 +68,8 @@ export async function registerUser(fullName, email, password, suite) {
         email,
         name: fullName,
         studentId,
-        role: 'member',
-        designation: `${suite} Troupe`,
+        role: assignedRole,
+        designation: isAdmin ? 'Lead Custodian / Officer' : `${suite} Troupe`,
         isLoggedIn: true
     };
 
