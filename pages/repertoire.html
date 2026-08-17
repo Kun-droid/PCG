@@ -5,13 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Repertoire & Music Hub — WVSU Panayana</title>
     
-    <!-- Browser Favicon -->
-    <link rel="icon" href="../assets/images/Panayana_logo.jpg" type="image/jpeg">
+    <!-- Instant Pre-Render State Script -->
     <script>
         if (localStorage.getItem('panayana_sidebar_collapsed') === 'true') {
             document.documentElement.classList.add('sidebar-is-collapsed');
         }
+        if (localStorage.getItem('panayana_dark_mode') === 'true') {
+            document.documentElement.classList.add('dark-theme');
+        }
     </script>
+    
+    <!-- Browser Favicon -->
+    <link rel="icon" href="../assets/images/Panayana_logo.jpg" type="image/jpeg">
     
     <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,7 +76,7 @@
         </div>
 
         <div class="sidebar-footer">
-            <a href="#" class="nav-item">
+            <a href="settings.html" class="nav-item">
                 <i class="fa-solid fa-gear nav-icon"></i>
                 <span class="nav-text">Settings</span>
             </a>
@@ -118,6 +123,7 @@
             <a href="costumes-inventory.html" class="nav-pill"><i class="fa-solid fa-shirt"></i> Costumes</a>
             <a href="repertoire.html" class="nav-pill active"><i class="fa-solid fa-music"></i> Repertoire</a>
             <a href="about-us.html" class="nav-pill"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="settings.html" class="nav-pill"><i class="fa-solid fa-gear"></i> Settings</a>
         </nav>
 
         <!-- Content Body -->
@@ -141,63 +147,7 @@
             </div>
 
             <!-- Suite Category Folders Grid -->
-            <div class="drive-folders-grid">
-                
-                <div class="folder-card" data-folder="singkil">
-                    <div class="folder-header">
-                        <div class="folder-icon maroon"><i class="fa-solid fa-fan"></i></div>
-                        <span class="folder-tag">Muslim Suite</span>
-                    </div>
-                    <h4>Singkil & Kulintang Pieces</h4>
-                    <p>Agong rhythms, Kulintang notation, and live staging track cuts.</p>
-                    <div class="folder-footer">
-                        <span><i class="fa-regular fa-file-audio"></i> 8 Audio Tracks</span>
-                        <a href="https://drive.google.com" target="_blank" class="folder-link"><i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </div>
-
-                <div class="folder-card" data-folder="maria-clara">
-                    <div class="folder-header">
-                        <div class="folder-icon gold"><i class="fa-solid fa-feather-pointed"></i></div>
-                        <span class="folder-tag">Maria Clara</span>
-                    </div>
-                    <h4>Spanish-Filipino Suites</h4>
-                    <p>Banduria 1 & 2 notation, Laud, Octavina, and Bajo de Uñas arrangements.</p>
-                    <div class="folder-footer">
-                        <span><i class="fa-regular fa-file-pdf"></i> 14 Sheet Scores</span>
-                        <a href="https://drive.google.com" target="_blank" class="folder-link"><i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </div>
-
-                <div class="folder-card" data-folder="cordillera">
-                    <div class="folder-header">
-                        <div class="folder-icon purple"><i class="fa-solid fa-mountain"></i></div>
-                        <span class="folder-tag">Cordillera</span>
-                    </div>
-                    <h4>Ganza & Highland Chants</h4>
-                    <p>Bendian patterns, Pattong ensemble tracks, and traditional rhythmic counts.</p>
-                    <div class="folder-footer">
-                        <span><i class="fa-regular fa-file-audio"></i> 6 Audio Files</span>
-                        <a href="https://drive.google.com" target="_blank" class="folder-link"><i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </div>
-
-                <div class="folder-card" data-folder="rural">
-                    <div class="folder-header">
-                        <div class="folder-icon maroon"><i class="fa-solid fa-guitar"></i></div>
-                        <span class="folder-tag">Rural / Barrio</span>
-                    </div>
-                    <h4>Tinikling & Fiesta Songs</h4>
-                    <p>Fast tempo rondalla chords, bamboo count click tracks, and festival suites.</p>
-                    <div class="folder-footer">
-                        <span><i class="fa-regular fa-file-lines"></i> 10 Resources</span>
-                        <a href="https://drive.google.com" target="_blank" class="folder-link"><i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Embedded Google Drive Frame -->
+        <!-- Embedded Google Drive Frame -->
             <div class="card drive-embed-card">
                 <div class="section-head">
                     <div class="embed-title-group">
@@ -237,7 +187,7 @@
         <a href="event-calendar.html" class="dock-item" aria-label="Schedule"><i class="fa-regular fa-calendar"></i></a>
         <a href="costumes-inventory.html" class="dock-item" aria-label="Costumes"><i class="fa-solid fa-shirt"></i></a>
         <a href="repertoire.html" class="dock-item active" aria-label="Repertoire"><i class="fa-solid fa-music"></i></a>
-        <a href="about-us.html" class="dock-item" aria-label="About Us"><i class="fa-solid fa-circle-info"></i></a>
+        <a href="settings.html" class="dock-item" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
     </nav>
 </div>
 

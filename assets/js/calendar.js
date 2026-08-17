@@ -3,12 +3,12 @@
 // ==========================================================================
 
 const eventsData = {
-    "2026-08-04": { title: "Singkil Rehearsal", desc: "Blocking & Spacing at Main Theater.", time: "4:00 PM – 7:00 PM", tag: "gold" },
-    "2026-08-12": { title: "Rondalla Practice", desc: "Instrumental synchronization & tempo calibration.", time: "5:00 PM – 8:00 PM", tag: "maroon" },
-    "2026-08-15": { title: "Annual Cultural Night", desc: "Grand showcase in the Main Theater Auditorium.", time: "4:00 PM – 7:30 PM", tag: "maroon" },
-    "2026-08-21": { title: "Costume Fitting", desc: "Fitting for Maria Clara & Cordillera suites.", time: "1:00 PM – 4:00 PM", tag: "gold" },
-    "2026-08-28": { title: "Gala Night Showcase", desc: "Formal dinner performance and cultural tribute.", time: "6:00 PM – 9:30 PM", tag: "maroon" },
-    "2026-09-08": { title: "Repertoire Walkthrough", desc: "Complete rundown with live musical ensemble.", time: "3:30 PM – 6:30 PM", tag: "gold" }
+    // "2026-08-04": { title: "Singkil Rehearsal", desc: "Blocking & Spacing at Main Theater.", time: "4:00 PM – 7:00 PM", tag: "gold" },
+    // "2026-08-12": { title: "Rondalla Practice", desc: "Instrumental synchronization & tempo calibration.", time: "5:00 PM – 8:00 PM", tag: "maroon" },
+    // "2026-08-15": { title: "Annual Cultural Night", desc: "Grand showcase in the Main Theater Auditorium.", time: "4:00 PM – 7:30 PM", tag: "maroon" },
+    // "2026-08-21": { title: "Costume Fitting", desc: "Fitting for Maria Clara & Cordillera suites.", time: "1:00 PM – 4:00 PM", tag: "gold" },
+    // "2026-08-28": { title: "Gala Night Showcase", desc: "Formal dinner performance and cultural tribute.", time: "6:00 PM – 9:30 PM", tag: "maroon" },
+    // "2026-09-08": { title: "Repertoire Walkthrough", desc: "Complete rundown with live musical ensemble.", time: "3:30 PM – 6:30 PM", tag: "gold" }
 };
 
 const today = new Date();

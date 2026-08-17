@@ -1,57 +1,14 @@
 // ==========================================================================
-// PANAYANA ABOUT US ADMIN CONTROLLER & PERSISTENCE ENGINE
+// PANAYANA ABOUT US ADMIN CONTROLLER (SUPABASE STORAGE + ADVISER UPLOAD)
 // ==========================================================================
 
-const defaultAboutData = {
-    hero: {
-        tag: "Official Cultural Performing Arts Arm",
-        title: "West Visayas State University Panayana Cultural Group",
-        desc: "Preserving, promoting, and staging the rich cultural heritage of Western Visayas and the Philippines through world-class folk dancing, authentic indigenous instrumentation, and theatrical repertoires."
-    },
-    narratives: {
-        history: "Founded at West Visayas State University in Iloilo City, the Panayana Cultural Group has served as a beacon of artistic excellence and Philippine folkloric heritage. From traditional Panay Bukidnon epic chanting and dances to Spanish-influenced suites, Maria Clara court dances, and Cordillera rituals, the troupe brings the authentic stories of the archipelago to university, regional, and national stages.",
-        mission: "To cultivate disciplined student performers who embody the cultural soul of Ilonggo tradition and Philippine heritage. We champion cultural preservation by training young artists in accurate dance choreography, live rondalla musicianship, indigenous costume preservation, and dynamic stagecraft."
-    },
-    advisers: [
-        {
-            id: "ADV-01",
-            name: "Prof. Corazon S. Solas",
-            role: "Faculty Adviser & Artistic Founder",
-            term: "1998 – 2008",
-            tag: "Folk Dance Pioneer"
-        },
-        {
-            id: "ADV-02",
-            name: "Dr. Ramon L. Rivera",
-            role: "Artistic Director & Choreographer",
-            term: "2009 – 2017",
-            tag: "Singkil Suite Master"
-        },
-        {
-            id: "ADV-03",
-            name: "Prof. Ma. Elena G. Diaz",
-            role: "Faculty Adviser & Music Director",
-            term: "2018 – 2024",
-            tag: "Rondalla Ensemble Lead"
-        }
-    ],
-    contacts: {
-        email: "panayana@wvsu.edu.ph",
-        phone: "+63 (033) 320 0870 loc. 1145",
-        location: "Cultural Center, WVSU Main Campus, Luna St., La Paz, Iloilo City",
-        facebook: "https://facebook.com",
-        instagram: "https://instagram.com",
-        youtube: "https://youtube.com",
-        drive: "https://drive.google.com"
-    }
-};
+import { supabase } from './supabaseClient.js';
+import { getAboutContent, saveAboutContent, getAdvisers, addAdviser, updateAdviser, deleteAdviser } from './db.js';
 
-// Load saved data or initialize defaults
-let aboutData = JSON.parse(localStorage.getItem('panayana_about_data') || 'null');
-if (!aboutData) {
-    aboutData = defaultAboutData;
-    localStorage.setItem('panayana_about_data', JSON.stringify(aboutData));
-}
+let advisersList = [];
+
+// Safe inline SVG fallback
+const FALLBACK_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e29532'%3E%3Cpath d='M12 2a5 5 0 1 0 5 5 5 5 0 0 0-5-5zm0 12c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z'/%3E%3C/svg%3E";
 
 // DOM References
 const heroForm = document.getElementById('heroNarrativeForm');
@@ -72,27 +29,43 @@ const adviserRoleInput = document.getElementById('adviserRoleInput');
 const adviserTermInput = document.getElementById('adviserTermInput');
 const adviserTagInput = document.getElementById('adviserTagInput');
 
+// Photo Upload Elements
+const uploadAdviserPhotoBtn = document.getElementById('uploadAdviserPhotoBtn');
+const adviserPhotoInput = document.getElementById('adviserPhotoInput');
+const adviserPhotoPreview = document.getElementById('adviserPhotoPreview');
+const adviserImageUrl = document.getElementById('adviserImageUrl');
+
 let activeEditAdviserId = null;
+let pendingPhotoData = null; // Compressed Base64 or Blob
 
 // ==========================================
-// 1. POPULATE INITIAL FORM FIELDS
+// 1. INITIALIZE & FETCH FROM SUPABASE
 // ==========================================
-function populateFormFields() {
-    // Hero & Narratives
-    document.getElementById('heroTagInput').value = aboutData.hero.tag;
-    document.getElementById('heroTitleInput').value = aboutData.hero.title;
-    document.getElementById('heroDescInput').value = aboutData.hero.desc;
-    document.getElementById('historyDescInput').value = aboutData.narratives.history;
-    document.getElementById('missionDescInput').value = aboutData.narratives.mission;
+export async function initAboutCMS() {
+    const [content, advisers] = await Promise.all([getAboutContent(), getAdvisers()]);
+    advisersList = advisers || [];
 
-    // Contacts
-    document.getElementById('contactEmailInput').value = aboutData.contacts.email;
-    document.getElementById('contactPhoneInput').value = aboutData.contacts.phone;
-    document.getElementById('contactLocationInput').value = aboutData.contacts.location;
-    document.getElementById('socialFbInput').value = aboutData.contacts.facebook;
-    document.getElementById('socialIgInput').value = aboutData.contacts.instagram;
-    document.getElementById('socialYtInput').value = aboutData.contacts.youtube;
-    document.getElementById('socialDriveInput').value = aboutData.contacts.drive;
+    if (content.about_hero) {
+        document.getElementById('heroTagInput').value = content.about_hero.tag || '';
+        document.getElementById('heroTitleInput').value = content.about_hero.title || '';
+        document.getElementById('heroDescInput').value = content.about_hero.desc || '';
+    }
+    if (content.about_narratives) {
+        document.getElementById('historyDescInput').value = content.about_narratives.history || '';
+        document.getElementById('missionDescInput').value = content.about_narratives.mission || '';
+    }
+
+    if (content.about_contacts) {
+        document.getElementById('contactEmailInput').value = content.about_contacts.email || '';
+        document.getElementById('contactPhoneInput').value = content.about_contacts.phone || '';
+        document.getElementById('contactLocationInput').value = content.about_contacts.location || '';
+        document.getElementById('socialFbInput').value = content.about_contacts.facebook || '';
+        document.getElementById('socialIgInput').value = content.about_contacts.instagram || '';
+        document.getElementById('socialYtInput').value = content.about_contacts.youtube || '';
+        document.getElementById('socialDriveInput').value = content.about_contacts.drive || '';
+    }
+
+    renderAdvisersGrid();
 }
 
 // ==========================================
@@ -102,7 +75,7 @@ function renderAdvisersGrid() {
     if (!advisersGrid) return;
     advisersGrid.innerHTML = '';
 
-    if (aboutData.advisers.length === 0) {
+    if (advisersList.length === 0) {
         advisersGrid.innerHTML = `
             <div style="grid-column: 1/-1; text-align:center; padding: 24px; color: var(--text-muted);">
                 No former advisers added yet. Click "+ Add Adviser" above.
@@ -111,18 +84,21 @@ function renderAdvisersGrid() {
         return;
     }
 
-    aboutData.advisers.forEach(item => {
+    advisersList.forEach(item => {
         const card = document.createElement('div');
         card.className = 'adviser-id-card';
-        card.style.position = 'relative';
+
+        const photoSrc = (item.image_url && item.image_url.trim().length > 20) 
+            ? item.image_url 
+            : FALLBACK_AVATAR;
 
         card.innerHTML = `
             <div class="id-card-top-strip"></div>
             <div class="id-photo-frame">
-                <img src="../assets/images/Panayana_logo.jpg" alt="${item.name}" class="adviser-photo">
+                <img src="${photoSrc}" alt="${item.name}" class="adviser-photo" onerror="this.onerror=null; this.src='${FALLBACK_AVATAR}';">
                 <span class="id-role-chip">Adviser</span>
             </div>
-            <div class="id-details">
+            <div class="adviser-card-details">
                 <h4>${item.name}</h4>
                 <span class="id-title">${item.role}</span>
                 <div class="id-badge-info">
@@ -130,21 +106,25 @@ function renderAdvisersGrid() {
                     <span><i class="fa-solid fa-award"></i> ${item.tag}</span>
                 </div>
             </div>
-            <div style="display: flex; gap: 8px; justify-content: flex-end; border-top: 1px solid var(--border-light); padding-top: 12px; margin-top: 12px;">
-                <button type="button" class="modal-btn secondary edit-adv-btn" data-id="${item.id}" style="padding: 5px 10px; font-size: 11px;">
+            <div class="adviser-card-actions">
+                <button type="button" class="modal-btn secondary adviser-btn-edit edit-adv-btn" data-id="${item.id}">
                     <i class="fa-solid fa-pen-to-square"></i> Edit
                 </button>
-                <button type="button" class="modal-btn secondary delete-adv-btn" data-id="${item.id}" style="padding: 5px 10px; font-size: 11px; color: #b91c1c; border-color: #f9d8dd;">
+                <button type="button" class="modal-btn secondary adviser-btn-delete delete-adv-btn" data-id="${item.id}">
                     <i class="fa-solid fa-trash-can"></i> Delete
                 </button>
             </div>
         `;
 
-        // Edit listener
         card.querySelector('.edit-adv-btn').addEventListener('click', () => openEditAdviserModal(item));
-
-        // Delete listener
-        card.querySelector('.delete-adv-btn').addEventListener('click', () => deleteAdviser(item.id));
+        card.querySelector('.delete-adv-btn').addEventListener('click', async () => {
+            if (confirm(`Are you sure you want to delete ${item.name}?`)) {
+                await deleteAdviser(item.id);
+                advisersList = await getAdvisers();
+                renderAdvisersGrid();
+                showSavedToast();
+            }
+        });
 
         advisersGrid.appendChild(card);
     });
@@ -160,100 +140,178 @@ function showSavedToast() {
 }
 
 // ==========================================
-// 3. SAVE HERO & NARRATIVES
+// 3. CLIENT-SIDE CANVAS IMAGE COMPRESSOR
 // ==========================================
-if (heroForm) {
-    heroForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+function compressImageToDataUrl(file, maxDim = 250, quality = 0.85) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
 
-        aboutData.hero.tag = document.getElementById('heroTagInput').value.trim();
-        aboutData.hero.title = document.getElementById('heroTitleInput').value.trim();
-        aboutData.hero.desc = document.getElementById('heroDescInput').value.trim();
-        aboutData.narratives.history = document.getElementById('historyDescInput').value.trim();
-        aboutData.narratives.mission = document.getElementById('missionDescInput').value.trim();
+                if (width > height) {
+                    if (width > maxDim) {
+                        height = Math.round((height * maxDim) / width);
+                        width = maxDim;
+                    }
+                } else {
+                    if (height > maxDim) {
+                        width = Math.round((width * maxDim) / height);
+                        height = maxDim;
+                    }
+                }
 
-        localStorage.setItem('panayana_about_data', JSON.stringify(aboutData));
-        showSavedToast();
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                resolve(dataUrl);
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+// Convert Base64 Data URL to Blob for Storage Upload
+function dataURLtoBlob(dataurl) {
+    const arr = dataurl.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+}
+
+// Uploads to Supabase Storage, with fallback to compressed Base64
+async function saveAdviserImage(compressedDataUrl) {
+    if (!compressedDataUrl || !compressedDataUrl.startsWith('data:image')) {
+        return compressedDataUrl || FALLBACK_AVATAR;
+    }
+
+    try {
+        const blob = dataURLtoBlob(compressedDataUrl);
+        const fileName = `adv-${Date.now()}.jpg`;
+        const filePath = `avatars/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+            .from('advisers')
+            .upload(filePath, blob, { contentType: 'image/jpeg', upsert: true });
+
+        if (uploadError) throw uploadError;
+
+        const { data: publicData } = supabase.storage
+            .from('advisers')
+            .getPublicUrl(filePath);
+
+        return publicData?.publicUrl || compressedDataUrl;
+    } catch (err) {
+        console.warn('Supabase storage upload bypassed; saving optimized Data URL:', err.message);
+        return compressedDataUrl;
+    }
+}
+
+// Photo Upload Trigger & Preview
+if (uploadAdviserPhotoBtn && adviserPhotoInput) {
+    uploadAdviserPhotoBtn.addEventListener('click', () => adviserPhotoInput.click());
+
+    adviserPhotoInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            try {
+                const compressed = await compressImageToDataUrl(file);
+                pendingPhotoData = compressed;
+                if (adviserPhotoPreview) adviserPhotoPreview.src = compressed;
+                if (adviserImageUrl) adviserImageUrl.value = compressed;
+            } catch (err) {
+                console.error('Image compression failed:', err);
+            }
+        }
     });
 }
 
 // ==========================================
-// 4. SAVE CONTACTS & SOCIALS
-// ==========================================
-if (contactsForm) {
-    contactsForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        aboutData.contacts.email = document.getElementById('contactEmailInput').value.trim();
-        aboutData.contacts.phone = document.getElementById('contactPhoneInput').value.trim();
-        aboutData.contacts.location = document.getElementById('contactLocationInput').value.trim();
-        aboutData.contacts.facebook = document.getElementById('socialFbInput').value.trim();
-        aboutData.contacts.instagram = document.getElementById('socialIgInput').value.trim();
-        aboutData.contacts.youtube = document.getElementById('socialYtInput').value.trim();
-        aboutData.contacts.drive = document.getElementById('socialDriveInput').value.trim();
-
-        localStorage.setItem('panayana_about_data', JSON.stringify(aboutData));
-        showSavedToast();
-    });
-}
-
-// ==========================================
-// 5. ADVISER MODAL & CRUD
+// 4. ADVISER MODAL & FORM SUBMIT
 // ==========================================
 function openEditAdviserModal(item) {
     activeEditAdviserId = item.id;
+    pendingPhotoData = null;
+    if (adviserPhotoInput) adviserPhotoInput.value = '';
+    
     adviserModalTitle.textContent = "Edit Former Adviser";
-    adviserNameInput.value = item.name;
-    adviserRoleInput.value = item.role;
-    adviserTermInput.value = item.term;
-    adviserTagInput.value = item.tag;
-    adviserModal.classList.add('active');
-}
+    adviserNameInput.value = item.name || '';
+    adviserRoleInput.value = item.role || '';
+    adviserTermInput.value = item.term || '';
+    adviserTagInput.value = item.tag || '';
 
-function deleteAdviser(id) {
-    aboutData.advisers = aboutData.advisers.filter(a => a.id !== id);
-    localStorage.setItem('panayana_about_data', JSON.stringify(aboutData));
-    renderAdvisersGrid();
-    showSavedToast();
+    const photo = (item.image_url && item.image_url.trim().length > 20) ? item.image_url : FALLBACK_AVATAR;
+    if (adviserPhotoPreview) adviserPhotoPreview.src = photo;
+    if (adviserImageUrl) adviserImageUrl.value = item.image_url || '';
+
+    adviserModal.classList.add('active');
 }
 
 if (openAddAdviserBtn) {
     openAddAdviserBtn.addEventListener('click', () => {
         activeEditAdviserId = null;
+        pendingPhotoData = null;
+        if (adviserPhotoInput) adviserPhotoInput.value = '';
+        
         adviserModalTitle.textContent = "Add Former Adviser";
         adviserManageForm.reset();
+        if (adviserPhotoPreview) adviserPhotoPreview.src = FALLBACK_AVATAR;
+        if (adviserImageUrl) adviserImageUrl.value = '';
         adviserModal.classList.add('active');
     });
 }
 
 if (adviserManageForm) {
-    adviserManageForm.addEventListener('submit', (e) => {
+    adviserManageForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const submitBtn = adviserManageForm.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
         const name = adviserNameInput.value.trim();
         const role = adviserRoleInput.value.trim();
         const term = adviserTermInput.value.trim();
         const tag = adviserTagInput.value.trim();
-
-        if (activeEditAdviserId) {
-            const adviser = aboutData.advisers.find(a => a.id === activeEditAdviserId);
-            if (adviser) {
-                adviser.name = name;
-                adviser.role = role;
-                adviser.term = term;
-                adviser.tag = tag;
-            }
-        } else {
-            aboutData.advisers.push({
-                id: `ADV-${Date.now().toString().slice(-4)}`,
-                name,
-                role,
-                term,
-                tag
-            });
+        
+        let finalImageUrl = adviserImageUrl.value;
+        if (pendingPhotoData) {
+            finalImageUrl = await saveAdviserImage(pendingPhotoData);
         }
 
-        localStorage.setItem('panayana_about_data', JSON.stringify(aboutData));
+        if (!finalImageUrl || finalImageUrl.trim().length === 0) {
+            finalImageUrl = FALLBACK_AVATAR;
+        }
+
+        let res;
+        if (activeEditAdviserId) {
+            res = await updateAdviser(activeEditAdviserId, name, role, term, tag, finalImageUrl);
+        } else {
+            res = await addAdviser(name, role, term, tag, finalImageUrl);
+        }
+
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Adviser';
+
+        if (res && res.error) {
+            alert(`Database error: ${res.error.message}`);
+            return;
+        }
+
+        advisersList = await getAdvisers();
         renderAdvisersGrid();
         adviserModal.classList.remove('active');
         showSavedToast();
@@ -261,9 +319,51 @@ if (adviserManageForm) {
 }
 
 [closeAdviserModalBtn, cancelAdviserModalBtn].forEach(btn => {
-    if (btn) btn.addEventListener('click', () => adviserModal.classList.remove('active'));
+    if (btn) btn.addEventListener('click', () => {
+        pendingPhotoData = null;
+        activeEditAdviserId = null;
+        adviserModal.classList.remove('active');
+    });
 });
 
-// Initialize View
-populateFormFields();
-renderAdvisersGrid();
+// ==========================================
+// 5. NARRATIVES & CONTACTS FORMS
+// ==========================================
+if (heroForm) {
+    heroForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const heroPayload = {
+            tag: document.getElementById('heroTagInput').value.trim(),
+            title: document.getElementById('heroTitleInput').value.trim(),
+            desc: document.getElementById('heroDescInput').value.trim()
+        };
+        const narrativePayload = {
+            history: document.getElementById('historyDescInput').value.trim(),
+            mission: document.getElementById('missionDescInput').value.trim()
+        };
+        await Promise.all([
+            saveAboutContent('about_hero', heroPayload),
+            saveAboutContent('about_narratives', narrativePayload)
+        ]);
+        showSavedToast();
+    });
+}
+
+if (contactsForm) {
+    contactsForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const contactsPayload = {
+            email: document.getElementById('contactEmailInput').value.trim(),
+            phone: document.getElementById('contactPhoneInput').value.trim(),
+            location: document.getElementById('contactLocationInput').value.trim(),
+            facebook: document.getElementById('socialFbInput').value.trim(),
+            instagram: document.getElementById('socialIgInput').value.trim(),
+            youtube: document.getElementById('socialYtInput').value.trim(),
+            drive: document.getElementById('socialDriveInput').value.trim()
+        };
+        await saveAboutContent('about_contacts', contactsPayload);
+        showSavedToast();
+    });
+}
+
+initAboutCMS();

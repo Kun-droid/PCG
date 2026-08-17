@@ -5,13 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dashboard — WVSU Panayana</title>
     
-    <!-- Browser Favicon -->
-    <link rel="icon" href="../assets/images/Panayana_logo.jpg" type="image/jpeg">
+    <!-- Instant Pre-Render State Script -->
     <script>
         if (localStorage.getItem('panayana_sidebar_collapsed') === 'true') {
             document.documentElement.classList.add('sidebar-is-collapsed');
         }
+        if (localStorage.getItem('panayana_dark_mode') === 'true') {
+            document.documentElement.classList.add('dark-theme');
+        }
     </script>
+    
+    <!-- Browser Favicon -->
+    <link rel="icon" href="../assets/images/Panayana_logo.jpg" type="image/jpeg">
     
     <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -70,7 +75,7 @@
         </div>
 
         <div class="sidebar-footer">
-            <a href="#" class="nav-item">
+            <a href="settings.html" class="nav-item">
                 <i class="fa-solid fa-gear nav-icon"></i>
                 <span class="nav-text">Settings</span>
             </a>
@@ -100,8 +105,8 @@
             
             <div class="user-profile-top">
                 <div class="profile-info desktop-only">
-                    <strong>Cultural Director</strong><br>
-                    <span>Main Cast / Admin</span>
+                    <strong id="headerUserName">Cultural Troupe</strong><br>
+                    <span id="headerUserDesignation">Member Portal</span>
                 </div>
                 <button class="profile-icon" aria-label="Notifications">
                     <i class="fa-regular fa-bell"></i>
@@ -117,6 +122,7 @@
             <a href="costumes-inventory.html" class="nav-pill"><i class="fa-solid fa-shirt"></i> Costumes</a>
             <a href="repertoire.html" class="nav-pill"><i class="fa-solid fa-music"></i> Repertoire</a>
             <a href="about-us.html" class="nav-pill"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="settings.html" class="nav-pill"><i class="fa-solid fa-gear"></i> Settings</a>
         </nav>
 
         <!-- Dynamic Body Content -->
@@ -126,10 +132,10 @@
             <section class="banner-card">
                 <div class="banner-tag">Upcoming Rehearsal</div>
                 <div class="banner-details">
-                    <h2>Annual Cultural Night & Repertoire</h2>
-                    <p><i class="fa-regular fa-clock"></i> 4:00 PM – 7:30 PM &bull; Main Theater Auditorium</p>
+                    <h2 id="dashHeroTitle">Annual Cultural Night & Repertoire</h2>
+                    <p id="dashHeroSubtitle"><i class="fa-regular fa-clock"></i> 4:00 PM – 7:30 PM &bull; Main Theater Auditorium</p>
                 </div>
-                <button class="banner-action-btn">Confirm Attendance</button>
+                <a href="event-calendar.html" class="banner-action-btn" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">View Schedule</a>
             </section>
 
             <!-- Metrics Overview -->
@@ -138,24 +144,24 @@
                     <div class="metric-icon maroon"><i class="fa-solid fa-calendar-check"></i></div>
                     <div class="metric-info">
                         <span class="metric-label">Scheduled Events</span>
-                        <div class="value">12</div>
-                        <span class="metric-subtitle">4 this week</span>
+                        <div class="value" id="dashTotalEvents">0</div>
+                        <span class="metric-subtitle">Active rehearsals & shows</span>
                     </div>
                 </div>
                 <div class="card metric-card">
-                    <div class="metric-icon gold"><i class="fa-solid fa-vest-patches"></i></div>
+                    <div class="metric-icon gold"><i class="fa-solid fa-vest"></i></div>
                     <div class="metric-info">
-                        <span class="metric-label">Costumes Ready</span>
-                        <div class="value">48</div>
-                        <span class="metric-subtitle">6 under repair</span>
+                        <span class="metric-label">Costumes Available</span>
+                        <div class="value" id="dashAvailableCostumes">0</div>
+                        <span class="metric-subtitle">Ready in storage</span>
                     </div>
                 </div>
                 <div class="card metric-card">
                     <div class="metric-icon purple"><i class="fa-solid fa-user-group"></i></div>
                     <div class="metric-info">
-                        <span class="metric-label">Active Members</span>
-                        <div class="value">34</div>
-                        <span class="metric-subtitle">All sections active</span>
+                        <span class="metric-label">Total Costumes</span>
+                        <div class="value" id="dashTotalCostumes">0</div>
+                        <span class="metric-subtitle">Across all suites</span>
                     </div>
                 </div>
             </div>
@@ -166,56 +172,12 @@
                 <!-- Left: Event Calendar Strip & Schedule -->
                 <div class="card full-width">
                     <div class="section-head">
-                        <h3>Event & Rehearsal Calendar</h3>
-                        <a href="event-calendar.html" class="section-link">View Full Schedule</a>
+                        <h3>Upcoming Rehearsals</h3>
+                        <a href="event-calendar.html" class="section-link">View Full Calendar</a>
                     </div>
 
-                    <div class="calendar-strip">
-                        <div class="date-chip">
-                            <span class="day-name">MON</span>
-                            <span class="day-number">15</span>
-                        </div>
-                        <div class="date-chip active">
-                            <span class="day-name">TUE</span>
-                            <span class="day-number">16</span>
-                            <span class="dot-indicator"></span>
-                        </div>
-                        <div class="date-chip">
-                            <span class="day-name">WED</span>
-                            <span class="day-number">17</span>
-                        </div>
-                        <div class="date-chip">
-                            <span class="day-name">THU</span>
-                            <span class="day-number">18</span>
-                            <span class="dot-indicator"></span>
-                        </div>
-                        <div class="date-chip">
-                            <span class="day-name">FRI</span>
-                            <span class="day-number">19</span>
-                        </div>
-                        <div class="date-chip">
-                            <span class="day-name">SAT</span>
-                            <span class="day-number">20</span>
-                        </div>
-                    </div>
-
-                    <div class="event-schedule-list">
-                        <div class="schedule-item">
-                            <div class="schedule-time">04:00 PM</div>
-                            <div class="schedule-divider"></div>
-                            <div class="schedule-details">
-                                <strong>Singkil Suite Blocking & Spacing</strong>
-                                <span>Main Stage &bull; Complete Troupe Required</span>
-                            </div>
-                        </div>
-                        <div class="schedule-item">
-                            <div class="schedule-time">06:00 PM</div>
-                            <div class="schedule-divider"></div>
-                            <div class="schedule-details">
-                                <strong>Rondalla & Percussion Synchronization</strong>
-                                <span>Music Studio &bull; Instrumentalists</span>
-                            </div>
-                        </div>
+                    <div class="event-schedule-list" id="dashScheduleList">
+                        <!-- Populated dynamically by dashboard.js -->
                     </div>
                 </div>
 
@@ -223,37 +185,12 @@
                 <div class="side-panel">
                     <div class="card">
                         <div class="section-head">
-                            <h3>Costumes Available</h3>
-                            <a href="costumes-inventory.html" class="section-link">Inventory</a>
+                            <h3>Costumes in Vault</h3>
+                            <a href="costumes-inventory.html" class="section-link">View Catalog</a>
                         </div>
                         
-                        <div class="card-list">
-                            <div class="list-card">
-                                <div class="list-thumb"><i class="fa-solid fa-feather-pointed"></i></div>
-                                <div class="list-info">
-                                    <h4>Maria Clara Ensemble</h4>
-                                    <p>18 Units Available &bull; Rack A</p>
-                                </div>
-                                <span class="status-badge available">Ready</span>
-                            </div>
-
-                            <div class="list-card">
-                                <div class="list-thumb"><i class="fa-solid fa-fan"></i></div>
-                                <div class="list-info">
-                                    <h4>Singkil Regal Attire</h4>
-                                    <p>8 Units Available &bull; Rack C</p>
-                                </div>
-                                <span class="status-badge reserved">In Use</span>
-                            </div>
-
-                            <div class="list-card">
-                                <div class="list-thumb"><i class="fa-solid fa-crown"></i></div>
-                                <div class="list-info">
-                                    <h4>Cordillera Headdresses</h4>
-                                    <p>12 Units Available &bull; Rack D</p>
-                                </div>
-                                <span class="status-badge available">Ready</span>
-                            </div>
+                        <div class="card-list" id="dashCostumeList">
+                            <!-- Populated dynamically by dashboard.js -->
                         </div>
                     </div>
                 </div>
@@ -269,10 +206,11 @@
         <a href="event-calendar.html" class="dock-item" aria-label="Schedule"><i class="fa-regular fa-calendar"></i></a>
         <a href="costumes-inventory.html" class="dock-item" aria-label="Costumes"><i class="fa-solid fa-shirt"></i></a>
         <a href="repertoire.html" class="dock-item" aria-label="Repertoire"><i class="fa-solid fa-music"></i></a>
-        <a href="about-us.html" class="dock-item" aria-label="About Us"><i class="fa-solid fa-circle-info"></i></a>
+        <a href="settings.html" class="dock-item" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
     </nav>
 </div>
 
 <script type="module" src="../assets/js/sidebar.js"></script>
+<script type="module" src="../assets/js/dashboard.js"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   PANAYANA EVENT CALENDAR — READ-ONLY STYLES & YEAR PICKER
+   PANAYANA EVENT CALENDAR — STYLES & YEAR PICKER
    ========================================================================== */
 
 .full-calendar-card {
@@ -197,9 +197,7 @@
   color: #ffffff;
 }
 
-/* ==========================================================================
-   YEAR PICKER GRID VIEW
-   ========================================================================== */
+/* Year Picker Grid View */
 .years-picker-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -231,97 +229,7 @@
   box-shadow: 0 4px 12px rgba(112, 19, 29, 0.3);
 }
 
-/* ==========================================================================
-   READ-ONLY DETAILS MODAL
-   ========================================================================== */
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(14, 8, 10, 0.55);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.25s ease, visibility 0.25s ease;
-  padding: 20px;
-}
-
-.modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-.modal-card {
-  background: var(--bg-surface);
-  border-radius: var(--radius-lg);
-  width: 100%;
-  max-width: 440px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--border-light);
-  overflow: hidden;
-  transform: scale(0.94) translateY(10px);
-  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
-}
-
-.modal-overlay.active .modal-card {
-  transform: scale(1) translateY(0);
-}
-
-.modal-header {
-  padding: 20px 22px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  border-bottom: 1px solid var(--border-light);
-}
-
-.modal-badge {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--sunset-gold);
-  background: #fef6eb;
-  padding: 3px 8px;
-  border-radius: 12px;
-  display: inline-block;
-  margin-bottom: 4px;
-}
-
-.modal-header h3 {
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--text-dark);
-}
-
-.modal-close-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid var(--border-light);
-  background: var(--bg-canvas);
-  color: var(--text-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.2s ease;
-}
-
-.modal-close-btn:hover {
-  background: #eae9ee;
-}
-
-.modal-body {
-  padding: 20px 22px;
-}
-
+/* Event Detail Box Inside Modal */
 .event-detail-box {
   display: flex;
   gap: 14px;
@@ -383,35 +291,7 @@
   font-size: 13px;
 }
 
-.modal-footer {
-  padding: 14px 22px 20px;
-  display: flex;
-  justify-content: flex-end;
-  border-top: 1px solid var(--border-light);
-}
-
-.modal-btn {
-  padding: 9px 18px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.modal-btn.secondary {
-  background: var(--bg-canvas);
-  border: 1px solid var(--border-light);
-  color: var(--text-dark);
-}
-
-.modal-btn.secondary:hover {
-  background: #eae9ee;
-}
-
-/* ==========================================================================
-   MOBILE RESPONSIVENESS (<= 768px)
-   ========================================================================== */
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
   .full-calendar-card {
     padding: 16px;
@@ -461,19 +341,49 @@
     padding: 16px 8px;
     font-size: 14px;
   }
+}
 
-  .modal-overlay {
-    align-items: flex-end;
-    padding: 0;
-  }
+/* Active current-month days */
+.cal-cell {
+  background: var(--bg-surface, #ffffff);
+  color: var(--text-dark, #1c1a24);
+  border: 1px solid var(--border-light, #e8e7ec);
+  min-height: 90px;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
 
-  .modal-card {
-    max-width: 100%;
-    border-radius: 24px 24px 0 0;
-    transform: translateY(100%);
-  }
+.cal-cell:hover {
+  background: #faf9fb;
+  border-color: rgba(112, 19, 29, 0.3);
+}
 
-  .modal-overlay.active .modal-card {
-    transform: translateY(0);
-  }
+.cal-cell .cal-day-num {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dark, #1c1a24);
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+/* Trailing past & next month days (Muted Shade) */
+.cal-cell.prev-month-cell,
+.cal-cell.next-month-cell {
+  background: var(--bg-canvas, #f3f2f5);
+  border-color: rgba(0, 0, 0, 0.04);
+  opacity: 0.55;
+}
+
+.cal-cell.prev-month-cell .cal-day-num,
+.cal-cell.next-month-cell .cal-day-num {
+  color: var(--text-muted, #9ca3af);
+  font-weight: 500;
+}
+
+.cal-cell.prev-month-cell:hover,
+.cal-cell.next-month-cell:hover {
+  background: #ecebee;
+  opacity: 0.85;
 }

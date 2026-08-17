@@ -5,13 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Costume Inventory — WVSU Panayana</title>
     
-    <!-- Browser Favicon -->
-    <link rel="icon" href="../assets/images/Panayana_logo.jpg" type="image/jpeg">
+    <!-- Instant Pre-Render State Script -->
     <script>
         if (localStorage.getItem('panayana_sidebar_collapsed') === 'true') {
             document.documentElement.classList.add('sidebar-is-collapsed');
         }
+        if (localStorage.getItem('panayana_dark_mode') === 'true') {
+            document.documentElement.classList.add('dark-theme');
+        }
     </script>
+    
+    <!-- Browser Favicon -->
+    <link rel="icon" href="../assets/images/Panayana_logo.jpg" type="image/jpeg">
     
     <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,7 +76,7 @@
         </div>
 
         <div class="sidebar-footer">
-            <a href="#" class="nav-item">
+            <a href="settings.html" class="nav-item">
                 <i class="fa-solid fa-gear nav-icon"></i>
                 <span class="nav-text">Settings</span>
             </a>
@@ -118,6 +123,7 @@
             <a href="costumes-inventory.html" class="nav-pill active"><i class="fa-solid fa-shirt"></i> Costumes</a>
             <a href="repertoire.html" class="nav-pill"><i class="fa-solid fa-music"></i> Repertoire</a>
             <a href="about-us.html" class="nav-pill"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="settings.html" class="nav-pill"><i class="fa-solid fa-gear"></i> Settings</a>
         </nav>
 
         <!-- Content Body -->
@@ -129,23 +135,23 @@
                     <div class="metric-icon maroon"><i class="fa-solid fa-vest"></i></div>
                     <div class="metric-info">
                         <span class="metric-label">Total Costumes</span>
-                        <div class="value" id="totalCostumesCount">68</div>
-                        <span class="metric-subtitle">Across 4 Cultural Suites</span>
+                        <div class="value" id="totalCostumesCount">0</div>
+                        <span class="metric-subtitle">Across all suites</span>
                     </div>
                 </div>
                 <div class="card metric-card">
                     <div class="metric-icon gold"><i class="fa-solid fa-circle-check"></i></div>
                     <div class="metric-info">
                         <span class="metric-label">Available for Use</span>
-                        <div class="value" id="availableCostumesCount">54</div>
-                        <span class="metric-subtitle">Ready in Storage</span>
+                        <div class="value" id="availableCostumesCount">0</div>
+                        <span class="metric-subtitle">Ready in storage</span>
                     </div>
                 </div>
                 <div class="card metric-card">
                     <div class="metric-icon purple"><i class="fa-solid fa-user-tag"></i></div>
                     <div class="metric-info">
                         <span class="metric-label">Currently Borrowed</span>
-                        <div class="value" id="borrowedCostumesCount">14</div>
+                        <div class="value" id="borrowedCostumesCount">0</div>
                         <span class="metric-subtitle">In active rehearsal</span>
                     </div>
                 </div>
@@ -154,19 +160,11 @@
             <!-- Main Inventory Card -->
             <div class="card inventory-main-card">
                 
-                <!-- Search and Suite Filter Bar -->
+                <!-- Search Filter Bar -->
                 <div class="inventory-controls">
                     <div class="search-input-box">
                         <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                        <input type="text" id="costumeSearchInput" placeholder="Search costume, suite, or rack...">
-                    </div>
-                    
-                    <div class="suite-filter-strip">
-                        <button class="suite-pill active" data-suite="all">All Suites</button>
-                        <button class="suite-pill" data-suite="Maria Clara">Maria Clara</button>
-                        <button class="suite-pill" data-suite="Muslim/Singkil">Muslim / Singkil</button>
-                        <button class="suite-pill" data-suite="Cordillera">Cordillera</button>
-                        <button class="suite-pill" data-suite="Rural/Barrio">Rural / Barrio</button>
+                        <input type="text" id="costumeSearchInput" placeholder="Search costume by name...">
                     </div>
                 </div>
 
@@ -184,7 +182,7 @@
         <a href="event-calendar.html" class="dock-item" aria-label="Schedule"><i class="fa-regular fa-calendar"></i></a>
         <a href="costumes-inventory.html" class="dock-item active" aria-label="Costumes"><i class="fa-solid fa-shirt"></i></a>
         <a href="repertoire.html" class="dock-item" aria-label="Repertoire"><i class="fa-solid fa-music"></i></a>
-        <a href="about-us.html" class="dock-item" aria-label="About Us"><i class="fa-solid fa-circle-info"></i></a>
+        <a href="settings.html" class="dock-item" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
     </nav>
 </div>
 
@@ -195,7 +193,7 @@
     <div class="modal-card">
         <div class="modal-header">
             <div class="modal-title-group">
-                <span class="modal-badge" id="modalCostumeSuite">Suite</span>
+                <span class="modal-badge">Attire Details</span>
                 <h3 id="modalCostumeTitle">Costume Name</h3>
             </div>
             <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close Modal">
@@ -209,20 +207,14 @@
                     <i class="fa-solid fa-shirt" id="modalIcon"></i>
                 </div>
                 <div class="costume-modal-stats">
-                    <div class="stat-pill"><i class="fa-solid fa-location-dot"></i> <span id="modalRack">Rack A</span></div>
-                    <div class="stat-pill"><i class="fa-solid fa-cubes"></i> <span id="modalTotalUnits">18 Units Total</span></div>
-                    <div class="stat-pill"><i class="fa-solid fa-circle-check"></i> <span id="modalAvailableUnits">14 Available</span></div>
+                    <div class="stat-pill"><i class="fa-solid fa-cubes"></i> <span id="modalTotalUnits">10 Total Units</span></div>
+                    <div class="stat-pill"><i class="fa-solid fa-circle-check"></i> <span id="modalAvailableUnits">10 Available Now</span></div>
                 </div>
             </div>
 
             <div class="costume-info-section">
-                <strong>Description & Inclusions</strong>
-                <p id="modalDescription">Complete traditional attire set.</p>
-            </div>
-
-            <div class="costume-info-section">
-                <strong>Accessories Included</strong>
-                <div class="accessory-tags" id="modalAccessories"></div>
+                <strong>Status & Availability</strong>
+                <p id="modalDescription">Available for staging, rehearsals, and member loans in the Panayana vault.</p>
             </div>
         </div>
 

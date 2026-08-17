@@ -5,13 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>About Us — WVSU Panayana</title>
     
-    <!-- Browser Favicon -->
-    <link rel="icon" href="../assets/images/Panayana_logo.jpg" type="image/jpeg">
+    <!-- Instant Pre-Render State Script -->
     <script>
         if (localStorage.getItem('panayana_sidebar_collapsed') === 'true') {
             document.documentElement.classList.add('sidebar-is-collapsed');
         }
+        if (localStorage.getItem('panayana_dark_mode') === 'true') {
+            document.documentElement.classList.add('dark-theme');
+        }
     </script>
+    
+    <!-- Browser Favicon -->
+    <link rel="icon" href="../assets/images/Panayana_logo.jpg" type="image/jpeg">
     
     <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,7 +76,7 @@
         </div>
 
         <div class="sidebar-footer">
-            <a href="#" class="nav-item">
+            <a href="settings.html" class="nav-item">
                 <i class="fa-solid fa-gear nav-icon"></i>
                 <span class="nav-text">Settings</span>
             </a>
@@ -118,6 +123,7 @@
             <a href="costumes-inventory.html" class="nav-pill"><i class="fa-solid fa-shirt"></i> Costumes</a>
             <a href="repertoire.html" class="nav-pill"><i class="fa-solid fa-music"></i> Repertoire</a>
             <a href="about-us.html" class="nav-pill active"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="settings.html" class="nav-pill"><i class="fa-solid fa-gear"></i> Settings</a>
         </nav>
 
         <!-- Content Body -->
@@ -129,9 +135,9 @@
                     <img src="../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Emblem" class="hero-emblem-img">
                 </div>
                 <div class="hero-narrative">
-                    <span class="hero-tag">Official Cultural Performing Arts Arm</span>
-                    <h2>West Visayas State University Panayana Cultural Group</h2>
-                    <p>Preserving, promoting, and staging the rich cultural heritage of Western Visayas and the Philippines through world-class folk dancing, authentic indigenous instrumentation, and theatrical repertoires.</p>
+                    <span class="hero-tag" id="aboutHeroTag">Official Cultural Performing Arts Arm</span>
+                    <h2 id="aboutHeroTitle">West Visayas State University Panayana Cultural Group</h2>
+                    <p id="aboutHeroDesc">Preserving, promoting, and staging the rich cultural heritage of Western Visayas and the Philippines through world-class folk dancing, authentic indigenous instrumentation, and theatrical repertoires.</p>
                 </div>
             </section>
 
@@ -142,7 +148,7 @@
                         <div class="card-icon maroon"><i class="fa-solid fa-landmark"></i></div>
                         <h3>Our History & Roots</h3>
                     </div>
-                    <p>Founded at West Visayas State University in Iloilo City, the <strong>Panayana Cultural Group</strong> has served as a beacon of artistic excellence and Philippine folkloric heritage. From traditional Panay Bukidnon epic chanting and dances to Spanish-influenced suites, Maria Clara court dances, and Cordillera rituals, the troupe brings the authentic stories of the archipelago to university, regional, and national stages.</p>
+                    <p id="aboutHistoryText">Founded at West Visayas State University in Iloilo City, the <strong>Panayana Cultural Group</strong> has served as a beacon of artistic excellence and Philippine folkloric heritage.</p>
                 </div>
 
                 <div class="card story-card">
@@ -150,7 +156,7 @@
                         <div class="card-icon gold"><i class="fa-solid fa-bullseye"></i></div>
                         <h3>Mission & Vision</h3>
                     </div>
-                    <p>To cultivate disciplined student performers who embody the cultural soul of Ilonggo tradition and Philippine heritage. We champion cultural preservation by training young artists in accurate dance choreography, live rondalla musicianship, indigenous costume preservation, and dynamic stagecraft.</p>
+                    <p id="aboutMissionText">To cultivate disciplined student performers who embody the cultural soul of Ilonggo tradition and Philippine heritage.</p>
                 </div>
             </div>
 
@@ -161,59 +167,8 @@
                     <p>Honoring the visionaries and faculty mentors who shaped the Panayana legacy through decades of artistic leadership.</p>
                 </div>
 
-                <div class="advisers-grid">
-                    
-                    <!-- Adviser 1 -->
-                    <div class="adviser-id-card">
-                        <div class="id-card-top-strip"></div>
-                        <div class="id-photo-frame">
-                            <img src="../assets/images/Panayana_logo.jpg" alt="Prof. Corazon S. Solas" class="adviser-photo">
-                            <span class="id-role-chip">Adviser</span>
-                        </div>
-                        <div class="id-details">
-                            <h4>Prof. Corazon S. Solas</h4>
-                            <span class="id-title">Faculty Adviser & Artistic Founder</span>
-                            <div class="id-badge-info">
-                                <span><i class="fa-regular fa-calendar-check"></i> Term: 1998 – 2008</span>
-                                <span><i class="fa-solid fa-award"></i> Folk Dance Pioneer</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Adviser 2 -->
-                    <div class="adviser-id-card">
-                        <div class="id-card-top-strip"></div>
-                        <div class="id-photo-frame">
-                            <img src="../assets/images/Panayana_logo.jpg" alt="Dr. Ramon L. Rivera" class="adviser-photo">
-                            <span class="id-role-chip">Adviser</span>
-                        </div>
-                        <div class="id-details">
-                            <h4>Dr. Ramon L. Rivera</h4>
-                            <span class="id-title">Artistic Director & Choreographer</span>
-                            <div class="id-badge-info">
-                                <span><i class="fa-regular fa-calendar-check"></i> Term: 2009 – 2017</span>
-                                <span><i class="fa-solid fa-award"></i> Singkil Suite Master</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Adviser 3 -->
-                    <div class="adviser-id-card">
-                        <div class="id-card-top-strip"></div>
-                        <div class="id-photo-frame">
-                            <img src="../assets/images/Panayana_logo.jpg" alt="Prof. Ma. Elena G. Diaz" class="adviser-photo">
-                            <span class="id-role-chip">Adviser</span>
-                        </div>
-                        <div class="id-details">
-                            <h4>Prof. Ma. Elena G. Diaz</h4>
-                            <span class="id-title">Faculty Adviser & Music Director</span>
-                            <div class="id-badge-info">
-                                <span><i class="fa-regular fa-calendar-check"></i> Term: 2018 – 2024</span>
-                                <span><i class="fa-solid fa-award"></i> Rondalla Ensemble Lead</span>
-                            </div>
-                        </div>
-                    </div>
-
+                <div class="advisers-grid" id="aboutAdvisersGrid">
+                    <!-- Populated dynamically by about.js -->
                 </div>
             </section>
 
@@ -226,14 +181,14 @@
                             <img src="../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
                         </div>
                         <h4>WVSU Panayana Cultural Group</h4>
-                        <p>West Visayas State University, Luna St., La Paz, Iloilo City, Iloilo, Philippines 5000</p>
+                        <p id="aboutLocationText">Cultural Center, WVSU Main Campus, Luna St., La Paz, Iloilo City</p>
                     </div>
 
                     <div class="contact-block">
                         <h5>Direct Contact</h5>
                         <ul class="contact-list">
-                            <li><i class="fa-solid fa-envelope"></i> <a href="mailto:panayana@wvsu.edu.ph">panayana@wvsu.edu.ph</a></li>
-                            <li><i class="fa-solid fa-phone"></i> +63 (033) 320 0870 loc. 1145</li>
+                            <li><i class="fa-solid fa-envelope"></i> <a href="mailto:panayana@wvsu.edu.ph" id="aboutEmailLink">panayana@wvsu.edu.ph</a></li>
+                            <li><i class="fa-solid fa-phone"></i> <span id="aboutPhoneText">+63 (033) 320 0870 loc. 1145</span></li>
                             <li><i class="fa-solid fa-location-dot"></i> Cultural Center, WVSU Main Campus</li>
                         </ul>
                     </div>
@@ -264,51 +219,11 @@
         <a href="event-calendar.html" class="dock-item" aria-label="Schedule"><i class="fa-regular fa-calendar"></i></a>
         <a href="costumes-inventory.html" class="dock-item" aria-label="Costumes"><i class="fa-solid fa-shirt"></i></a>
         <a href="repertoire.html" class="dock-item" aria-label="Repertoire"><i class="fa-solid fa-music"></i></a>
-        <a href="about-us.html" class="dock-item active" aria-label="About Us"><i class="fa-solid fa-circle-info"></i></a>
+        <a href="settings.html" class="dock-item" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
     </nav>
 </div>
 
 <script type="module" src="../assets/js/sidebar.js"></script>
-<script type="module">
-        const saved = localStorage.getItem('panayana_about_data');
-        if (saved) {
-            const data = JSON.parse(saved);
-            
-            // Update Hero
-            const heroTag = document.querySelector('.hero-narrative .hero-tag');
-            const heroTitle = document.querySelector('.hero-narrative h2');
-            const heroDesc = document.querySelector('.hero-narrative p');
-            if (heroTag && data.hero?.tag) heroTag.textContent = data.hero.tag;
-            if (heroTitle && data.hero?.title) heroTitle.textContent = data.hero.title;
-            if (heroDesc && data.hero?.desc) heroDesc.textContent = data.hero.desc;
-
-            // Update Narratives
-            const stories = document.querySelectorAll('.story-card p');
-            if (stories[0] && data.narratives?.history) stories[0].innerHTML = data.narratives.history;
-            if (stories[1] && data.narratives?.mission) stories[1].innerHTML = data.narratives.mission;
-
-            // Update Advisers
-            const advisersGrid = document.querySelector('.advisers-grid');
-            if (advisersGrid && data.advisers) {
-                advisersGrid.innerHTML = data.advisers.map(item => `
-                    <div class="adviser-id-card">
-                        <div class="id-card-top-strip"></div>
-                        <div class="id-photo-frame">
-                            <img src="../assets/images/Panayana_logo.jpg" alt="${item.name}" class="adviser-photo">
-                            <span class="id-role-chip">Adviser</span>
-                        </div>
-                        <div class="id-details">
-                            <h4>${item.name}</h4>
-                            <span class="id-title">${item.role}</span>
-                            <div class="id-badge-info">
-                                <span><i class="fa-regular fa-calendar-check"></i> Term: ${item.term}</span>
-                                <span><i class="fa-solid fa-award"></i> ${item.tag}</span>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        }
-    </script>
+<script type="module" src="../assets/js/about.js"></script>
 </body>
 </html>

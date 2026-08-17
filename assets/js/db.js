@@ -1,6 +1,21 @@
 import { supabase } from './supabaseClient.js';
 
 // ==========================================
+// PROFILES & MEMBERS
+// ==========================================
+export async function getTotalMembersCount() {
+    const { count, error } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+    
+    if (error) {
+        console.error('Error fetching member count:', error);
+        return 0;
+    }
+    return count || 0;
+}
+
+// ==========================================
 // COSTUME INVENTORY
 // ==========================================
 export async function getCostumes() {
@@ -146,6 +161,7 @@ export async function deleteSchedule(eventDate) {
 // ==========================================
 export async function getAboutContent() {
     const { data, error } = await supabase.from('site_content').select('*');
+    if (error) console.error('Error fetching site_content:', error);
     const content = {};
     (data || []).forEach(row => {
         content[row.key] = row.data;
@@ -153,24 +169,48 @@ export async function getAboutContent() {
     return content;
 }
 
-export async function saveAboutContentKey(key, dataObj) {
-    return await supabase
+export async function saveAboutContent(key, dataObj) {
+    const { data, error } = await supabase
         .from('site_content')
-        .upsert([{ key, data: dataObj, updated_at: new Date().toISOString() }]);
+        .upsert([{ key, data: dataObj, updated_at: new Date().toISOString() }], { onConflict: 'key' })
+        .select();
+    if (error) console.error('Error saving site_content:', error);
+    return { data, error };
 }
 
 export async function getAdvisers() {
     const { data, error } = await supabase
         .from('advisers')
         .select('*')
-        .order('created_at', { ascending: true });
+        .order('id', { ascending: true });
+    if (error) console.error('Error fetching advisers:', error);
     return data || [];
 }
 
-export async function saveAdviser(adviserObj) {
-    return await supabase.from('advisers').upsert([adviserObj]);
+export async function addAdviser(name, role, term, tag, image_url = null) {
+    const { data, error } = await supabase
+        .from('advisers')
+        .insert([{ name, role, term, tag, image_url }])
+        .select();
+    if (error) console.error('Error adding adviser:', error);
+    return { data, error };
+}
+
+export async function updateAdviser(id, name, role, term, tag, image_url = null) {
+    const { data, error } = await supabase
+        .from('advisers')
+        .update({ name, role, term, tag, image_url })
+        .eq('id', id)
+        .select();
+    if (error) console.error('Error updating adviser:', error);
+    return { data, error };
 }
 
 export async function deleteAdviser(id) {
-    return await supabase.from('advisers').delete().eq('id', id);
+    const { data, error } = await supabase
+        .from('advisers')
+        .delete()
+        .eq('id', id);
+    if (error) console.error('Error deleting adviser:', error);
+    return { data, error };
 }

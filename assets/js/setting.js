@@ -1,6 +1,8 @@
 // ==========================================================================
-// PANAYANA SETTINGS & PREFERENCES CONTROLLER
+// PANAYANA SETTINGS & PREFERENCES CONTROLLER (SUPABASE CONNECTED)
 // ==========================================================================
+
+import { supabase } from './supabaseClient.js';
 
 const tabButtons = document.querySelectorAll('.settings-tab-btn');
 const panes = document.querySelectorAll('.settings-pane');
@@ -52,11 +54,12 @@ tabButtons.forEach(btn => {
 });
 
 // 2. Load Saved Settings
-function loadSettings() {
+async function loadSettings() {
     const savedUser = JSON.parse(localStorage.getItem('panayana_auth_user') || '{}');
     if (savedUser.name && profFullName) profFullName.value = savedUser.name;
     if (savedUser.email && profEmail) profEmail.value = savedUser.email;
     if (savedUser.studentId && profStudentId) profStudentId.value = savedUser.studentId;
+    if (savedUser.designation && profRole) profRole.value = savedUser.designation;
 
     if (darkModeToggle) {
         darkModeToggle.checked = localStorage.getItem('panayana_dark_mode') === 'true';
@@ -71,18 +74,29 @@ function loadSettings() {
     if (notifyAnnounce && notifs.announce !== undefined) notifyAnnounce.checked = notifs.announce;
 }
 
-// 3. Save Profile
+// 3. Save Profile (Supabase & Local)
 if (profileForm) {
-    profileForm.addEventListener('submit', (e) => {
+    profileForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const currentUser = JSON.parse(localStorage.getItem('panayana_auth_user') || '{}');
-        currentUser.name = profFullName.value.trim();
-        currentUser.email = profEmail.value.trim();
-        currentUser.studentId = profStudentId.value.trim();
-        currentUser.designation = profRole.value;
+        const updatedName = profFullName.value.trim();
+        const updatedStudentId = profStudentId.value.trim();
+        const updatedDesignation = profRole.value.trim();
 
+        if (currentUser.id) {
+            await supabase.from('profiles').update({
+                full_name: updatedName,
+                student_id: updatedStudentId,
+                designation: updatedDesignation
+            }).eq('id', currentUser.id);
+        }
+
+        currentUser.name = updatedName;
+        currentUser.studentId = updatedStudentId;
+        currentUser.designation = updatedDesignation;
         localStorage.setItem('panayana_auth_user', JSON.stringify(currentUser));
-        showToast("Profile details updated successfully.");
+        
+        showToast("Profile details updated in Supabase.");
     });
 }
 
@@ -92,6 +106,12 @@ if (saveAppearanceBtn) {
         localStorage.setItem('panayana_dark_mode', darkModeToggle.checked);
         localStorage.setItem('panayana_sidebar_collapsed', sidebarCollapsedToggle.checked);
         
+        if (darkModeToggle.checked) {
+            document.documentElement.classList.add('dark-theme');
+        } else {
+            document.documentElement.classList.remove('dark-theme');
+        }
+
         if (sidebarCollapsedToggle.checked) {
             document.documentElement.classList.add('sidebar-is-collapsed');
         } else {
@@ -115,9 +135,9 @@ if (saveNotificationsBtn) {
     });
 }
 
-// 6. Security / Password Submit
+// 6. Security / Password Update (Supabase Auth API)
 if (securityForm) {
-    securityForm.addEventListener('submit', (e) => {
+    securityForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const newPass = document.getElementById('secNewPass').value;
         const confirmPass = document.getElementById('secConfirmPass').value;
@@ -127,10 +147,15 @@ if (securityForm) {
             return;
         }
 
+        const { error } = await supabase.auth.updateUser({ password: newPass });
+        if (error) {
+            alert(`Error: ${error.message}`);
+            return;
+        }
+
         securityForm.reset();
-        showToast("Password updated successfully.");
+        showToast("Password updated securely in Supabase.");
     });
 }
 
-// Initialize
 loadSettings();

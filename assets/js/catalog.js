@@ -1,15 +1,10 @@
 // ==========================================================================
-// PANAYANA COSTUME INVENTORY (NAME & QUANTITY ONLY) CONTROLLER
+// PANAYANA COSTUME CATALOG (SUPABASE CONNECTED)
 // ==========================================================================
 
-let costumesData = [
-    { id: "CST-01", name: "Maria Clara Formal Ensemble", quantity: 18, available: 14 },
-    { id: "CST-02", name: "Singkil Princess Regal Attire", quantity: 10, available: 8 },
-    { id: "CST-03", name: "Singkil Prince & Warriors Set", quantity: 14, available: 10 },
-    { id: "CST-04", name: "Cordillera Tadek / Bendian Set", quantity: 12, available: 10 },
-    { id: "CST-05", name: "Rural Tinikling / Balitaw Costumes", quantity: 14, available: 12 }
-];
+import { getCostumes, addCostume, updateCostume, checkoutCostume, returnCostume } from './db.js';
 
+let costumesData = [];
 const session = JSON.parse(localStorage.getItem('panayana_auth_user') || '{}');
 const isAdmin = session.isLoggedIn && session.role === 'admin';
 
@@ -35,18 +30,23 @@ const scannerFeedback = document.getElementById('scannerFeedback');
 
 let activeEditId = null;
 
+export async function loadCostumes() {
+    costumesData = await getCostumes();
+    renderCostumesGrid(searchInput ? searchInput.value : '');
+}
+
 function updateMetrics() {
     let total = 0;
     let available = 0;
 
     costumesData.forEach(c => {
-        total += parseInt(c.quantity);
-        available += parseInt(c.available);
+        total += parseInt(c.quantity || 0);
+        available += parseInt(c.available || 0);
     });
 
     if (totalCostumesCount) totalCostumesCount.textContent = total;
     if (availableCostumesCount) availableCostumesCount.textContent = available;
-    if (borrowedCostumesCount) borrowedCostumesCount.textContent = total - available;
+    if (borrowedCostumesCount) borrowedCostumesCount.textContent = Math.max(0, total - available);
 }
 
 function renderCostumesGrid(filterText = '') {
@@ -61,16 +61,16 @@ function renderCostumesGrid(filterText = '') {
         costumesGrid.innerHTML = `
             <div style="grid-column: 1/-1; text-align:center; padding: 30px; color: var(--text-muted);">
                 <i class="fa-solid fa-shirt" style="font-size:28px; margin-bottom:6px; display:block;"></i>
-                No matching costumes found.
+                No matching costumes found in vault.
             </div>
         `;
+        updateMetrics();
         return;
     }
 
     filtered.forEach(item => {
         const card = document.createElement('div');
         card.className = 'costume-card';
-
         const isAvailable = item.available > 0;
 
         card.innerHTML = `
@@ -88,18 +88,13 @@ function renderCostumesGrid(filterText = '') {
                         ${isAvailable ? 'Available' : 'All in Use'}
                     </span>
                 </div>
-                ${isAdmin ? `
-                    <button class="edit-costume-btn" data-id="${item.id}" title="Edit Costume">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                ` : ''}
+                <button class="edit-costume-btn" data-id="${item.id}" title="Edit Costume">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </button>
             </div>
         `;
 
-        if (isAdmin) {
-            card.querySelector('.edit-costume-btn').addEventListener('click', () => openEditModal(item));
-        }
-
+        card.querySelector('.edit-costume-btn').addEventListener('click', () => openEditModal(item));
         costumesGrid.appendChild(card);
     });
 
@@ -124,32 +119,18 @@ if (openAddCostumeBtn) {
 }
 
 if (costumeManageForm) {
-    costumeManageForm.addEventListener('submit', (e) => {
+    costumeManageForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-
         const name = document.getElementById('newCostumeName').value.trim();
         const quantity = parseInt(document.getElementById('newCostumeQuantity').value);
 
         if (activeEditId) {
-            const costume = costumesData.find(c => c.id === activeEditId);
-            if (costume) {
-                costume.name = name;
-                costume.quantity = quantity;
-                if (costume.available > quantity) {
-                    costume.available = quantity;
-                }
-            }
+            await updateCostume(activeEditId, name, quantity);
         } else {
-            const newCostume = {
-                id: `CST-${Date.now().toString().slice(-3)}`,
-                name: name,
-                quantity: quantity,
-                available: quantity
-            };
-            costumesData.unshift(newCostume);
+            await addCostume(name, quantity);
         }
 
-        renderCostumesGrid(searchInput ? searchInput.value : '');
+        await loadCostumes();
         addCostumeModal.classList.remove('active');
     });
 }
@@ -162,11 +143,11 @@ if (openInventoryScannerBtn && qrScannerModal) {
 }
 
 if (simBorrowBtn) {
-    simBorrowBtn.addEventListener('click', () => {
+    simBorrowBtn.addEventListener('click', async () => {
         const item = costumesData[0];
         if (item && item.available > 0) {
-            item.available -= 1;
-            renderCostumesGrid();
+            await checkoutCostume('2026-0012', 'Kirk Johnray', item.id, item.name, 'Attire Unit');
+            await loadCostumes();
             scannerFeedback.style.display = 'block';
             scannerFeedback.className = 'scanner-feedback-box success';
             scannerFeedback.innerHTML = `<i class="fa-solid fa-check"></i> Issued 1x <b>${item.name}</b>`;
@@ -175,11 +156,11 @@ if (simBorrowBtn) {
 }
 
 if (simReturnBtn) {
-    simReturnBtn.addEventListener('click', () => {
+    simReturnBtn.addEventListener('click', async () => {
         const item = costumesData[0];
-        if (item && item.available < item.quantity) {
-            item.available += 1;
-            renderCostumesGrid();
+        if (item) {
+            await returnCostume(null, item.id);
+            await loadCostumes();
             scannerFeedback.style.display = 'block';
             scannerFeedback.className = 'scanner-feedback-box success';
             scannerFeedback.innerHTML = `<i class="fa-solid fa-rotate-left"></i> Returned 1x <b>${item.name}</b>`;
@@ -196,9 +177,7 @@ if (closeQrScannerBtn && qrScannerModal) {
 }
 
 if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-        renderCostumesGrid(e.target.value);
-    });
+    searchInput.addEventListener('input', (e) => renderCostumesGrid(e.target.value));
 }
 
-renderCostumesGrid();
+loadCostumes();

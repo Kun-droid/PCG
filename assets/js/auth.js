@@ -3,8 +3,13 @@ import { supabase } from './supabaseClient.js';
 // Predefined Admin Emails
 const ADMIN_EMAILS = [
     'kjkirkjohnray@gmail.com',
+    'kirkjohnray.menez@wvsu.edu.ph',
     'admin@wvsu.edu.ph'
 ];
+
+// ==========================================
+// 1. AUTHENTICATION & REGISTRATION
+// ==========================================
 
 export async function loginUser(email, password, selectedRole = 'member') {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -77,12 +82,63 @@ export async function registerUser(fullName, email, password, suite) {
     return { user: data.user, profile: userSession };
 }
 
+// ==========================================
+// 2. SIGN OUT (SINGLE-PROMPT LOGOUT)
+// ==========================================
+
 export async function logoutUser() {
+    const confirmed = window.confirm("Are you sure you want to sign out?");
+    if (!confirmed) return;
+
     try {
         await supabase.auth.signOut();
     } catch (e) {
-        console.error(e);
+        console.error("Error during sign out:", e);
     }
+    
     localStorage.removeItem('panayana_auth_user');
-    window.location.href = '../index.html';
+    window.location.href = '../../index.html';
+}
+
+// ==========================================
+// 3. SESSION CHECK & ADMIN HEADER INJECTION
+// ==========================================
+
+export function getCurrentUser() {
+    const userJson = localStorage.getItem('panayana_auth_user');
+    if (!userJson) return null;
+    try {
+        return JSON.parse(userJson);
+    } catch {
+        return null;
+    }
+}
+
+export function initAdminHeaderAuth() {
+    const user = getCurrentUser();
+    const adminHeaderName = document.getElementById('adminHeaderName');
+
+    if (user && adminHeaderName) {
+        adminHeaderName.textContent = user.name;
+    }
+
+    // Clone and replace the logout button node to remove duplicate listeners
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn && logoutBtn.parentNode) {
+        const freshLogoutBtn = logoutBtn.cloneNode(true);
+        logoutBtn.parentNode.replaceChild(freshLogoutBtn, logoutBtn);
+        
+        freshLogoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            logoutUser();
+        });
+    }
+}
+
+// Ensure clean execution on load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAdminHeaderAuth, { once: true });
+} else {
+    initAdminHeaderAuth();
 }

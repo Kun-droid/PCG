@@ -5,13 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Event Calendar — WVSU Panayana</title>
     
-    <!-- Browser Favicon -->
-    <link rel="icon" href="../assets/images/Panayana_logo.jpg" type="image/jpeg">
+    <!-- Instant Pre-Render State Script -->
     <script>
         if (localStorage.getItem('panayana_sidebar_collapsed') === 'true') {
             document.documentElement.classList.add('sidebar-is-collapsed');
         }
+        if (localStorage.getItem('panayana_dark_mode') === 'true') {
+            document.documentElement.classList.add('dark-theme');
+        }
     </script>
+    
+    <!-- Browser Favicon -->
+    <link rel="icon" href="../assets/images/Panayana_logo.jpg" type="image/jpeg">
     
     <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,7 +76,7 @@
         </div>
 
         <div class="sidebar-footer">
-            <a href="#" class="nav-item">
+            <a href="settings.html" class="nav-item">
                 <i class="fa-solid fa-gear nav-icon"></i>
                 <span class="nav-text">Settings</span>
             </a>
@@ -118,6 +123,7 @@
             <a href="costumes-inventory.html" class="nav-pill"><i class="fa-solid fa-shirt"></i> Costumes</a>
             <a href="repertoire.html" class="nav-pill"><i class="fa-solid fa-music"></i> Repertoire</a>
             <a href="about-us.html" class="nav-pill"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="settings.html" class="nav-pill"><i class="fa-solid fa-gear"></i> Settings</a>
         </nav>
 
         <!-- Content Body: Dynamic Calendar -->
@@ -167,7 +173,7 @@
         <a href="event-calendar.html" class="dock-item active" aria-label="Schedule"><i class="fa-regular fa-calendar"></i></a>
         <a href="costumes-inventory.html" class="dock-item" aria-label="Costumes"><i class="fa-solid fa-shirt"></i></a>
         <a href="repertoire.html" class="dock-item" aria-label="Repertoire"><i class="fa-solid fa-music"></i></a>
-        <a href="about-us.html" class="dock-item" aria-label="About Us"><i class="fa-solid fa-circle-info"></i></a>
+        <a href="settings.html" class="dock-item" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
     </nav>
 </div>
 
