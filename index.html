@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Authentication — WVSU Panayana Portal</title>
+    <title>Login — WVSU Panayana Portal</title>
     
     <!-- Browser Favicon -->
     <link rel="icon" href="../assets/images/Panayana_logo.jpg" type="image/jpeg">
@@ -72,7 +72,7 @@
 
                 <div class="form-title-box">
                     <h2>Welcome Back</h2>
-                    <p>Sign in to your troupe member dashboard.</p>
+                    <p>Sign in to dashboard.</p>
                 </div>
 
                 <!-- Role Selector -->
@@ -89,9 +89,9 @@
                     </label>
                 </div>
 
-                <!-- Email Input -->
+                <!-- Email / Student ID Input -->
                 <div class="form-input-group">
-                    <label for="loginEmail">WVSU Email or Member ID</label>
+                    <label for="loginEmail">WVSU Email or Student ID</label>
                     <div class="input-with-icon">
                         <i class="fa-regular fa-envelope input-icon"></i>
                         <input type="text" id="loginEmail" placeholder="e.g. member@wvsu.edu.ph" required autocomplete="username">
@@ -140,8 +140,8 @@
                 </div>
 
                 <div class="form-title-box">
-                    <h2>Join the Troupe</h2>
-                    <p>Create your performer profile and account.</p>
+                    <h2>Join the Group</h2>
+                    <p>Create your profile and account.</p>
                 </div>
 
                 <!-- Full Name -->
@@ -150,6 +150,14 @@
                     <div class="input-with-icon">
                         <i class="fa-regular fa-user input-icon"></i>
                         <input type="text" id="regFullName" placeholder="e.g. Kirk Johnray" required>
+                    </div>
+                </div>
+
+                <div class="form-input-group">
+                    <label for="regStudentId">Student ID</label>
+                    <div class="input-with-icon">
+                        <i class="fa-regular fa-id-card input-icon"></i>
+                        <input type="text" id="regStudentId" placeholder="e.g. 2020-M000" required>
                     </div>
                 </div>
 
@@ -164,16 +172,16 @@
 
                 <!-- Suite / Section -->
                 <div class="form-input-group">
-                    <label for="regSuite">Primary Repertoire Suite</label>
+                    <label for="regSuite">Member Designation</label>
                     <div class="input-with-icon">
-                        <i class="fa-solid fa-masks-theater input-icon"></i>
+                        <i class="fa-solid fa-user-tag input-icon"></i>
                         <select id="regSuite" class="custom-select-field" required>
-                            <option value="" disabled selected>Select Performing Suite</option>
-                            <option value="Maria Clara">Maria Clara Ensemble</option>
-                            <option value="Muslim/Singkil">Muslim / Singkil Suite</option>
-                            <option value="Cordillera">Cordillera Dance Troupe</option>
-                            <option value="Rural/Barrio">Rural & Fiesta Suite</option>
-                            <option value="Rondalla">Rondalla Instrumentalists</option>
+                            <option value="" disabled selected>Select</option>
+                            <option value="Maria Clara">Soprano</option>
+                            <option value="Muslim/Singkil">Alto</option>
+                            <option value="Cordillera">Tenor</option>
+                            <option value="Rural/Barrio">Bass</option>
+                            <option value="Rondalla">Alumni</option>
                         </select>
                     </div>
                 </div>
@@ -199,6 +207,20 @@
             </form>
         </div>
 
+    </div>
+</div>
+
+<!-- =====================================================
+     MAROON FULL-PAGE TRANSITION SPLASH (DESKTOP & MOBILE)
+     ===================================================== -->
+<div class="auth-portal-splash" id="authPortalSplash">
+    <div class="splash-content">
+        <div class="splash-emblem-badge">
+            <img src="../assets/images/Panayana_logo.jpg" alt="Panayana Emblem" class="splash-logo-img">
+        </div>
+        <h3 class="splash-title" id="splashTitle">Welcome Member!</h3>
+        <p class="splash-sub" id="splashSub">Entering Cultural Troupe Portal...</p>
+        <div class="splash-spinner"></div>
     </div>
 </div>
 

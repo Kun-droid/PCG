@@ -24,6 +24,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
+    <!-- QR Code Engine CDN in Head for Pre-load -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <!-- Core Stylesheets -->
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/event-calendar.css">
@@ -76,10 +79,6 @@
         </div>
 
         <div class="sidebar-footer">
-            <a href="settings.html" class="nav-item">
-                <i class="fa-solid fa-gear nav-icon"></i>
-                <span class="nav-text">Settings</span>
-            </a>
             <button id="logout-btn" class="nav-item logout-item">
                 <i class="fa-solid fa-arrow-right-from-bracket nav-icon"></i>
                 <span class="nav-text">Logout</span>
@@ -105,11 +104,11 @@
             </div>
             
             <div class="user-profile-top">
-                <div class="profile-info desktop-only">
-                    <strong>Cultural Troupe</strong><br>
-                    <span>Member / Cast View</span>
-                </div>
-                <button class="profile-icon" aria-label="Notifications">
+                <button type="button" class="profile-info profile-trigger-btn" id="profileTriggerBtn" aria-label="Open Member Profile">
+                    <strong id="headerUserName">Cultural Troupe</strong>
+                    <span id="headerUserDesignation">Member / Cast View</span>
+                </button>
+                <button class="profile-icon" id="notificationTriggerBtn" aria-label="Notifications">
                     <i class="fa-regular fa-bell"></i>
                     <span class="badge-dot"></span>
                 </button>
@@ -211,6 +210,99 @@
 
         <div class="modal-footer">
             <button class="modal-btn secondary" id="modalCloseAction">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- =====================================================
+     NOTIFICATIONS MODAL
+     ===================================================== -->
+<div class="modal-overlay" id="notificationModal">
+    <div class="modal-card notification-modal-card">
+        <div class="modal-header">
+            <div class="modal-title-group">
+                <span class="modal-badge">Troupe Feed</span>
+                <h3>Announcements & Alerts</h3>
+            </div>
+            <button class="modal-close-btn" id="closeNotificationBtn" aria-label="Close Notifications">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="modal-body" style="padding: 16px 20px;">
+            <div class="notification-list" id="notifDynamicList">
+                <div class="empty-list-state" style="padding: 24px 10px;">
+                    <i class="fa-solid fa-bell-slash"></i>
+                    <p>No new alerts or scheduled reminders right now.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="notif-action-btn" id="dismissNotificationsBtn">
+                <i class="fa-solid fa-check-double"></i>
+                <span>Mark All as Read</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- =====================================================
+     MEMBER PROFILE MODAL (WITH BLANK QR PASS)
+     ===================================================== -->
+<div class="modal-overlay" id="profileModal">
+    <div class="modal-card profile-modal-card">
+        <div class="modal-header">
+            <div class="modal-title-group">
+                <span class="modal-badge">Cast Record</span>
+                <h3>Member Profile</h3>
+            </div>
+            <button class="modal-close-btn" id="closeProfileBtn" aria-label="Close Profile">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="modal-body" style="padding: 20px 22px;">
+            <div class="profile-modal-identity">
+                <div class="profile-modal-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <h3 id="modalProfName">Member Name</h3>
+                <span class="profile-modal-designation" id="modalProfDesignation">Performing Member</span>
+            </div>
+
+            <!-- Blank Member QR Pass -->
+            <div class="member-qr-section">
+                <div id="memberQrContainer" class="member-qr-box"></div>
+            </div>
+
+            <div class="profile-info-grid">
+                <div class="profile-info-item">
+                    <span class="info-label"><i class="fa-regular fa-id-card"></i> Student ID</span>
+                    <strong id="modalProfStudentId">2026-00000</strong>
+                </div>
+
+                <div class="profile-info-item">
+                    <span class="info-label"><i class="fa-regular fa-envelope"></i> WVSU Email</span>
+                    <strong id="modalProfEmail">member@wvsu.edu.ph</strong>
+                </div>
+
+                <div class="profile-info-item">
+                    <span class="info-label"><i class="fa-solid fa-layer-group"></i> Assigned Suite</span>
+                    <strong id="modalProfSuite">General Cast</strong>
+                </div>
+
+                <div class="profile-info-item">
+                    <span class="info-label"><i class="fa-solid fa-shield-halved"></i> Troupe Status</span>
+                    <span class="status-badge available" id="modalProfStatus">Active Performer</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="modal-btn secondary" id="closeProfileActionBtn">
+                <span>Close</span>
+            </button>
         </div>
     </div>
 </div>

@@ -30,8 +30,8 @@ function updateMetrics() {
     let total = 0;
     let available = 0;
     costumesData.forEach(c => {
-        total += parseInt(c.quantity || 0);
-        available += parseInt(c.available || 0);
+        total += parseInt(c.quantity || 0, 10);
+        available += parseInt(c.available || 0, 10);
     });
     if (totalCount) totalCount.textContent = total;
     if (availableCount) availableCount.textContent = available;
@@ -59,8 +59,8 @@ function renderGrid(filter = '') {
     }
 
     filtered.forEach(c => {
-        const totalUnits = parseInt(c.quantity || 0);
-        const availUnits = parseInt(c.available || 0);
+        const totalUnits = parseInt(c.quantity || 0, 10);
+        const availUnits = parseInt(c.available || 0, 10);
         const isAvail = availUnits > 0;
         
         const card = document.createElement('div');
@@ -102,7 +102,7 @@ if (searchInput) {
 }
 
 [closeBtn, closeAction].forEach(b => {
-    if (b) b.addEventListener('click', () => modal?.classList.remove('active'));
+    b?.addEventListener('click', () => modal?.classList.remove('active'));
 });
 
 if (modal) {
@@ -111,4 +111,14 @@ if (modal) {
     });
 }
 
-loadCostumes();
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        modal.classList.remove('active');
+    }
+});
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadCostumes);
+} else {
+    loadCostumes();
+}

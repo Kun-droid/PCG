@@ -177,6 +177,7 @@ function closeModal() {
 }
 
 if (yearSelectorBtn) yearSelectorBtn.addEventListener('click', toggleYearPicker);
+
 if (prevBtn) {
     prevBtn.addEventListener('click', () => {
         if (isYearPickerOpen) {
@@ -188,6 +189,7 @@ if (prevBtn) {
         }
     });
 }
+
 if (nextBtn) {
     nextBtn.addEventListener('click', () => {
         if (isYearPickerOpen) {
@@ -199,6 +201,7 @@ if (nextBtn) {
         }
     });
 }
+
 if (todayBtn) {
     todayBtn.addEventListener('click', () => {
         currentNavDate = new Date();
@@ -206,13 +209,22 @@ if (todayBtn) {
         else renderCalendar();
     });
 }
-if (closeBtn) closeBtn.addEventListener('click', closeModal);
-if (closeAction) closeAction.addEventListener('click', closeModal);
+
+[closeBtn, closeAction].forEach(btn => {
+    btn?.addEventListener('click', closeModal);
+});
+
 if (modal) {
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal();
     });
 }
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closeModal();
+    }
+});
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initCalendar);
