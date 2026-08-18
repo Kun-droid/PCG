@@ -1,8 +1,5 @@
 import { getCostumes, getSchedules } from './db.js';
 
-const user = JSON.parse(localStorage.getItem('panayana_auth_user') || '{}');
-const headerUserName = document.getElementById('headerUserName');
-const headerUserDesignation = document.getElementById('headerUserDesignation');
 const dashTotalCostumes = document.getElementById('dashTotalCostumes');
 const dashAvailableCostumes = document.getElementById('dashAvailableCostumes');
 const dashTotalEvents = document.getElementById('dashTotalEvents');
@@ -14,13 +11,8 @@ const bannerEventTag = document.getElementById('bannerEventTag');
 const bannerEventTitle = document.getElementById('bannerEventTitle');
 const bannerEventTime = document.getElementById('bannerEventTime');
 const bannerEventLocation = document.getElementById('bannerEventLocation');
-const bannerActionBtn = document.getElementById('bannerActionBtn');
 const bannerWidgetMonth = document.getElementById('bannerWidgetMonth');
 const bannerWidgetDay = document.getElementById('bannerWidgetDay');
-
-// Set logged-in member details in header
-if (headerUserName && user.name) headerUserName.textContent = user.name;
-if (headerUserDesignation && user.designation) headerUserDesignation.textContent = user.designation;
 
 export async function initDashboard() {
     const [costumes, schedules] = await Promise.all([
@@ -32,8 +24,8 @@ export async function initDashboard() {
     let total = 0;
     let available = 0;
     (costumes || []).forEach(c => {
-        total += parseInt(c.quantity || 0);
-        available += parseInt(c.available || 0);
+        total += parseInt(c.quantity || 0, 10);
+        available += parseInt(c.available || 0, 10);
     });
 
     if (dashTotalCostumes) dashTotalCostumes.textContent = total;
@@ -51,8 +43,8 @@ export async function initDashboard() {
                         <h4>${c.name}</h4>
                         <p>${c.available} Available &bull; ${c.quantity} Total Units</p>
                     </div>
-                    <span class="status-badge ${parseInt(c.available) > 0 ? 'available' : 'reserved'}">
-                        ${parseInt(c.available) > 0 ? 'Ready' : 'In Use'}
+                    <span class="status-badge ${parseInt(c.available, 10) > 0 ? 'available' : 'reserved'}">
+                        ${parseInt(c.available, 10) > 0 ? 'Ready' : 'In Use'}
                     </span>
                 </div>
             `).join('');
@@ -63,7 +55,6 @@ export async function initDashboard() {
     const scheduleKeys = Object.keys(schedules || {}).sort();
     if (dashTotalEvents) dashTotalEvents.textContent = scheduleKeys.length;
 
-    // Find the next upcoming event on or after today
     const todayStr = new Date().toISOString().split('T')[0];
     const upcomingKey = scheduleKeys.find(key => key >= todayStr) || scheduleKeys[0];
 
@@ -74,21 +65,15 @@ export async function initDashboard() {
         if (bannerEventLocation) bannerEventLocation.textContent = nextEvent.desc || 'Main Theater Auditorium';
         if (bannerEventTag) bannerEventTag.textContent = nextEvent.tag === 'gold' ? 'Workshop / Rehearsal' : 'Upcoming Rehearsal';
         
-        // Sync Visual Date Card on Banner
         const [yr, mo, dy] = upcomingKey.split('-');
         const dateObj = new Date(yr, parseInt(mo, 10) - 1, dy);
         const mShort = !isNaN(dateObj) ? dateObj.toLocaleString('default', { month: 'short' }).toUpperCase() : 'AUG';
         if (bannerWidgetMonth) bannerWidgetMonth.textContent = `${mShort} ${yr}`;
         if (bannerWidgetDay) bannerWidgetDay.textContent = parseInt(dy, 10);
-
-        if (bannerActionBtn) {
-            const isAdmin = user.role === 'admin';
-            bannerActionBtn.href = isAdmin ? 'schedule-master.html' : 'event-calendar.html';
-        }
     } else {
         if (bannerEventTitle) bannerEventTitle.textContent = 'No Upcoming Rehearsals';
         if (bannerEventTime) bannerEventTime.textContent = 'Standby for announcements';
-        if (bannerEventLocation) bannerEventLocation.textContent = 'WVSU Cultural Center';
+        if (bannerEventLocation) bannerEventLocation.textContent = 'TBA';
         if (bannerEventTag) bannerEventTag.textContent = 'Schedule Standby';
         if (bannerWidgetMonth) bannerWidgetMonth.textContent = 'STANDBY';
         if (bannerWidgetDay) bannerWidgetDay.textContent = '--';
@@ -123,4 +108,8 @@ export async function initDashboard() {
     }
 }
 
-initDashboard();
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDashboard);
+} else {
+    initDashboard();
+}

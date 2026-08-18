@@ -1,6 +1,6 @@
 import { supabase } from './supabaseClient.js';
 
-// Predefined Admin Whitelist (lowercase)
+// Predefined Admin Whitelist (lowercase)[cite: 7]
 const ADMIN_EMAILS = [
     'kjkirkjohnray@gmail.com',
     'kirkjohnray.menez@wvsu.edu.ph',
@@ -10,20 +10,39 @@ const ADMIN_EMAILS = [
 // ==========================================
 // 1. AUTHENTICATION (SIGN IN)
 // ==========================================
-export async function loginUser(email, password, selectedRole = 'member') {
+export async function loginUser(identifier, password, selectedRole = 'member') {
     try {
-        const cleanEmail = (email || '').trim().toLowerCase();
+        const cleanIdentifier = (identifier || '').trim().toLowerCase();
+        let targetEmail = cleanIdentifier;
 
-        // 1. Authenticate with Supabase Auth Engine
+        // 1. Check if user typed a Student ID instead of an email[cite: 7]
+        if (!cleanIdentifier.includes('@')) {
+            const { data: profileByStudentId, error: queryErr } = await supabase
+                .from('profiles')
+                .select('email')
+                .eq('student_id', cleanIdentifier)
+                .maybeSingle();
+
+            if (queryErr || !profileByStudentId?.email) {
+                return {
+                    user: null,
+                    profile: null,
+                    error: new Error(`No account found registered under Student ID: ${cleanIdentifier}`)
+                };
+            }
+            targetEmail = profileByStudentId.email.toLowerCase().trim();
+        }
+
+        // 2. Authenticate with Supabase Auth Engine[cite: 7]
         const { data, error } = await supabase.auth.signInWithPassword({ 
-            email: cleanEmail, 
+            email: targetEmail, 
             password 
         });
         
         if (error) return { user: null, profile: null, error };
         if (!data?.user) return { user: null, profile: null, error: new Error('User not found.') };
 
-        // 2. Fetch Profile Record
+        // 3. Fetch Live Profile Record from Database[cite: 7]
         let profile = null;
         try {
             const { data: profData } = await supabase
@@ -36,12 +55,12 @@ export async function loginUser(email, password, selectedRole = 'member') {
             console.warn('Could not read profiles table:', dbErr);
         }
 
-        // 3. Strict Role Determination
-        const isWhitelisted = ADMIN_EMAILS.includes(cleanEmail);
-        const isDbAdmin = (profile?.role || '').toLowerCase().trim() === 'admin';
+        // 4. Strict Role Determination[cite: 7]
+        const isWhitelisted = ADMIN_EMAILS.includes(targetEmail);
+        const isDbAdmin = (profile?.role || data.user.user_metadata?.role || '').toLowerCase().trim() === 'admin';
         const actualRole = (isWhitelisted || isDbAdmin) ? 'admin' : 'member';
 
-        // 4. Strict Role Matching Validation
+        // 5. Strict Role Matching Validation[cite: 7]
         if (selectedRole === 'admin' && actualRole !== 'admin') {
             await supabase.auth.signOut();
             localStorage.removeItem('panayana_auth_user');
@@ -62,14 +81,31 @@ export async function loginUser(email, password, selectedRole = 'member') {
             };
         }
 
-        // 5. Construct & Save Validated Session
+        // 6. Resolve Registered Name Directly from DB / Metadata[cite: 7]
+        const resolvedFullName = profile?.full_name || 
+                                 profile?.name || 
+                                 data.user.user_metadata?.full_name || 
+                                 data.user.user_metadata?.name || 
+                                 '';
+
+        const resolvedStudentId = profile?.student_id || 
+                                  data.user.user_metadata?.student_id || 
+                                  '';
+
+        const resolvedDesignation = profile?.designation || 
+                                    data.user.user_metadata?.designation || 
+                                    (actualRole === 'admin' ? 'Lead Custodian / Officer' : 'Performing Member');
+
+        // 7. Construct & Save Validated Session[cite: 7]
         const userSession = {
             id: data.user.id,
             email: data.user.email,
-            name: profile?.full_name || cleanEmail.split('@')[0],
-            studentId: profile?.student_id || '',
+            name: resolvedFullName,
+            full_name: resolvedFullName,
+            studentId: resolvedStudentId,
+            student_id: resolvedStudentId,
             role: actualRole,
-            designation: profile?.designation || (actualRole === 'admin' ? 'Lead Custodian / Officer' : 'Troupe Member'),
+            designation: resolvedDesignation,
             isLoggedIn: true
         };
 
@@ -85,18 +121,27 @@ export async function loginUser(email, password, selectedRole = 'member') {
 // ==========================================
 // 2. REGISTRATION (SIGN UP)
 // ==========================================
-export async function registerUser(fullName, email, password, suite = 'Troupe') {
+export async function registerUser(fullName, email, password, designation = 'Performing Member', studentId = '') {
     try {
         const cleanEmail = (email || '').trim().toLowerCase();
+        const cleanFullName = (fullName || '').trim();
         const isAdmin = ADMIN_EMAILS.includes(cleanEmail);
         const assignedRole = isAdmin ? 'admin' : 'member';
-        const studentId = `2026-${Date.now().toString().slice(-5)}`;
+        const finalStudentId = (studentId && studentId.trim().length > 0)
+            ? studentId.trim()
+            : `2026-${Date.now().toString().slice(-5)}`;
 
         const { data, error } = await supabase.auth.signUp({
             email: cleanEmail,
             password,
             options: {
-                data: { full_name: fullName, suite, role: assignedRole }
+                data: { 
+                    full_name: cleanFullName,
+                    name: cleanFullName,
+                    student_id: finalStudentId,
+                    designation, 
+                    role: assignedRole 
+                }
             }
         });
 
@@ -106,11 +151,12 @@ export async function registerUser(fullName, email, password, suite = 'Troupe') 
             try {
                 await supabase.from('profiles').upsert([{
                     id: data.user.id,
-                    full_name: fullName,
+                    name: cleanFullName,
+                    full_name: cleanFullName,
                     email: cleanEmail,
-                    student_id: studentId,
+                    student_id: finalStudentId,
                     role: assignedRole,
-                    designation: assignedRole === 'admin' ? 'Lead Custodian / Officer' : `${suite} Troupe`
+                    designation: assignedRole === 'admin' ? 'Lead Custodian / Officer' : designation
                 }]);
             } catch (pErr) {
                 console.warn('Profile table upsert skipped:', pErr);
@@ -145,8 +191,10 @@ export async function logoutUser() {
     const currentPath = window.location.pathname;
     if (currentPath.includes('/admin/')) {
         window.location.href = '../../index.html';
+    } else if (currentPath.includes('/pages/')) {
+        window.location.href = '../index.html';
     } else {
-        window.location.href = '../../index.html';
+        window.location.href = 'index.html';
     }
 }
 
@@ -161,26 +209,66 @@ export function getCurrentUser() {
     }
 }
 
-export function initHeaderAuth() {
-    const user = getCurrentUser();
+export async function initHeaderAuth() {
+    // 1. First populate immediately from cached session[cite: 7]
+    let user = getCurrentUser();
 
-    // Populate Admin Header
-    const adminHeaderName = document.getElementById('adminHeaderName');
-    if (adminHeaderName && user) {
-        adminHeaderName.textContent = user.name;
+    const applyToUI = (userData) => {
+        if (!userData) return;
+        const displayName = userData.name || userData.full_name || '';
+
+        const adminHeaderName = document.getElementById('adminHeaderName');
+        if (adminHeaderName && displayName) {
+            adminHeaderName.textContent = displayName;
+        }
+
+        const headerUserName = document.getElementById('headerUserName');
+        const headerUserDesignation = document.getElementById('headerUserDesignation');
+        if (headerUserName && displayName) {
+            headerUserName.textContent = displayName;
+        }
+        if (headerUserDesignation && userData.designation) {
+            headerUserDesignation.textContent = userData.designation;
+        }
+    };
+
+    if (user) applyToUI(user);
+
+    // 2. Fetch fresh live profile from Supabase to ensure accurate database data[cite: 7]
+    try {
+        const { data: authData } = await supabase.auth.getUser();
+        if (authData?.user) {
+            const { data: dbProfile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', authData.user.id)
+                .maybeSingle();
+
+            const liveName = dbProfile?.full_name || 
+                             dbProfile?.name || 
+                             authData.user.user_metadata?.full_name || 
+                             authData.user.user_metadata?.name || 
+                             '';
+
+            if (liveName) {
+                user = {
+                    ...user,
+                    id: authData.user.id,
+                    email: authData.user.email,
+                    name: liveName,
+                    full_name: liveName,
+                    studentId: dbProfile?.student_id || authData.user.user_metadata?.student_id || user?.studentId || '',
+                    designation: dbProfile?.designation || authData.user.user_metadata?.designation || user?.designation || ''
+                };
+                localStorage.setItem('panayana_auth_user', JSON.stringify(user));
+                applyToUI(user);
+            }
+        }
+    } catch (e) {
+        console.warn('Live profile sync check notice:', e);
     }
 
-    // Populate Member Header
-    const headerUserName = document.getElementById('headerUserName');
-    const headerUserDesignation = document.getElementById('headerUserDesignation');
-    if (headerUserName && user) {
-        headerUserName.textContent = user.name;
-    }
-    if (headerUserDesignation && user?.designation) {
-        headerUserDesignation.textContent = user.designation;
-    }
-
-    // Bind Logout Button safely
+    // 3. Bind Logout Button safely[cite: 7]
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         const freshBtn = logoutBtn.cloneNode(true);

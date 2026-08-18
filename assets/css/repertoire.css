@@ -4,9 +4,9 @@
 
 /* Hero Drive Banner */
 .repertoire-hero-card {
-  background: linear-gradient(135deg, var(--primary-maroon), var(--maroon-dark));
+  background: linear-gradient(135deg, var(--primary-maroon, #70131d), var(--maroon-dark, #40080e));
   color: #ffffff;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-lg, 20px);
   padding: 24px 28px;
   display: flex;
   justify-content: space-between;
@@ -26,7 +26,7 @@
   width: 54px;
   height: 54px;
   background: #ffffff;
-  color: var(--primary-maroon);
+  color: var(--primary-maroon, #70131d);
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -50,7 +50,7 @@
 
 .drive-open-btn {
   background: #ffffff;
-  color: var(--primary-maroon);
+  color: var(--primary-maroon, #70131d);
   text-decoration: none;
   padding: 10px 20px;
   border-radius: 24px;
@@ -69,97 +69,6 @@
   transform: translateY(-2px);
 }
 
-/* Category Folders Grid */
-.drive-folders-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.folder-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.folder-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-}
-
-.folder-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-}
-
-.folder-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-}
-
-.folder-icon.maroon { background: #fbebee; color: var(--primary-maroon); }
-.folder-icon.gold { background: #fef6eb; color: var(--sunset-gold); }
-.folder-icon.purple { background: #f3eefb; color: #7c3aed; }
-
-.folder-tag {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  background: var(--bg-canvas);
-  padding: 3px 8px;
-  border-radius: 6px;
-}
-
-.folder-card h4 {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-dark);
-  margin-bottom: 4px;
-}
-
-.folder-card p {
-  font-size: 11.5px;
-  color: var(--text-muted);
-  line-height: 1.4;
-  margin-bottom: 16px;
-}
-
-.folder-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 12px;
-  border-top: 1px solid var(--border-light);
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-.folder-link {
-  color: var(--primary-maroon);
-  font-size: 14px;
-  text-decoration: none;
-  transition: transform 0.2s ease;
-}
-
-.folder-card:hover .folder-link {
-  transform: translateX(3px);
-}
-
 /* Embedded Drive Preview Card */
 .drive-embed-card {
   padding: 24px;
@@ -170,13 +79,13 @@
   align-items: center;
   gap: 10px;
   font-size: 16px;
-  color: var(--primary-maroon);
+  color: var(--primary-maroon, #70131d);
 }
 
 .embed-title-group h3 {
   font-size: 16px;
   font-weight: 700;
-  color: var(--text-dark);
+  color: var(--text-dark, #1e1e24);
 }
 
 .sync-status {
@@ -195,9 +104,9 @@
   position: relative;
   width: 100%;
   height: 520px;
-  background: var(--bg-canvas);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-light);
+  background: var(--bg-canvas, #f6f5f8);
+  border-radius: var(--radius-md, 14px);
+  border: 1px solid var(--border-light, #e8e7ec);
   overflow: hidden;
 }
 
@@ -207,11 +116,11 @@
   border: none;
 }
 
-/* Fallback card banner */
+/* Fallback Card Banner */
 .drive-fallback-overlay {
   position: absolute;
   inset: 0;
-  background: var(--bg-surface);
+  background: var(--bg-surface, #ffffff);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -229,33 +138,33 @@
 
 .fallback-content i {
   font-size: 48px;
-  color: var(--primary-maroon);
+  color: var(--primary-maroon, #70131d);
   margin-bottom: 6px;
 }
 
 .fallback-content h3 {
   font-size: 18px;
   font-weight: 800;
-  color: var(--text-dark);
+  color: var(--text-dark, #1e1e24);
 }
 
 .fallback-content p {
   font-size: 12.5px;
-  color: var(--text-muted);
+  color: var(--text-muted, #828292);
   line-height: 1.5;
 }
 
 .fallback-content code {
-  background: var(--bg-canvas);
+  background: var(--bg-canvas, #f6f5f8);
   padding: 2px 6px;
   border-radius: 4px;
-  color: var(--primary-maroon);
+  color: var(--primary-maroon, #70131d);
   font-weight: 700;
 }
 
 .fallback-btn {
   margin-top: 10px;
-  background: var(--primary-maroon);
+  background: var(--primary-maroon, #70131d);
   color: #ffffff;
   text-decoration: none;
   padding: 10px 20px;
@@ -270,7 +179,7 @@
 }
 
 .fallback-btn:hover {
-  background: var(--maroon-dark);
+  background: var(--maroon-dark, #40080e);
 }
 
 /* Responsive (Mobile <= 768px) */

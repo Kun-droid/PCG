@@ -61,7 +61,7 @@ export async function loadAboutData() {
     if (advisersGrid) {
         if (!advisers || advisers.length === 0) {
             advisersGrid.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted, #828292);">
                     <i class="fa-solid fa-user-graduate" style="font-size: 32px; margin-bottom: 8px; color: #cbd5e1; display: block;"></i>
                     <p>No adviser tributes published yet.</p>
                 </div>`;
@@ -116,7 +116,6 @@ export async function loadAboutData() {
                 </span>
             `;
 
-            // Open Detail Modal on Click / Keypress
             card.addEventListener('click', () => openAdviserModal(item, photoSrc));
             card.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -154,26 +153,27 @@ function openAdviserModal(item, photoSrc) {
 
     modal.classList.add('active');
     
-    // Reset body scroll to top when opening
     const modalBody = modal.querySelector('.modal-body');
     if (modalBody) modalBody.scrollTop = 0;
 }
 
-// Close Modal Controls
+function closeModal() {
+    if (modal) modal.classList.remove('active');
+}
+
 [closeBtn, modalCloseActionBtn].forEach(btn => {
-    btn?.addEventListener('click', () => modal?.classList.remove('active'));
+    btn?.addEventListener('click', closeModal);
 });
 
 if (modal) {
     modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.classList.remove('active');
+        if (e.target === modal) closeModal();
     });
 }
 
-// Keyboard ESC listener
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && modal?.classList.contains('active')) {
-        modal.classList.remove('active');
+        closeModal();
     }
 });
 

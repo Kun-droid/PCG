@@ -1,5 +1,5 @@
 /* ==========================================================================
-   PANAYANA PORTAL — CORE STYLESHEET (DESKTOP & MOBILE INTEGRATED)
+   PANAYANA PORTAL — CORE STYLESHEET
    ========================================================================== */
 
 :root {
@@ -19,15 +19,6 @@
   --neumorphic-light: 0 4px 14px rgba(0, 0, 0, 0.04);
   --radius-lg: 20px;
   --radius-md: 14px;
-}
-
-/* Disable transitions on initial load to prevent twitching */
-.no-transition * {
-  -webkit-transition: none !important;
-  -moz-transition: none !important;
-  -ms-transition: none !important;
-  -o-transition: none !important;
-  transition: none !important;
 }
 
 html {
@@ -113,42 +104,86 @@ body {
   color: var(--text-muted);
 }
 
+/* ==========================================================================
+   HEADER TOP RIGHT PROFILE & NOTIFICATION
+   ========================================================================== */
+
 .user-profile-top {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
-.profile-info {
+.profile-trigger-btn {
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   text-align: right;
+  line-height: 1.25;
+  transition: background-color 0.2s ease;
+  pointer-events: auto;
+  position: relative;
+  z-index: 15;
+}
+
+.profile-trigger-btn:hover {
+  background-color: var(--bg-canvas, #f6f5f8);
+}
+
+.profile-trigger-btn strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dark, #1e1e24);
+  letter-spacing: -0.01em;
+  pointer-events: none;
+}
+
+.profile-trigger-btn span {
   font-size: 12px;
+  font-weight: 600;
+  color: var(--sunset-gold, #e29532);
+  pointer-events: none;
 }
 
 .profile-icon {
   width: 38px;
   height: 38px;
-  background: var(--bg-canvas);
-  border: 1px solid var(--border-light);
+  background: var(--bg-canvas, #f6f5f8);
+  border: 1px solid var(--border-light, #e8e7ec);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-dark);
+  color: var(--text-dark, #1e1e24);
   cursor: pointer;
   position: relative;
+  outline: none;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.profile-icon:hover {
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .badge-dot {
   position: absolute;
   top: 8px;
   right: 8px;
-  width: 6px;
-  height: 6px;
-  background: var(--sunset-gold);
+  width: 7px;
+  height: 7px;
+  background: var(--sunset-gold, #e29532);
   border-radius: 50%;
+  border: 1.5px solid #ffffff;
 }
 
-/* Content Cards & Grids */
+/* Content Container */
 .content-body {
   padding: 24px 28px;
 }
@@ -162,7 +197,7 @@ body {
 }
 
 /* ==========================================================================
-   EXPANDED HERO BANNER STYLING
+   HERO BANNER COMPONENT
    ========================================================================== */
 
 .banner-card.hero-banner {
@@ -208,7 +243,7 @@ body {
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.2;
-  margin: 2px 0 0 0;
+  margin: 2px 0 0;
   color: #ffffff;
 }
 
@@ -258,7 +293,6 @@ body {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
-/* Right Column: Visual Date Widget & Watermark */
 .banner-content-right {
   display: flex;
   align-items: center;
@@ -304,7 +338,6 @@ body {
   color: rgba(255, 255, 255, 0.75);
 }
 
-/* Ambient Decorative PCG Logo Watermark (Large Peeking Effect) */
 .banner-watermark-logo {
   position: absolute;
   right: -90px;
@@ -316,7 +349,6 @@ body {
   opacity: 0.12;
   filter: brightness(0) invert(1);
   transform: rotate(-10deg);
-  transition: opacity 0.3s ease;
 }
 
 .banner-watermark-logo img {
@@ -371,7 +403,7 @@ body {
   color: var(--text-muted);
 }
 
-/* Two Column Layout */
+/* Two Column Grid */
 .panayana-dashboard-grid {
   display: grid;
   grid-template-columns: 2fr 1.2fr;
@@ -398,11 +430,7 @@ body {
   text-decoration: none;
 }
 
-/* ==========================================================================
-   DASHBOARD REHEARSALS & COSTUME VAULT WIDGETS
-   ========================================================================== */
-
-/* 1. Upcoming Rehearsals Item */
+/* Schedule List Card */
 .schedule-item {
   display: flex;
   align-items: center;
@@ -489,17 +517,10 @@ body {
   white-space: nowrap;
 }
 
-.schedule-tag.maroon {
-  background: #fbebee;
-  color: var(--primary-maroon);
-}
+.schedule-tag.maroon { background: #fbebee; color: var(--primary-maroon); }
+.schedule-tag.gold { background: #fef6eb; color: var(--sunset-gold); }
 
-.schedule-tag.gold {
-  background: #fef6eb;
-  color: var(--sunset-gold);
-}
-
-/* 2. Costumes in Vault Item */
+/* Vault Quick-List */
 .list-card {
   display: flex;
   align-items: center;
@@ -564,17 +585,9 @@ body {
   white-space: nowrap;
 }
 
-.status-badge.available {
-  background: #ecfdf5;
-  color: #059669;
-}
+.status-badge.available { background: #ecfdf5; color: #059669; }
+.status-badge.reserved { background: #fef2f2; color: #dc2626; }
 
-.status-badge.reserved {
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-/* Empty State Fallback */
 .empty-list-state {
   text-align: center;
   padding: 24px 12px;
@@ -592,13 +605,16 @@ body {
   margin: 0;
 }
 
-/* Universal Modals */
+/* ==========================================================================
+   MODAL COMPONENT (CENTRALIZED)
+   ========================================================================== */
+
 .modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(14, 8, 10, 0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -619,11 +635,11 @@ body {
   background: var(--bg-surface);
   border-radius: var(--radius-lg);
   width: 100%;
-  max-width: 460px;
+  max-width: 480px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
   border: 1px solid var(--border-light);
   overflow: hidden;
-  transform: scale(0.94) translateY(10px);
+  transform: scale(0.95) translateY(10px);
   transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
 }
 
@@ -632,7 +648,7 @@ body {
 }
 
 .modal-header {
-  padding: 20px 22px 14px;
+  padding: 18px 22px 14px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -653,28 +669,29 @@ body {
 }
 
 .modal-header h3 {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 800;
   color: var(--text-dark);
 }
 
 .modal-close-btn {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   border: 1px solid var(--border-light);
   background: var(--bg-canvas);
-  color: var(--text-dark);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   font-size: 14px;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .modal-close-btn:hover {
-  background: #eae9ee;
+  background: #fbebee;
+  color: var(--primary-maroon);
 }
 
 .modal-body {
@@ -682,14 +699,167 @@ body {
 }
 
 .modal-footer {
-  padding: 14px 22px 20px;
+  padding: 14px 22px;
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+  background: #faf9fb;
   border-top: 1px solid var(--border-light);
 }
 
-/* Desktop Sidebar */
+.modal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.modal-btn.secondary {
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  color: var(--text-dark);
+}
+
+.modal-btn.secondary:hover {
+  background: #f3f2f5;
+}
+
+/* ==========================================================================
+   NOTIFICATIONS FEED & ACTION BUTTON STYLING
+   ========================================================================== */
+
+.notification-modal-card {
+  max-width: 480px;
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px 14px;
+  background: var(--bg-canvas, #f6f5f8);
+  border: 1px solid var(--border-light, #e8e7ec);
+  border-radius: 14px;
+  transition: all 0.2s ease;
+}
+
+.notification-item:hover {
+  border-color: rgba(112, 19, 29, 0.2);
+  transform: translateY(-1px);
+}
+
+.notification-item.unread {
+  background: #ffffff;
+  border-left: 3px solid var(--sunset-gold, #e29532);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.notif-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.notif-icon.maroon {
+  background: #fbebee;
+  color: var(--primary-maroon, #70131d);
+}
+
+.notif-icon.gold {
+  background: #fef6eb;
+  color: var(--sunset-gold, #e29532);
+}
+
+.notif-icon.purple {
+  background: #f3eefb;
+  color: #7c3aed;
+}
+
+.notif-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-content strong {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-dark, #1e1e24);
+  margin-bottom: 3px;
+  line-height: 1.3;
+}
+
+.notif-content p {
+  font-size: 12px;
+  color: var(--text-muted, #828292);
+  line-height: 1.45;
+  margin-bottom: 6px;
+}
+
+.notif-time {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #9c9aa5;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.notif-action-btn {
+  background: linear-gradient(135deg, var(--primary-maroon, #70131d) 0%, #4a0910 100%);
+  color: #ffffff;
+  border: none;
+  padding: 9px 20px;
+  border-radius: 30px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(112, 19, 29, 0.22);
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  outline: none;
+}
+
+.notif-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(112, 19, 29, 0.32);
+  background: linear-gradient(135deg, #851723 0%, #5e0d16 100%);
+}
+
+.notif-action-btn:active {
+  transform: translateY(0);
+}
+
+.notif-action-btn i {
+  font-size: 13px;
+  color: var(--sunset-gold, #e29532);
+}
+
+/* ==========================================================================
+   DESKTOP SAAS SIDEBAR
+   ========================================================================== */
+
 .sidebar {
   width: var(--sidebar-width);
   height: 100vh;
@@ -703,7 +873,6 @@ body {
   transition: width 0.3s cubic-bezier(0.2, 0, 0, 1);
   flex-shrink: 0;
   z-index: 100;
-  overflow: visible;
 }
 
 .sidebar.collapsed {
@@ -785,7 +954,6 @@ body {
   flex-direction: column;
   gap: 6px;
   overflow-y: auto;
-  overflow-x: hidden;
   scrollbar-width: none;
 }
 
@@ -849,7 +1017,10 @@ body {
   display: none !important;
 }
 
-/* Mobile Media Queries */
+/* ==========================================================================
+   RESPONSIVENESS (<= 768px)
+   ========================================================================== */
+
 @media (max-width: 900px) {
   .banner-content-left {
     max-width: 100%;
@@ -908,6 +1079,7 @@ body {
     gap: 6px;
     white-space: nowrap;
     cursor: pointer;
+    text-decoration: none;
   }
 
   .nav-pill.active {
@@ -954,6 +1126,7 @@ body {
     color: var(--text-muted);
     font-size: 18px;
     cursor: pointer;
+    text-decoration: none;
   }
 
   .dock-item.active {
@@ -978,7 +1151,7 @@ body {
 
 /* Persistent Collapsed Pre-render State */
 html.sidebar-is-collapsed .sidebar {
-  width: var(--sidebar-collapsed-width, 70px) !important;
+  width: var(--sidebar-collapsed-width, 76px) !important;
   transition: none !important;
 }
 
@@ -999,4 +1172,239 @@ html.sidebar-is-collapsed .sidebar .nav-item {
 
 html.sidebar-is-collapsed .sidebar .brand-logo-badge {
   margin: 0 auto !important;
+}
+
+/* ==========================================================================
+   DASHBOARD SEAMLESS ENTRANCE FADE DISSOLVE
+   ========================================================================== */
+.portal-entry-cover {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at center, #70131d 0%, #3b070d 100%);
+  z-index: 999999;
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.portal-entry-cover.dissolve {
+  opacity: 0 !important;
+}
+
+/* ==========================================================================
+   MEMBER PROFILE MODAL STYLES
+   ========================================================================== */
+
+.profile-modal-card {
+  max-width: 440px;
+}
+
+.profile-modal-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-light, #e8e7ec);
+}
+
+.profile-modal-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #fbebee;
+  color: var(--primary-maroon, #70131d);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: 10px;
+  border: 3px solid var(--sunset-gold, #e29532);
+  box-shadow: 0 4px 14px rgba(112, 19, 29, 0.15);
+}
+
+.profile-modal-identity h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-dark, #1e1e24);
+  margin-bottom: 2px;
+}
+
+.profile-modal-designation {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sunset-gold, #e29532);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Blank Member QR Pass Container */
+.member-qr-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 12px 0 16px;
+}
+
+.member-qr-box {
+  padding: 8px;
+  background: #ffffff;
+  border: 1.5px solid var(--border-light, #e8e7ec);
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 146px;
+  min-height: 146px;
+}
+
+.member-qr-box img,
+.member-qr-box canvas {
+  border-radius: 6px;
+  display: block;
+}
+
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.profile-info-item {
+  background: var(--bg-canvas, #f6f5f8);
+  border: 1px solid var(--border-light, #e8e7ec);
+  padding: 12px 14px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-info-item .info-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-muted, #828292);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.profile-info-item .info-label i {
+  color: var(--primary-maroon, #70131d);
+}
+
+.profile-info-item strong {
+  font-size: 13px;
+  color: var(--text-dark, #1e1e24);
+  word-break: break-all;
+}
+
+@media (max-width: 480px) {
+  .profile-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* ==========================================================================
+   MOBILE PROFILE TRIGGER & MODAL RESPONSIVENESS
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .header-brand-mobile {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .header-title h1 {
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .header-title span {
+    font-size: 11px;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .user-profile-top {
+    flex-shrink: 0;
+    gap: 8px;
+  }
+
+  /* Make profile clickable button compact and touch-friendly */
+  .profile-trigger-btn {
+    padding: 4px 6px;
+    max-width: 120px;
+  }
+
+  .profile-trigger-btn strong {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 110px;
+  }
+
+  .profile-trigger-btn span {
+    font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 110px;
+  }
+
+  .profile-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 14px;
+  }
+
+  /* Mobile Sheet Modal for Profile & QR Pass */
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal-overlay.active .modal-card {
+    border-radius: 20px 20px 0 0;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .profile-modal-card .modal-body {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 18px 24px;
+  }
+
+  .profile-modal-avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 22px;
+  }
+
+  .member-qr-box {
+    min-width: 130px;
+    min-height: 130px;
+  }
 }

@@ -319,6 +319,28 @@
         </div>
     </div>
 </div>
+<body>
+<!-- Instant Entry Dissolve Curtain -->
+<div id="portalEntryCover" class="portal-entry-cover" style="display: none;"></div>
+
+<script>
+    // If arriving from login transition, display the solid cover and fade it out smoothly
+    if (sessionStorage.getItem('panayana_portal_fadein') === 'true') {
+        const cover = document.getElementById('portalEntryCover');
+        if (cover) {
+            cover.style.display = 'block';
+            sessionStorage.removeItem('panayana_portal_fadein');
+            window.addEventListener('DOMContentLoaded', () => {
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        cover.classList.add('dissolve');
+                        setTimeout(() => cover.remove(), 900);
+                    }, 120);
+                });
+            });
+        }
+    }
+</script>
 
 <script type="module" src="../../../assets/js/sidebar.js"></script>
 <script type="module" src="../../../assets/js/admin.js"></script>

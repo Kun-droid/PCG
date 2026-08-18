@@ -24,6 +24,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
+    <!-- QR Code Engine CDN in Head for Pre-load -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <!-- Core Stylesheets -->
     <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="stylesheet" href="../assets/css/about-us.css">
@@ -101,11 +104,11 @@
             </div>
             
             <div class="user-profile-top">
-                <div class="profile-info desktop-only">
-                    <strong>Cultural Troupe</strong><br>
-                    <span>General Information</span>
-                </div>
-                <button class="profile-icon" aria-label="Notifications">
+                <button type="button" class="profile-info profile-trigger-btn" id="profileTriggerBtn" aria-label="Open Member Profile">
+                    <strong id="headerUserName">Cultural Troupe</strong>
+                    <span id="headerUserDesignation">General Information</span>
+                </button>
+                <button class="profile-icon" id="notificationTriggerBtn" aria-label="Notifications">
                     <i class="fa-regular fa-bell"></i>
                     <span class="badge-dot"></span>
                 </button>
@@ -155,22 +158,17 @@
                 </div>
             </div>
 
-            <!-- Former Advisers ID Card Showcase Section -->
+            <!-- Former Advisers Showcase Section -->
             <section class="advisers-section">
-               <!-- Former Advisers Section -->
-<div class="advisers-section-wrapper" style="margin-top: 32px;">
-    <div class="section-header-block" style="margin-bottom: 20px;">
-        <h3 style="font-size: 18px; font-weight: 800; color: var(--text-dark);">Former Advisers & Artistic Directors</h3>
-        <p style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">
-            Honoring the visionaries and faculty mentors who shaped the Panayana legacy through decades of artistic leadership.
-        </p>
-    </div>
+                <div class="advisers-section-wrapper" style="margin-top: 32px;">
+                    <div class="section-heading-box">
+                        <h3>Former Advisers & Artistic Directors</h3>
+                        <p>Honoring the visionaries and faculty mentors who shaped the Panayana legacy through decades of artistic leadership.</p>
+                    </div>
 
-    <!-- Dynamic Advisers Grid (Preserves 3-Column Card Layout) -->
-    <div class="advisers-grid" id="memberAdvisersGrid">
-        <!-- Dynamic Cards Injected by JS -->
-    </div>
-</div>
+                    <!-- Dynamic Advisers Grid -->
+                    <div class="advisers-grid" id="memberAdvisersGrid"></div>
+                </div>
             </section>
 
             <!-- Institutional Contacts & Directory -->
@@ -224,9 +222,9 @@
     </nav>
 </div>
 
-<script type="module" src="../assets/js/sidebar.js"></script>
-<script type="module" src="../assets/js/about.js"></script>
-<script type="module" src="../assets/js/auth.js"></script>
+<!-- =====================================================
+     ADVISER TRIBUTE DETAIL MODAL
+     ===================================================== -->
 <div class="modal-overlay" id="adviserDetailModal">
     <div class="modal-card adviser-detail-modal-card">
         <div class="modal-header">
@@ -234,7 +232,7 @@
                 <span class="modal-badge">Heritage Tribute</span>
                 <h3 id="modalAdvName">Adviser Tribute</h3>
             </div>
-            <button class="modal-close-btn" id="closeAdvDetailBtn" aria-label="Close">
+            <button class="modal-close-btn" id="closeAdvDetailBtn" aria-label="Close Modal">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -263,9 +261,7 @@
             <div class="adviser-divider"></div>
 
             <div class="modal-adv-narrative">
-                <h4 style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 8px;">
-                    Biography & Cultural Contribution
-                </h4>
+                <h4>Biography & Cultural Contribution</h4>
                 <p id="modalAdvBio"></p>
             </div>
 
@@ -275,7 +271,7 @@
             </div>
         </div>
 
-       <div class="modal-detail-footer">
+        <div class="modal-detail-footer">
             <button type="button" class="modal-action-close-btn" id="modalCloseActionBtn">
                 <i class="fa-solid fa-arrow-left"></i>
                 <span>Back to Directory</span>
@@ -283,5 +279,102 @@
         </div>
     </div>
 </div>
+
+<!-- =====================================================
+     NOTIFICATIONS MODAL
+     ===================================================== -->
+<div class="modal-overlay" id="notificationModal">
+    <div class="modal-card notification-modal-card">
+        <div class="modal-header">
+            <div class="modal-title-group">
+                <span class="modal-badge">Troupe Feed</span>
+                <h3>Announcements & Alerts</h3>
+            </div>
+            <button class="modal-close-btn" id="closeNotificationBtn" aria-label="Close Notifications">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="modal-body" style="padding: 16px 20px;">
+            <div class="notification-list" id="notifDynamicList">
+                <div class="empty-list-state" style="padding: 24px 10px;">
+                    <i class="fa-solid fa-bell-slash"></i>
+                    <p>No new alerts or scheduled reminders right now.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="notif-action-btn" id="dismissNotificationsBtn">
+                <i class="fa-solid fa-check-double"></i>
+                <span>Mark All as Read</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- =====================================================
+     MEMBER PROFILE MODAL (WITH BLANK QR PASS)
+     ===================================================== -->
+<div class="modal-overlay" id="profileModal">
+    <div class="modal-card profile-modal-card">
+        <div class="modal-header">
+            <div class="modal-title-group">
+                <span class="modal-badge">Cast Record</span>
+                <h3>Member Profile</h3>
+            </div>
+            <button class="modal-close-btn" id="closeProfileBtn" aria-label="Close Profile">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="modal-body" style="padding: 20px 22px;">
+            <div class="profile-modal-identity">
+                <div class="profile-modal-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <h3 id="modalProfName">Member Name</h3>
+                <span class="profile-modal-designation" id="modalProfDesignation">Performing Member</span>
+            </div>
+
+            <!-- Blank Member QR Pass -->
+            <div class="member-qr-section">
+                <div id="memberQrContainer" class="member-qr-box"></div>
+            </div>
+
+            <div class="profile-info-grid">
+                <div class="profile-info-item">
+                    <span class="info-label"><i class="fa-regular fa-id-card"></i> Student ID</span>
+                    <strong id="modalProfStudentId">2026-00000</strong>
+                </div>
+
+                <div class="profile-info-item">
+                    <span class="info-label"><i class="fa-regular fa-envelope"></i> WVSU Email</span>
+                    <strong id="modalProfEmail">member@wvsu.edu.ph</strong>
+                </div>
+
+                <div class="profile-info-item">
+                    <span class="info-label"><i class="fa-solid fa-layer-group"></i> Assigned Suite</span>
+                    <strong id="modalProfSuite">General Cast</strong>
+                </div>
+
+                <div class="profile-info-item">
+                    <span class="info-label"><i class="fa-solid fa-shield-halved"></i> Troupe Status</span>
+                    <span class="status-badge available" id="modalProfStatus">Active Performer</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="modal-btn secondary" id="closeProfileActionBtn">
+                <span>Close</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="../assets/js/sidebar.js"></script>
+<script type="module" src="../assets/js/about.js"></script>
+<script type="module" src="../assets/js/auth.js"></script>
 </body>
 </html>
