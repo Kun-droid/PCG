@@ -1,7 +1,7 @@
 import { supabase } from './supabaseClient.js';
 
 // ==========================================
-// PROFILES & MEMBERS
+// 1. PROFILES & MEMBERS
 // ==========================================
 export async function getTotalMembersCount() {
     const { count, error } = await supabase
@@ -16,7 +16,7 @@ export async function getTotalMembersCount() {
 }
 
 // ==========================================
-// COSTUME INVENTORY
+// 2. COSTUME INVENTORY
 // ==========================================
 export async function getCostumes() {
     const { data, error } = await supabase
@@ -47,7 +47,7 @@ export async function updateCostume(id, name, quantity) {
 }
 
 // ==========================================
-// CIRCULATION & SCAN DISPATCH
+// 3. CIRCULATION & LOANS
 // ==========================================
 export async function getActiveLoans() {
     const { data, error } = await supabase
@@ -71,7 +71,6 @@ export async function checkActiveLoanByStudentId(studentId) {
 }
 
 export async function checkoutCostume(studentId, borrowerName, costumeId, costumeName, suite) {
-    // 1. Log checkout
     const { data, error } = await supabase
         .from('loans')
         .insert([{
@@ -79,11 +78,11 @@ export async function checkoutCostume(studentId, borrowerName, costumeId, costum
             borrower_name: borrowerName,
             costume_id: costumeId,
             costume_name: costumeName,
-            suite: suite
+            suite: suite,
+            issued_date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
         }])
         .select();
 
-    // 2. Decrement available count in inventory
     if (!error && costumeId) {
         const { data: c } = await supabase.from('costumes').select('available').eq('id', costumeId).single();
         if (c && c.available > 0) {
@@ -94,14 +93,12 @@ export async function checkoutCostume(studentId, borrowerName, costumeId, costum
 }
 
 export async function returnCostume(loanId, costumeId) {
-    // 1. Mark loan returned
     const { data, error } = await supabase
         .from('loans')
         .update({ returned: true, returned_at: new Date().toISOString() })
         .eq('id', loanId)
         .select();
 
-    // 2. Increment available count in inventory
     if (!error && costumeId) {
         const { data: c } = await supabase.from('costumes').select('available, quantity').eq('id', costumeId).single();
         if (c && c.available < c.quantity) {
@@ -112,15 +109,15 @@ export async function returnCostume(loanId, costumeId) {
 }
 
 // ==========================================
-// SCHEDULE MASTER / CALENDAR
+// 4. SCHEDULE MASTER & CALENDAR
 // ==========================================
 export async function getSchedules() {
     const { data, error } = await supabase
         .from('schedules')
-        .select('*');
+        .select('*')
+        .order('event_date', { ascending: true });
     if (error) console.error('Error loading schedules:', error);
     
-    // Format into date keyed object for calendar renderer
     const scheduleMap = {};
     (data || []).forEach(item => {
         scheduleMap[item.event_date] = {
@@ -157,7 +154,7 @@ export async function deleteSchedule(eventDate) {
 }
 
 // ==========================================
-// ABOUT US CONTENT & ADVISERS
+// 5. ABOUT US CONTENT & ADVISERS
 // ==========================================
 export async function getAboutContent() {
     const { data, error } = await supabase.from('site_content').select('*');
@@ -182,24 +179,48 @@ export async function getAdvisers() {
     const { data, error } = await supabase
         .from('advisers')
         .select('*')
-        .order('id', { ascending: true });
+        .order('created_at', { ascending: true });
     if (error) console.error('Error fetching advisers:', error);
     return data || [];
 }
 
-export async function addAdviser(name, role, term, tag, image_url = null) {
+export async function addAdviser(name, role, term, tag, image_url = null, bio = '', quote = '') {
+    const payload = {
+        name,
+        role: role || 'Adviser',
+        designation: role || 'Adviser & Artistic Mentor',
+        term: term || '2004–2026',
+        education: tag || 'Master in Music',
+        tag: tag || 'Master in Music',
+        image_url: image_url || '../../../assets/images/libutaque.jpg',
+        bio: bio || '',
+        quote: quote || ''
+    };
+
     const { data, error } = await supabase
         .from('advisers')
-        .insert([{ name, role, term, tag, image_url }])
+        .insert([payload])
         .select();
     if (error) console.error('Error adding adviser:', error);
     return { data, error };
 }
 
-export async function updateAdviser(id, name, role, term, tag, image_url = null) {
+export async function updateAdviser(id, name, role, term, tag, image_url = null, bio = '', quote = '') {
+    const payload = {
+        name,
+        role: role || 'Adviser',
+        designation: role || 'Adviser & Artistic Mentor',
+        term: term || '2004–2026',
+        education: tag || 'Master in Music',
+        tag: tag || 'Master in Music',
+        image_url: image_url || '../../../assets/images/libutaque.jpg',
+        bio: bio || '',
+        quote: quote || ''
+    };
+
     const { data, error } = await supabase
         .from('advisers')
-        .update({ name, role, term, tag, image_url })
+        .update(payload)
         .eq('id', id)
         .select();
     if (error) console.error('Error updating adviser:', error);

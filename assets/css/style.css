@@ -161,49 +161,169 @@ body {
   box-shadow: var(--neumorphic-light);
 }
 
-/* Banner Card */
-.banner-card {
-  background: linear-gradient(135deg, var(--primary-maroon), var(--maroon-dark));
+/* ==========================================================================
+   EXPANDED HERO BANNER STYLING
+   ========================================================================== */
+
+.banner-card.hero-banner {
+  background: linear-gradient(135deg, #70131d 0%, #3b070d 100%);
   color: #ffffff;
   border-radius: var(--radius-lg);
-  padding: 22px;
-  margin-bottom: 20px;
-  box-shadow: 0 10px 24px rgba(112, 19, 29, 0.2);
+  padding: 30px 36px;
+  margin-bottom: 24px;
+  box-shadow: 0 12px 28px rgba(112, 19, 29, 0.22);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 180px;
+}
+
+.banner-content-left {
+  flex: 1;
+  max-width: 65%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .banner-tag {
   background: rgba(226, 149, 50, 0.2);
   color: var(--sunset-gold);
   font-size: 11px;
-  font-weight: 700;
-  padding: 4px 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 5px 12px;
   border-radius: 20px;
   display: inline-block;
-  margin-bottom: 10px;
-  border: 1px solid rgba(226, 149, 50, 0.3);
+  border: 1px solid rgba(226, 149, 50, 0.35);
+  width: fit-content;
 }
 
-.banner-details h2 {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 4px;
+.banner-content-left h2 {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 2px 0 0 0;
+  color: #ffffff;
 }
 
-.banner-details p {
-  font-size: 13px;
-  opacity: 0.85;
-  margin-bottom: 16px;
+.banner-meta-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 6px;
+}
+
+.banner-meta-line i {
+  color: var(--sunset-gold);
+  margin-right: 2px;
+}
+
+.meta-dot {
+  opacity: 0.5;
+}
+
+.banner-actions {
+  margin-top: 4px;
 }
 
 .banner-action-btn {
   background: #ffffff;
   color: var(--primary-maroon);
   border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 12px;
+  padding: 10px 22px;
+  border-radius: 30px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.banner-action-btn:hover {
+  transform: translateY(-2px);
+  background: #fdf2f3;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* Right Column: Visual Date Widget & Watermark */
+.banner-content-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  z-index: 2;
+}
+
+.banner-calendar-widget {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 14px 22px;
+  text-align: center;
+  min-width: 124px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.widget-header {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--sunset-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.widget-day {
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1;
+  color: #ffffff;
+  margin: 2px 0;
+}
+
+.widget-status {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Ambient Decorative PCG Logo Watermark (Large Peeking Effect) */
+.banner-watermark-logo {
+  position: absolute;
+  right: -90px;
+  bottom: -110px;
+  width: 360px;
+  height: 360px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.12;
+  filter: brightness(0) invert(1);
+  transform: rotate(-10deg);
+  transition: opacity 0.3s ease;
+}
+
+.banner-watermark-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 /* Metrics Row */
@@ -276,6 +396,200 @@ body {
   font-weight: 600;
   color: var(--primary-maroon);
   text-decoration: none;
+}
+
+/* ==========================================================================
+   DASHBOARD REHEARSALS & COSTUME VAULT WIDGETS
+   ========================================================================== */
+
+/* 1. Upcoming Rehearsals Item */
+.schedule-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.schedule-item:last-child {
+  margin-bottom: 0;
+}
+
+.schedule-item:hover {
+  transform: translateY(-1px);
+  border-color: rgba(112, 19, 29, 0.25);
+}
+
+.schedule-date-badge {
+  width: 44px;
+  height: 48px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.schedule-date-badge .badge-month {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--primary-maroon);
+  line-height: 1;
+}
+
+.schedule-date-badge .badge-day {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1.1;
+}
+
+.schedule-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.schedule-details strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.schedule-details span {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.schedule-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.schedule-tag.maroon {
+  background: #fbebee;
+  color: var(--primary-maroon);
+}
+
+.schedule-tag.gold {
+  background: #fef6eb;
+  color: var(--sunset-gold);
+}
+
+/* 2. Costumes in Vault Item */
+.list-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.list-card:last-child {
+  margin-bottom: 0;
+}
+
+.list-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(112, 19, 29, 0.25);
+}
+
+.list-thumb {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  color: var(--primary-maroon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.list-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.list-info h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-info p {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.status-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.status-badge.available {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.status-badge.reserved {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* Empty State Fallback */
+.empty-list-state {
+  text-align: center;
+  padding: 24px 12px;
+  color: var(--text-muted);
+}
+
+.empty-list-state i {
+  font-size: 24px;
+  margin-bottom: 6px;
+  color: #c4c3cb;
+}
+
+.empty-list-state p {
+  font-size: 12px;
+  margin: 0;
 }
 
 /* Universal Modals */
@@ -536,6 +850,18 @@ body {
 }
 
 /* Mobile Media Queries */
+@media (max-width: 900px) {
+  .banner-content-left {
+    max-width: 100%;
+  }
+  .banner-content-right {
+    display: none !important;
+  }
+  .banner-card.hero-banner {
+    padding: 24px;
+  }
+}
+
 @media (max-width: 768px) {
   .sidebar,
   .desktop-only {

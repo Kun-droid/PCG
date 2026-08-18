@@ -1,5 +1,5 @@
 /* ==========================================================================
-   PANAYANA DEDICATED ADMIN CONSOLE STYLES
+   PANAYANA DEDICATED ADMIN CONSOLE & OFFICERS STYLES
    ========================================================================== */
 
 .admin-view-body {
@@ -471,6 +471,194 @@
 }
 
 /* ==========================================================================
+   FORMER ADVISERS & ARTISTIC DIRECTORS TRIBUTE CARDS
+   ========================================================================== */
+
+.advisers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 20px;
+}
+
+.adviser-card {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-light, #e8e7ec);
+  border-radius: var(--radius-lg, 20px);
+  padding: 30px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Gradient accent bar on top */
+.adviser-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-maroon, #70131d), var(--sunset-gold, #e29532));
+}
+
+.adviser-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+}
+
+.adviser-card-header-actions {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  gap: 6px;
+  z-index: 5;
+}
+
+.action-circle-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--bg-canvas, #f3f2f5);
+  border: 1px solid var(--border-light, #e8e7ec);
+  color: var(--text-dark, #1c1a24);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.action-circle-btn:hover {
+  background: var(--primary-maroon, #70131d);
+  color: #ffffff;
+  border-color: var(--primary-maroon, #70131d);
+}
+
+.action-circle-btn.delete:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+.adviser-avatar-wrapper {
+  position: relative;
+  width: 94px;
+  height: 94px;
+  margin-bottom: 14px;
+}
+
+.adviser-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--sunset-gold, #e29532);
+  box-shadow: 0 4px 12px rgba(226, 149, 50, 0.2);
+}
+
+.adviser-role-pill {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-maroon, #70131d);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(112, 19, 29, 0.3);
+}
+
+.adviser-header-info h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-dark, #1e1e24);
+  margin: 0 0 2px;
+}
+
+.adviser-designation {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sunset-gold, #e29532);
+  display: block;
+}
+
+.adviser-meta-pills {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.adviser-meta-item {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted, #828292);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.adviser-meta-item i {
+  color: var(--primary-maroon, #70131d);
+  font-size: 13px;
+}
+
+.adviser-divider {
+  width: 48px;
+  height: 2px;
+  background: var(--border-light, #e8e7ec);
+  margin: 16px auto;
+  border-radius: 2px;
+}
+
+.adviser-bio {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-dark, #1e1e24);
+  opacity: 0.85;
+  margin: 0 0 16px;
+}
+
+.adviser-quote-box {
+  background: var(--bg-canvas, #f6f5f8);
+  border-left: 3px solid var(--sunset-gold, #e29532);
+  border-radius: 0 10px 10px 0;
+  padding: 10px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.adviser-quote-box i {
+  color: var(--sunset-gold, #e29532);
+  font-size: 13px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.adviser-quote-box span {
+  font-size: 11.5px;
+  font-style: italic;
+  color: var(--text-muted, #828292);
+  line-height: 1.4;
+}
+
+/* ==========================================================================
    MODAL SYSTEM & CONTROLS
    ========================================================================== */
 
@@ -583,6 +771,15 @@
   background: var(--bg-canvas, #f6f5f8);
 }
 
+.modal-btn.primary {
+  background: var(--primary-maroon, #70131d);
+  color: #ffffff;
+}
+
+.modal-btn.primary:hover {
+  background: #540e15;
+}
+
 /* ==========================================================================
    RESPONSIVENESS
    ========================================================================== */
@@ -595,6 +792,10 @@
 
 @media (max-width: 600px) {
   .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .advisers-grid {
     grid-template-columns: 1fr;
   }
 }

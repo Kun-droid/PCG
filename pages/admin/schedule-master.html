@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Schedule Master — Panayana Admin</title>
+    <title>Schedule — Panayana Admin</title>
 
     <!-- Instant Pre-Render State Guard -->
     <script>
@@ -67,13 +67,13 @@
                 <i class="fa-solid fa-gauge-high nav-icon"></i>
                 <span class="nav-text">Home</span>
             </a>
+               <a href="schedule-master.html" class="nav-item active">
+                <i class="fa-regular fa-calendar-days nav-icon"></i>
+                <span class="nav-text">Schedules</span>
+            </a>
             <a href="costume-cat.html" class="nav-item">
                 <i class="fa-solid fa-shirt nav-icon"></i>
                 <span class="nav-text">Costumes</span>
-            </a>
-            <a href="schedule-master.html" class="nav-item active">
-                <i class="fa-regular fa-calendar-days nav-icon"></i>
-                <span class="nav-text">Schedules</span>
             </a>
             <a href="archive.html" class="nav-item">
                 <i class="fa-solid fa-music nav-icon"></i>
@@ -116,23 +116,22 @@
                 </div>
             </div>
             
-           <div class="user-profile-top">
-    <div class="profile-info desktop-only">
-        <strong id="adminHeaderName">Lead Custodian / Officer</strong><br>
-        <span class="admin-live-badge"><span class="pulse-dot"></span> System Live</span>
-    </div>
-    <button class="profile-icon" aria-label="Alerts">
-        <i class="fa-solid fa-shield-halved"></i>
-    </button>
-</div>
+            <div class="user-profile-top">
+                <div class="profile-info desktop-only">
+                    <strong id="adminHeaderName">Lead Custodian / Officer</strong><br>
+                    <span class="admin-live-badge"><span class="pulse-dot"></span> System Live</span>
+                </div>
+                <button class="profile-icon" aria-label="Alerts">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </button>
             </div>
         </header>
 
         <!-- Admin Mobile Top Navigation Bar -->
         <nav class="pill-nav admin-pills mobile-only">
             <a href="admin-dash.html" class="nav-pill"><i class="fa-solid fa-qrcode"></i> Home</a>
-            <a href="costume-cat.html" class="nav-pill"><i class="fa-solid fa-shirt"></i> Costumes</a>
             <a href="schedule-master.html" class="nav-pill active"><i class="fa-regular fa-calendar-days"></i> Schedules</a>
+            <a href="costume-cat.html" class="nav-pill"><i class="fa-solid fa-shirt"></i> Costumes</a>
             <a href="archive.html" class="nav-pill"><i class="fa-solid fa-music"></i> Archive</a>
             <a href="page-edit.html" class="nav-pill"><i class="fa-solid fa-circle-info"></i> About</a>
             <a href="setting.html" class="nav-pill"><i class="fa-solid fa-gear"></i> Settings</a>
@@ -180,8 +179,8 @@
     <!-- Admin Mobile Bottom Dock -->
     <nav class="bottom-dock admin-bottom-dock mobile-only">
         <a href="admin-dash.html" class="dock-item" aria-label="Dispatch"><i class="fa-solid fa-qrcode"></i></a>
-        <a href="costume-cat.html" class="dock-item" aria-label="Catalog"><i class="fa-solid fa-shirt"></i></a>
         <a href="schedule-master.html" class="dock-item active" aria-label="Schedule"><i class="fa-regular fa-calendar-days"></i></a>
+        <a href="costume-cat.html" class="dock-item" aria-label="Catalog"><i class="fa-solid fa-shirt"></i></a>
         <a href="archive.html" class="dock-item" aria-label="Archive"><i class="fa-solid fa-music"></i></a>
         <a href="page-edit.html" class="dock-item" aria-label="About"><i class="fa-solid fa-circle-info"></i></a>
         <a href="setting.html" class="dock-item" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
@@ -190,7 +189,7 @@
 
 <!-- =====================================================
      1. ADMIN EVENT DETAIL & VIEW MODAL
-     ===================================================== -->
+     ==================================================== -->
 <div class="modal-overlay" id="eventModal">
     <div class="modal-card">
         <div class="modal-header">
@@ -239,7 +238,7 @@
 
 <!-- =====================================================
      2. ADMIN ADD / EDIT SCHEDULE MODAL
-     ===================================================== -->
+     ==================================================== -->
 <div class="modal-overlay" id="eventManageModal">
     <div class="modal-card">
         <div class="modal-header">

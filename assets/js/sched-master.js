@@ -5,15 +5,26 @@
 import { getSchedules, saveSchedule, deleteSchedule } from './db.js';
 
 let schedulesData = {};
-let currentDate = new Date(2026, 7, 1); // Defaults to August 2026
+const today = new Date();
+let currentNavDate = new Date();
+let isYearPickerOpen = false;
+
+const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
 
 // DOM References
 const calendarDaysGrid = document.getElementById('calendarDaysGrid');
 const currentMonthYear = document.getElementById('currentMonthYear');
+const calendarBadge = document.getElementById('calendarBadge');
+const weekdaysHeader = document.getElementById('calendarWeekdays');
+const yearsPickerGrid = document.getElementById('yearsPickerGrid');
+const yearSelectorBtn = document.getElementById('yearSelectorBtn');
+
 const prevMonthBtn = document.getElementById('prevMonthBtn');
 const nextMonthBtn = document.getElementById('nextMonthBtn');
 const todayBtn = document.getElementById('todayBtn');
-const calendarBadge = document.getElementById('calendarBadge');
 const openAddEventBtn = document.getElementById('openAddEventBtn');
 
 // Read / Detail Modal DOM
@@ -47,156 +58,153 @@ let selectedDateKey = null;
 // 1. INITIALIZE & RENDER
 // ==========================================
 export async function initScheduleMaster() {
-    schedulesData = await getSchedules();
+    try {
+        schedulesData = (await getSchedules()) || {};
+    } catch (e) {
+        console.warn('Could not fetch schedules:', e);
+        schedulesData = {};
+    }
     renderCalendar();
 }
 
 function renderCalendar() {
-    if (!calendarDaysGrid) return;
-    calendarDaysGrid.innerHTML = '';
-
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-
-    const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
+    const year = currentNavDate.getFullYear();
+    const month = currentNavDate.getMonth();
 
     if (currentMonthYear) {
         currentMonthYear.textContent = `${monthNames[month]} ${year}`;
     }
 
+    const isCurrentMonth = (year === today.getFullYear() && month === today.getMonth());
+    if (calendarBadge) {
+        calendarBadge.textContent = isCurrentMonth ? "Current Month" : `${year}`;
+    }
+
+    if (!calendarDaysGrid) return;
+    calendarDaysGrid.innerHTML = '';
+
     const firstDayIndex = new Date(year, month, 1).getDay();
-    const totalDays = new Date(year, month + 1, 0).getDate();
-    const prevLastDay = new Date(year, month, 0).getDate();
+    const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+    const prevMonthTotalDays = new Date(year, month, 0).getDate();
 
-    // 1. Previous Month Padding Days (Muted Shade)
+    // 1. Previous Month Inactive Slots
     for (let i = firstDayIndex; i > 0; i--) {
-        const dayNum = prevLastDay - i + 1;
-        const prevMonthDate = new Date(year, month - 1, dayNum);
-        const pYear = prevMonthDate.getFullYear();
-        const pMonth = String(prevMonthDate.getMonth() + 1).padStart(2, '0');
-        const pDay = String(dayNum).padStart(2, '0');
-        const dateKey = `${pYear}-${pMonth}-${pDay}`;
-
-        const dayDiv = document.createElement('div');
-        dayDiv.className = 'cal-cell prev-month-cell';
-        dayDiv.innerHTML = `<span class="cal-day-num">${dayNum}</span>`;
-
-        const event = schedulesData[dateKey];
-        if (event) {
-            dayDiv.classList.add('has-event');
-            const tagClass = event.tag === 'gold' ? 'gold-tag' : 'maroon-tag';
-            dayDiv.innerHTML += `
-                <div class="cal-event-pill ${tagClass}">
-                    <strong>${event.title}</strong>
-                    <small>${event.time || ''}</small>
-                </div>
-            `;
-        }
-
-        dayDiv.addEventListener('click', () => {
-            handleDateCellClick(dateKey, dayNum, monthNames[prevMonthDate.getMonth()], pYear, event);
-        });
-
-        calendarDaysGrid.appendChild(dayDiv);
+        const dayNum = prevMonthTotalDays - i + 1;
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell inactive';
+        cell.innerHTML = `<span class="cell-num">${dayNum}</span>`;
+        calendarDaysGrid.appendChild(cell);
     }
 
     // 2. Current Month Active Days
-    for (let day = 1; day <= totalDays; day++) {
-        const dayDiv = document.createElement('div');
-        dayDiv.className = 'cal-cell';
+    for (let day = 1; day <= totalDaysInMonth; day++) {
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell';
 
-        const monthPadded = String(month + 1).padStart(2, '0');
-        const dayPadded = String(day).padStart(2, '0');
-        const dateKey = `${year}-${monthPadded}-${dayPadded}`;
+        const formattedMonth = String(month + 1).padStart(2, '0');
+        const formattedDay = String(day).padStart(2, '0');
+        const dateKey = `${year}-${formattedMonth}-${formattedDay}`;
 
-        const today = new Date();
-        if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-            dayDiv.classList.add('today-cell');
-        }
+        const isToday = (isCurrentMonth && day === today.getDate());
+        if (isToday) cell.classList.add('today');
 
-        let innerContent = `<span class="cal-day-num">${day}</span>`;
+        const event = schedulesData ? schedulesData[dateKey] : null;
+        let tagHTML = '';
 
-        const event = schedulesData[dateKey];
         if (event) {
-            dayDiv.classList.add('has-event');
-            const tagClass = event.tag === 'gold' ? 'gold-tag' : 'maroon-tag';
-            innerContent += `
-                <div class="cal-event-pill ${tagClass}">
-                    <strong>${event.title}</strong>
-                    <small>${event.time || ''}</small>
-                </div>
-            `;
+            cell.classList.add('has-event');
+            const tagColor = isToday ? 'white' : (event.tag || 'maroon');
+            const timeSnippet = event.time ? `<span class="tag-time">${event.time}</span>` : '';
+            tagHTML = `<span class="cal-tag ${tagColor}"><strong>${event.title}</strong> ${timeSnippet}</span>`;
+        } else if (isToday) {
+            tagHTML = `<span class="cal-tag white">Today</span>`;
         }
 
-        dayDiv.innerHTML = innerContent;
+        cell.innerHTML = `
+            <span class="cell-num">${day}</span>
+            ${tagHTML}
+        `;
 
-        dayDiv.addEventListener('click', () => {
+        cell.addEventListener('click', () => {
             handleDateCellClick(dateKey, day, monthNames[month], year, event);
         });
 
-        calendarDaysGrid.appendChild(dayDiv);
+        calendarDaysGrid.appendChild(cell);
     }
 
-    // 3. Next Month Padding Days (Muted Shade)
-    const totalRendered = firstDayIndex + totalDays;
-    const nextDaysNeeded = 7 - (totalRendered % 7);
-    if (nextDaysNeeded < 7) {
-        for (let j = 1; j <= nextDaysNeeded; j++) {
-            const nextMonthDate = new Date(year, month + 1, j);
-            const nYear = nextMonthDate.getFullYear();
-            const nMonth = String(nextMonthDate.getMonth() + 1).padStart(2, '0');
-            const nDay = String(j).padStart(2, '0');
-            const dateKey = `${nYear}-${nMonth}-${nDay}`;
+    // 3. Next Month Inactive Slots
+    const totalRenderedSlots = firstDayIndex + totalDaysInMonth;
+    const remainingSlots = (totalRenderedSlots % 7 === 0) ? 0 : (7 - (totalRenderedSlots % 7));
 
-            const dayDiv = document.createElement('div');
-            dayDiv.className = 'cal-cell next-month-cell';
-            dayDiv.innerHTML = `<span class="cal-day-num">${j}</span>`;
-
-            const event = schedulesData[dateKey];
-            if (event) {
-                dayDiv.classList.add('has-event');
-                const tagClass = event.tag === 'gold' ? 'gold-tag' : 'maroon-tag';
-                dayDiv.innerHTML += `
-                    <div class="cal-event-pill ${tagClass}">
-                        <strong>${event.title}</strong>
-                        <small>${event.time || ''}</small>
-                    </div>
-                `;
-            }
-
-            dayDiv.addEventListener('click', () => {
-                handleDateCellClick(dateKey, j, monthNames[nextMonthDate.getMonth()], nYear, event);
-            });
-
-            calendarDaysGrid.appendChild(dayDiv);
-        }
+    for (let nextDay = 1; nextDay <= remainingSlots; nextDay++) {
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell inactive';
+        cell.innerHTML = `<span class="cell-num">${nextDay}</span>`;
+        calendarDaysGrid.appendChild(cell);
     }
 }
 
 // ==========================================
-// 2. MODAL CLICK HANDLERS
+// 2. YEAR PICKER ACCORDION / TOGGLE
+// ==========================================
+function toggleYearPicker() {
+    isYearPickerOpen = !isYearPickerOpen;
+    if (isYearPickerOpen) {
+        renderYearPicker();
+        if (weekdaysHeader) weekdaysHeader.style.display = 'none';
+        if (calendarDaysGrid) calendarDaysGrid.style.display = 'none';
+        if (yearsPickerGrid) yearsPickerGrid.style.display = 'grid';
+        if (yearSelectorBtn) yearSelectorBtn.classList.add('active');
+    } else {
+        closeYearPicker();
+    }
+}
+
+function closeYearPicker() {
+    isYearPickerOpen = false;
+    if (weekdaysHeader) weekdaysHeader.style.display = 'grid';
+    if (calendarDaysGrid) calendarDaysGrid.style.display = 'grid';
+    if (yearsPickerGrid) yearsPickerGrid.style.display = 'none';
+    if (yearSelectorBtn) yearSelectorBtn.classList.remove('active');
+    renderCalendar();
+}
+
+function renderYearPicker() {
+    if (!yearsPickerGrid) return;
+    yearsPickerGrid.innerHTML = '';
+    const currentYear = currentNavDate.getFullYear();
+    for (let yr = currentYear - 6; yr <= currentYear + 5; yr++) {
+        const yearCard = document.createElement('button');
+        yearCard.type = 'button';
+        yearCard.className = `year-pick-btn ${yr === currentYear ? 'active' : ''}`;
+        yearCard.textContent = yr;
+        yearCard.addEventListener('click', () => {
+            currentNavDate.setFullYear(yr);
+            closeYearPicker();
+        });
+        yearsPickerGrid.appendChild(yearCard);
+    }
+}
+
+// ==========================================
+// 3. MODAL CLICK HANDLERS
 // ==========================================
 function handleDateCellClick(dateKey, day, monthName, year, event) {
     selectedDateKey = dateKey;
 
     if (event) {
-        // Open Detail Modal
         if (modalDateTitle) modalDateTitle.textContent = `${monthName} ${day}, ${year}`;
-        if (modalEventTitle) modalEventTitle.textContent = event.title;
+        if (modalEventTitle) modalEventTitle.textContent = event.title || '';
         if (modalEventDesc) modalEventDesc.textContent = event.desc || 'No additional details provided.';
-        if (modalEventTime) modalEventTime.textContent = event.time || 'TBA';
+        if (modalEventTime) modalEventTime.textContent = event.time || 'Schedule TBA';
 
         if (eventDetailBox) eventDetailBox.style.display = 'flex';
         if (noEventState) noEventState.style.display = 'none';
         if (editEventBtn) editEventBtn.style.display = 'inline-flex';
         if (deleteEventBtn) deleteEventBtn.style.display = 'inline-flex';
 
-        eventModal.classList.add('active');
+        if (eventModal) eventModal.classList.add('active');
     } else {
-        // No event: open Add Rehearsal modal directly with date prefilled
         openCreateModal(dateKey);
     }
 }
@@ -209,14 +217,14 @@ function openCreateModal(prefillDate = '') {
         eventDateInput.value = prefillDate || selectedDateKey || new Date().toISOString().split('T')[0];
     }
 
-    eventManageModal.classList.add('active');
+    if (eventManageModal) eventManageModal.classList.add('active');
 }
 
 function openEditModalFromDetail() {
-    const event = schedulesData[selectedDateKey];
+    const event = schedulesData ? schedulesData[selectedDateKey] : null;
     if (!event) return;
 
-    eventModal.classList.remove('active');
+    if (eventModal) eventModal.classList.remove('active');
 
     if (manageModalTitle) manageModalTitle.textContent = "Edit Rehearsal / Event";
     if (eventDateInput) eventDateInput.value = selectedDateKey;
@@ -225,39 +233,48 @@ function openEditModalFromDetail() {
     if (eventTagInput) eventTagInput.value = event.tag || 'maroon';
     if (eventDescInput) eventDescInput.value = event.desc || '';
 
-    eventManageModal.classList.add('active');
+    if (eventManageModal) eventManageModal.classList.add('active');
 }
 
 // ==========================================
-// 3. FORM ACTIONS (SAVE & DELETE)
+// 4. FORM ACTIONS (SAVE & DELETE)
 // ==========================================
 if (eventManageForm) {
     eventManageForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const submitBtn = eventManageForm.querySelector('button[type="submit"]');
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+        }
 
-        const date = eventDateInput.value;
-        const title = eventTitleInput.value.trim();
-        const time = eventTimeInput.value.trim();
-        const tag = eventTagInput.value;
-        const desc = eventDescInput.value.trim();
+        const date = eventDateInput ? eventDateInput.value : '';
+        const title = eventTitleInput ? eventTitleInput.value.trim() : '';
+        const time = eventTimeInput ? eventTimeInput.value.trim() : '';
+        const tag = eventTagInput ? eventTagInput.value : 'maroon';
+        const desc = eventDescInput ? eventDescInput.value.trim() : '';
 
         const { error } = await saveSchedule(date, title, time, tag, desc);
 
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Schedule';
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Schedule';
+        }
 
         if (error) {
             alert(`Error saving schedule: ${error.message}`);
             return;
         }
 
-        schedulesData = await getSchedules();
+        try {
+            schedulesData = (await getSchedules()) || {};
+        } catch (fetchErr) {
+            console.warn(fetchErr);
+        }
+
         renderCalendar();
-        eventManageModal.classList.remove('active');
+        if (eventManageModal) eventManageModal.classList.remove('active');
     });
 }
 
@@ -266,50 +283,61 @@ if (deleteEventBtn) {
         if (!selectedDateKey) return;
         if (confirm(`Are you sure you want to delete the schedule for ${selectedDateKey}?`)) {
             await deleteSchedule(selectedDateKey);
-            schedulesData = await getSchedules();
+            try {
+                schedulesData = (await getSchedules()) || {};
+            } catch (fetchErr) {
+                console.warn(fetchErr);
+            }
             renderCalendar();
-            eventModal.classList.remove('active');
+            if (eventModal) eventModal.classList.remove('active');
         }
     });
 }
 
 // Navigation & Trigger Listeners
-if (openAddEventBtn) {
-    openAddEventBtn.addEventListener('click', () => openCreateModal());
-}
-
-if (editEventBtn) {
-    editEventBtn.addEventListener('click', openEditModalFromDetail);
-}
+if (yearSelectorBtn) yearSelectorBtn.addEventListener('click', toggleYearPicker);
+if (openAddEventBtn) openAddEventBtn.addEventListener('click', () => openCreateModal());
+if (editEventBtn) editEventBtn.addEventListener('click', openEditModalFromDetail);
 
 if (prevMonthBtn) {
     prevMonthBtn.addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar();
+        if (isYearPickerOpen) {
+            currentNavDate.setFullYear(currentNavDate.getFullYear() - 12);
+            renderYearPicker();
+        } else {
+            currentNavDate.setMonth(currentNavDate.getMonth() - 1);
+            renderCalendar();
+        }
     });
 }
 
 if (nextMonthBtn) {
     nextMonthBtn.addEventListener('click', () => {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar();
+        if (isYearPickerOpen) {
+            currentNavDate.setFullYear(currentNavDate.getFullYear() + 12);
+            renderYearPicker();
+        } else {
+            currentNavDate.setMonth(currentNavDate.getMonth() + 1);
+            renderCalendar();
+        }
     });
 }
 
 if (todayBtn) {
     todayBtn.addEventListener('click', () => {
-        currentDate = new Date();
-        renderCalendar();
+        currentNavDate = new Date();
+        if (isYearPickerOpen) closeYearPicker();
+        else renderCalendar();
     });
 }
 
-// Close Modals
+// Modal Closers
 [modalCloseBtn, modalCloseAction].forEach(btn => {
-    if (btn) btn.addEventListener('click', () => eventModal.classList.remove('active'));
+    if (btn) btn.addEventListener('click', () => eventModal && eventModal.classList.remove('active'));
 });
 
 [closeManageModalBtn, cancelManageModalBtn].forEach(btn => {
-    if (btn) btn.addEventListener('click', () => eventManageModal.classList.remove('active'));
+    if (btn) btn.addEventListener('click', () => eventManageModal && eventManageModal.classList.remove('active'));
 });
 
 // Close modal when clicking outside background overlay
@@ -321,4 +349,8 @@ if (todayBtn) {
     }
 });
 
-initScheduleMaster();
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScheduleMaster);
+} else {
+    initScheduleMaster();
+}

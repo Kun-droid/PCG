@@ -28,6 +28,8 @@ const adviserNameInput = document.getElementById('adviserNameInput');
 const adviserRoleInput = document.getElementById('adviserRoleInput');
 const adviserTermInput = document.getElementById('adviserTermInput');
 const adviserTagInput = document.getElementById('adviserTagInput');
+const adviserBioInput = document.getElementById('adviserBioInput');
+const adviserQuoteInput = document.getElementById('adviserQuoteInput');
 
 // Photo Upload Elements
 const uploadAdviserPhotoBtn = document.getElementById('uploadAdviserPhotoBtn');
@@ -36,7 +38,7 @@ const adviserPhotoPreview = document.getElementById('adviserPhotoPreview');
 const adviserImageUrl = document.getElementById('adviserImageUrl');
 
 let activeEditAdviserId = null;
-let pendingPhotoData = null; // Compressed Base64 or Blob
+let pendingPhotoData = null;
 
 // ==========================================
 // 1. INITIALIZE & FETCH FROM SUPABASE
@@ -86,34 +88,52 @@ function renderAdvisersGrid() {
 
     advisersList.forEach(item => {
         const card = document.createElement('div');
-        card.className = 'adviser-id-card';
+        card.className = 'adviser-card';
 
         const photoSrc = (item.image_url && item.image_url.trim().length > 20) 
             ? item.image_url 
             : FALLBACK_AVATAR;
 
         card.innerHTML = `
-            <div class="id-card-top-strip"></div>
-            <div class="id-photo-frame">
-                <img src="${photoSrc}" alt="${item.name}" class="adviser-photo" onerror="this.onerror=null; this.src='${FALLBACK_AVATAR}';">
-                <span class="id-role-chip">Adviser</span>
-            </div>
-            <div class="adviser-card-details">
-                <h4>${item.name}</h4>
-                <span class="id-title">${item.role}</span>
-                <div class="id-badge-info">
-                    <span><i class="fa-regular fa-calendar-check"></i> Term: ${item.term}</span>
-                    <span><i class="fa-solid fa-award"></i> ${item.tag}</span>
-                </div>
-            </div>
-            <div class="adviser-card-actions">
-                <button type="button" class="modal-btn secondary adviser-btn-edit edit-adv-btn" data-id="${item.id}">
-                    <i class="fa-solid fa-pen-to-square"></i> Edit
+            <div class="adviser-card-header-actions">
+                <button type="button" class="action-circle-btn edit-adv-btn" data-id="${item.id}" title="Edit Adviser">
+                    <i class="fa-solid fa-pen-to-square"></i>
                 </button>
-                <button type="button" class="modal-btn secondary adviser-btn-delete delete-adv-btn" data-id="${item.id}">
-                    <i class="fa-solid fa-trash-can"></i> Delete
+                <button type="button" class="action-circle-btn delete delete-adv-btn" data-id="${item.id}" title="Delete Adviser">
+                    <i class="fa-solid fa-trash-can"></i>
                 </button>
             </div>
+
+            <div class="adviser-avatar-wrapper">
+                <img src="${photoSrc}" alt="${item.name}" class="adviser-avatar-img" onerror="this.onerror=null; this.src='${FALLBACK_AVATAR}';">
+                <span class="adviser-role-pill">Adviser</span>
+            </div>
+
+            <div class="adviser-header-info">
+                <h3>${item.name}</h3>
+                <span class="adviser-designation">${item.role || 'Adviser & Artistic Mentor'}</span>
+            </div>
+
+            <div class="adviser-meta-pills">
+                <span class="adviser-meta-item">
+                    <i class="fa-regular fa-calendar-check"></i>
+                    <span>Term: ${item.term}</span>
+                </span>
+                <span class="adviser-meta-item">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <span>${item.tag || 'Master in Music'}</span>
+                </span>
+            </div>
+
+            <div class="adviser-divider"></div>
+
+            <p class="adviser-bio">${item.bio || 'Spearheaded musical direction and repertoire for over two decades.'}</p>
+
+            ${item.quote ? `
+                <div class="adviser-quote-box">
+                    <i class="fa-solid fa-quote-left"></i>
+                    <span>${item.quote}</span>
+                </div>` : ''}
         `;
 
         card.querySelector('.edit-adv-btn').addEventListener('click', () => openEditAdviserModal(item));
@@ -140,7 +160,7 @@ function showSavedToast() {
 }
 
 // ==========================================
-// 3. CLIENT-SIDE CANVAS IMAGE COMPRESSOR
+// 3. CANVAS IMAGE COMPRESSOR
 // ==========================================
 function compressImageToDataUrl(file, maxDim = 250, quality = 0.85) {
     return new Promise((resolve, reject) => {
@@ -180,7 +200,6 @@ function compressImageToDataUrl(file, maxDim = 250, quality = 0.85) {
     });
 }
 
-// Convert Base64 Data URL to Blob for Storage Upload
 function dataURLtoBlob(dataurl) {
     const arr = dataurl.split(',');
     const mime = arr[0].match(/:(.*?);/)[1];
@@ -193,7 +212,6 @@ function dataURLtoBlob(dataurl) {
     return new Blob([u8arr], { type: mime });
 }
 
-// Uploads to Supabase Storage, with fallback to compressed Base64
 async function saveAdviserImage(compressedDataUrl) {
     if (!compressedDataUrl || !compressedDataUrl.startsWith('data:image')) {
         return compressedDataUrl || FALLBACK_AVATAR;
@@ -221,7 +239,6 @@ async function saveAdviserImage(compressedDataUrl) {
     }
 }
 
-// Photo Upload Trigger & Preview
 if (uploadAdviserPhotoBtn && adviserPhotoInput) {
     uploadAdviserPhotoBtn.addEventListener('click', () => adviserPhotoInput.click());
 
@@ -241,7 +258,7 @@ if (uploadAdviserPhotoBtn && adviserPhotoInput) {
 }
 
 // ==========================================
-// 4. ADVISER MODAL & FORM SUBMIT
+// 4. MODAL INTERACTIONS & FORM SUBMISSION
 // ==========================================
 function openEditAdviserModal(item) {
     activeEditAdviserId = item.id;
@@ -253,6 +270,8 @@ function openEditAdviserModal(item) {
     adviserRoleInput.value = item.role || '';
     adviserTermInput.value = item.term || '';
     adviserTagInput.value = item.tag || '';
+    if (adviserBioInput) adviserBioInput.value = item.bio || '';
+    if (adviserQuoteInput) adviserQuoteInput.value = item.quote || '';
 
     const photo = (item.image_url && item.image_url.trim().length > 20) ? item.image_url : FALLBACK_AVATAR;
     if (adviserPhotoPreview) adviserPhotoPreview.src = photo;
@@ -286,6 +305,8 @@ if (adviserManageForm) {
         const role = adviserRoleInput.value.trim();
         const term = adviserTermInput.value.trim();
         const tag = adviserTagInput.value.trim();
+        const bio = adviserBioInput ? adviserBioInput.value.trim() : '';
+        const quote = adviserQuoteInput ? adviserQuoteInput.value.trim() : '';
         
         let finalImageUrl = adviserImageUrl.value;
         if (pendingPhotoData) {
@@ -298,9 +319,9 @@ if (adviserManageForm) {
 
         let res;
         if (activeEditAdviserId) {
-            res = await updateAdviser(activeEditAdviserId, name, role, term, tag, finalImageUrl);
+            res = await updateAdviser(activeEditAdviserId, name, role, term, tag, finalImageUrl, bio, quote);
         } else {
-            res = await addAdviser(name, role, term, tag, finalImageUrl);
+            res = await addAdviser(name, role, term, tag, finalImageUrl, bio, quote);
         }
 
         submitBtn.disabled = false;

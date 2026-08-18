@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Costume Inventory — WVSU Panayana</title>
+    <title>Costume — WVSU Panayana</title>
     
     <!-- Instant Pre-Render State Script -->
     <script>
@@ -26,7 +26,7 @@
     
     <!-- Core Stylesheets -->
     <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/costumes-inventory.css">
+    <link rel="stylesheet" href="../assets/css/costume-inventory.css">
 </head>
 <body>
 
@@ -55,19 +55,19 @@
             <span class="nav-label">Navigation</span>
             <a href="dashboard.html" class="nav-item">
                 <i class="fa-solid fa-gauge-high nav-icon"></i>
-                <span class="nav-text">Dashboard</span>
+                <span class="nav-text">Home</span>
             </a>
             <a href="event-calendar.html" class="nav-item">
                 <i class="fa-regular fa-calendar-days nav-icon"></i>
-                <span class="nav-text">Event Calendar</span>
+                <span class="nav-text">Events</span>
             </a>
             <a href="costumes-inventory.html" class="nav-item active">
                 <i class="fa-solid fa-shirt nav-icon"></i>
-                <span class="nav-text">Costume Inventory</span>
+                <span class="nav-text">Costume</span>
             </a>
             <a href="repertoire.html" class="nav-item">
                 <i class="fa-solid fa-music nav-icon"></i>
-                <span class="nav-text">Repertoire & Cast</span>
+                <span class="nav-text">Archive</span>
             </a>
             <a href="about-us.html" class="nav-item">
                 <i class="fa-solid fa-circle-info nav-icon"></i>
@@ -118,12 +118,11 @@
 
         <!-- Mobile Pill Navigation -->
         <nav class="pill-nav mobile-only">
-            <a href="dashboard.html" class="nav-pill"><i class="fa-solid fa-house-chimney"></i> Dashboard</a>
-            <a href="event-calendar.html" class="nav-pill"><i class="fa-regular fa-calendar-days"></i> Calendar</a>
-            <a href="costumes-inventory.html" class="nav-pill active"><i class="fa-solid fa-shirt"></i> Costumes</a>
-            <a href="repertoire.html" class="nav-pill"><i class="fa-solid fa-music"></i> Repertoire</a>
-            <a href="about-us.html" class="nav-pill"><i class="fa-solid fa-circle-info"></i> About</a>
-            <a href="settings.html" class="nav-pill"><i class="fa-solid fa-gear"></i> Settings</a>
+            <a href="dashboard.html" class="nav-pill"><i class="fa-solid fa-house-chimney"></i> Home</a>
+            <a href="event-calendar.html" class="nav-pill"><i class="fa-regular fa-calendar-days"></i> Events</a>
+            <a href="costumes-inventory.html" class="nav-pill active"><i class="fa-solid fa-shirt"></i> Costume</a>
+            <a href="repertoire.html" class="nav-pill"><i class="fa-solid fa-music"></i> Archive</a>
+            <a href="about-us.html" class="nav-pill"><i class="fa-solid fa-circle-info"></i> About Us</a>
         </nav>
 
         <!-- Content Body -->
@@ -182,7 +181,7 @@
         <a href="event-calendar.html" class="dock-item" aria-label="Schedule"><i class="fa-regular fa-calendar"></i></a>
         <a href="costumes-inventory.html" class="dock-item active" aria-label="Costumes"><i class="fa-solid fa-shirt"></i></a>
         <a href="repertoire.html" class="dock-item" aria-label="Repertoire"><i class="fa-solid fa-music"></i></a>
-        <a href="settings.html" class="dock-item" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
+        <a href="about-us.html" class="dock-item" aria-label="About"><i class="fa-solid fa-circle-info"></i></a>
     </nav>
 </div>
 
@@ -225,6 +224,7 @@
 </div>
 
 <script type="module" src="../assets/js/sidebar.js"></script>
-<script type="module" src="../assets/js/costumes-inventory.js"></script>
+<script type="module" src="../assets/js/costume-inventory.js"></script>
+<script type="module" src="../assets/js/auth.js"></script>
 </body>
 </html>

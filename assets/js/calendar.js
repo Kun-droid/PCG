@@ -1,16 +1,6 @@
-// ==========================================================================
-// PANAYANA READ-ONLY EVENT CALENDAR ENGINE (WITH YEAR PICKER)
-// ==========================================================================
+import { getSchedules } from './db.js';
 
-const eventsData = {
-    // "2026-08-04": { title: "Singkil Rehearsal", desc: "Blocking & Spacing at Main Theater.", time: "4:00 PM – 7:00 PM", tag: "gold" },
-    // "2026-08-12": { title: "Rondalla Practice", desc: "Instrumental synchronization & tempo calibration.", time: "5:00 PM – 8:00 PM", tag: "maroon" },
-    // "2026-08-15": { title: "Annual Cultural Night", desc: "Grand showcase in the Main Theater Auditorium.", time: "4:00 PM – 7:30 PM", tag: "maroon" },
-    // "2026-08-21": { title: "Costume Fitting", desc: "Fitting for Maria Clara & Cordillera suites.", time: "1:00 PM – 4:00 PM", tag: "gold" },
-    // "2026-08-28": { title: "Gala Night Showcase", desc: "Formal dinner performance and cultural tribute.", time: "6:00 PM – 9:30 PM", tag: "maroon" },
-    // "2026-09-08": { title: "Repertoire Walkthrough", desc: "Complete rundown with live musical ensemble.", time: "3:30 PM – 6:30 PM", tag: "gold" }
-};
-
+let eventsData = {};
 const today = new Date();
 let currentNavDate = new Date();
 let isYearPickerOpen = false;
@@ -20,7 +10,7 @@ const monthNames = [
     "July", "August", "September", "October", "November", "December"
 ];
 
-// DOM References
+// DOM Elements
 const monthYearLabel = document.getElementById('currentMonthYear');
 const badgeLabel = document.getElementById('calendarBadge');
 const daysGrid = document.getElementById('calendarDaysGrid');
@@ -43,9 +33,16 @@ const eventTitle = document.getElementById('modalEventTitle');
 const eventDesc = document.getElementById('modalEventDesc');
 const eventTime = document.getElementById('modalEventTime');
 
-// ==========================================
-// CALENDAR RENDERER
-// ==========================================
+export async function initCalendar() {
+    try {
+        eventsData = (await getSchedules()) || {};
+    } catch (e) {
+        console.warn('Could not load schedules:', e);
+        eventsData = {};
+    }
+    renderCalendar();
+}
+
 function renderCalendar() {
     const year = currentNavDate.getFullYear();
     const month = currentNavDate.getMonth();
@@ -64,7 +61,7 @@ function renderCalendar() {
     const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
     const prevMonthTotalDays = new Date(year, month, 0).getDate();
 
-    // Previous Month Inactive Days
+    // Previous Month Inactive Slots
     for (let i = firstDayIndex; i > 0; i--) {
         const dayNum = prevMonthTotalDays - i + 1;
         const cell = document.createElement('div');
@@ -85,13 +82,14 @@ function renderCalendar() {
         const isToday = (isCurrentMonth && day === today.getDate());
         if (isToday) cell.classList.add('today');
 
-        const event = eventsData[dateKey];
+        const event = eventsData ? eventsData[dateKey] : null;
         let tagHTML = '';
 
         if (event) {
             cell.classList.add('has-event');
             const tagColor = isToday ? 'white' : (event.tag || 'maroon');
-            tagHTML = `<span class="cal-tag ${tagColor}">${event.title}</span>`;
+            const timeSnippet = event.time ? `<span class="tag-time">${event.time}</span>` : '';
+            tagHTML = `<span class="cal-tag ${tagColor}"><strong>${event.title}</strong> ${timeSnippet}</span>`;
         } else if (isToday) {
             tagHTML = `<span class="cal-tag white">Today</span>`;
         }
@@ -105,7 +103,7 @@ function renderCalendar() {
         daysGrid.appendChild(cell);
     }
 
-    // Next Month Inactive Days
+    // Next Month Inactive Slots
     const totalRenderedSlots = firstDayIndex + totalDaysInMonth;
     const remainingSlots = (totalRenderedSlots % 7 === 0) ? 0 : (7 - (totalRenderedSlots % 7));
 
@@ -117,18 +115,14 @@ function renderCalendar() {
     }
 }
 
-// ==========================================
-// YEAR PICKER COMPONENT
-// ==========================================
 function toggleYearPicker() {
     isYearPickerOpen = !isYearPickerOpen;
-
     if (isYearPickerOpen) {
         renderYearPicker();
-        weekdaysHeader.style.display = 'none';
-        daysGrid.style.display = 'none';
-        yearsPickerGrid.style.display = 'grid';
-        yearSelectorBtn.classList.add('active');
+        if (weekdaysHeader) weekdaysHeader.style.display = 'none';
+        if (daysGrid) daysGrid.style.display = 'none';
+        if (yearsPickerGrid) yearsPickerGrid.style.display = 'grid';
+        if (yearSelectorBtn) yearSelectorBtn.classList.add('active');
     } else {
         closeYearPicker();
     }
@@ -136,50 +130,43 @@ function toggleYearPicker() {
 
 function closeYearPicker() {
     isYearPickerOpen = false;
-    weekdaysHeader.style.display = 'grid';
-    daysGrid.style.display = 'grid';
-    yearsPickerGrid.style.display = 'none';
-    yearSelectorBtn.classList.remove('active');
+    if (weekdaysHeader) weekdaysHeader.style.display = 'grid';
+    if (daysGrid) daysGrid.style.display = 'grid';
+    if (yearsPickerGrid) yearsPickerGrid.style.display = 'none';
+    if (yearSelectorBtn) yearSelectorBtn.classList.remove('active');
     renderCalendar();
 }
 
 function renderYearPicker() {
+    if (!yearsPickerGrid) return;
     yearsPickerGrid.innerHTML = '';
     const currentYear = currentNavDate.getFullYear();
-    const startYear = currentYear - 6;
-    const endYear = currentYear + 5;
-
-    for (let yr = startYear; yr <= endYear; yr++) {
+    for (let yr = currentYear - 6; yr <= currentYear + 5; yr++) {
         const yearCard = document.createElement('button');
+        yearCard.type = 'button';
         yearCard.className = `year-pick-btn ${yr === currentYear ? 'active' : ''}`;
         yearCard.textContent = yr;
-
         yearCard.addEventListener('click', () => {
             currentNavDate.setFullYear(yr);
             closeYearPicker();
         });
-
         yearsPickerGrid.appendChild(yearCard);
     }
 }
 
-// ==========================================
-// READ-ONLY MODAL CONTROLLER
-// ==========================================
 function openModal(dateKey, readableDate) {
     if (modalDateTitle) modalDateTitle.textContent = readableDate;
-
-    const event = eventsData[dateKey];
+    const event = eventsData ? eventsData[dateKey] : null;
 
     if (event) {
-        eventTitle.textContent = event.title;
-        eventDesc.textContent = event.desc || 'No additional details provided.';
-        eventTime.textContent = event.time || 'Schedule TBA';
-        eventBox.style.display = 'flex';
-        noEventBox.style.display = 'none';
+        if (eventTitle) eventTitle.textContent = event.title;
+        if (eventDesc) eventDesc.textContent = event.desc || 'No additional rehearsal notes.';
+        if (eventTime) eventTime.textContent = event.time || 'Schedule TBA';
+        if (eventBox) eventBox.style.display = 'flex';
+        if (noEventBox) noEventBox.style.display = 'none';
     } else {
-        eventBox.style.display = 'none';
-        noEventBox.style.display = 'block';
+        if (eventBox) eventBox.style.display = 'none';
+        if (noEventBox) noEventBox.style.display = 'block';
     }
 
     if (modal) modal.classList.add('active');
@@ -189,12 +176,7 @@ function closeModal() {
     if (modal) modal.classList.remove('active');
 }
 
-// Year Picker Listener
-if (yearSelectorBtn) {
-    yearSelectorBtn.addEventListener('click', toggleYearPicker);
-}
-
-// Month Navigation Listeners
+if (yearSelectorBtn) yearSelectorBtn.addEventListener('click', toggleYearPicker);
 if (prevBtn) {
     prevBtn.addEventListener('click', () => {
         if (isYearPickerOpen) {
@@ -206,7 +188,6 @@ if (prevBtn) {
         }
     });
 }
-
 if (nextBtn) {
     nextBtn.addEventListener('click', () => {
         if (isYearPickerOpen) {
@@ -218,7 +199,6 @@ if (nextBtn) {
         }
     });
 }
-
 if (todayBtn) {
     todayBtn.addEventListener('click', () => {
         currentNavDate = new Date();
@@ -226,8 +206,6 @@ if (todayBtn) {
         else renderCalendar();
     });
 }
-
-// Modal Dismiss Listeners
 if (closeBtn) closeBtn.addEventListener('click', closeModal);
 if (closeAction) closeAction.addEventListener('click', closeModal);
 if (modal) {
@@ -236,5 +214,8 @@ if (modal) {
     });
 }
 
-// Initialize View
-renderCalendar();
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCalendar);
+} else {
+    initCalendar();
+}

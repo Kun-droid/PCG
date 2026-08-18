@@ -1,9 +1,31 @@
 import { getAboutContent, getAdvisers } from './db.js';
 
-export async function loadAboutData() {
-    const [content, advisers] = await Promise.all([getAboutContent(), getAdvisers()]);
+const FALLBACK_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e29532'%3E%3Cpath d='M12 2a5 5 0 1 0 5 5 5 5 0 0 0-5-5zm0 12c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z'/%3E%3C/svg%3E";
 
-    // 1. Populate Hero Content
+// Modal DOM References
+const modal = document.getElementById('adviserDetailModal');
+const closeBtn = document.getElementById('closeAdvDetailBtn');
+const modalCloseActionBtn = document.getElementById('modalCloseActionBtn');
+const modalAdvImage = document.getElementById('modalAdvImage');
+const modalAdvFullName = document.getElementById('modalAdvFullName');
+const modalAdvRole = document.getElementById('modalAdvRole');
+const modalAdvTerm = document.getElementById('modalAdvTerm');
+const modalAdvTag = document.getElementById('modalAdvTag');
+const modalAdvBio = document.getElementById('modalAdvBio');
+const modalAdvQuote = document.getElementById('modalAdvQuote');
+const modalAdvQuoteBox = document.getElementById('modalAdvQuoteBox');
+
+function cleanText(txt = '') {
+    return txt.replace(/[\*\_\>\"“”]/g, '').trim();
+}
+
+export async function loadAboutData() {
+    const [content, advisers] = await Promise.all([
+        getAboutContent().catch(() => ({})),
+        getAdvisers().catch(() => [])
+    ]);
+
+    // 1. Hero Content
     if (content.about_hero) {
         const heroTag = document.getElementById('aboutHeroTag');
         const heroTitle = document.getElementById('aboutHeroTitle');
@@ -13,7 +35,7 @@ export async function loadAboutData() {
         if (heroDesc && content.about_hero.desc) heroDesc.textContent = content.about_hero.desc;
     }
 
-    // 2. Populate Narratives
+    // 2. Narratives
     if (content.about_narratives) {
         const historyText = document.getElementById('aboutHistoryText');
         const missionText = document.getElementById('aboutMissionText');
@@ -21,7 +43,7 @@ export async function loadAboutData() {
         if (missionText && content.about_narratives.mission) missionText.innerHTML = content.about_narratives.mission;
     }
 
-    // 3. Populate Contacts & Directory
+    // 3. Contacts & Channels
     if (content.about_contacts) {
         const loc = document.getElementById('aboutLocationText');
         const emailLink = document.getElementById('aboutEmailLink');
@@ -34,27 +56,129 @@ export async function loadAboutData() {
         if (phone && content.about_contacts.phone) phone.textContent = content.about_contacts.phone;
     }
 
-    // 4. Populate Former Advisers Grid
-    const advisersGrid = document.getElementById('aboutAdvisersGrid');
-    if (advisersGrid && advisers && advisers.length > 0) {
-        advisersGrid.innerHTML = advisers.map(item => `
-            <div class="adviser-id-card">
-                <div class="id-card-top-strip"></div>
-                <div class="id-photo-frame">
-                    <img src="../assets/images/Panayana_logo.jpg" alt="${item.name}" class="adviser-photo">
-                    <span class="id-role-chip">Adviser</span>
+    // 4. Former Advisers Grid
+    const advisersGrid = document.getElementById('aboutAdvisersGrid') || document.getElementById('memberAdvisersGrid');
+    if (advisersGrid) {
+        if (!advisers || advisers.length === 0) {
+            advisersGrid.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+                    <i class="fa-solid fa-user-graduate" style="font-size: 32px; margin-bottom: 8px; color: #cbd5e1; display: block;"></i>
+                    <p>No adviser tributes published yet.</p>
+                </div>`;
+            return;
+        }
+
+        advisersGrid.innerHTML = '';
+
+        advisers.forEach(item => {
+            const photoSrc = item.image_url && item.image_url.trim().length > 20
+                ? item.image_url
+                : FALLBACK_AVATAR;
+
+            const cleanedQuote = cleanText(item.quote || '');
+
+            const card = document.createElement('div');
+            card.className = 'adviser-card clickable-adviser-card';
+            card.setAttribute('role', 'button');
+            card.setAttribute('tabindex', '0');
+
+            card.innerHTML = `
+                <div class="adviser-avatar-wrapper">
+                    <img src="${photoSrc}" alt="${item.name}" class="adviser-avatar-img" onerror="this.onerror=null; this.src='${FALLBACK_AVATAR}';">
+                    <span class="adviser-role-pill">Adviser</span>
                 </div>
-                <div class="id-details">
-                    <h4>${item.name}</h4>
-                    <span class="id-title">${item.role}</span>
-                    <div class="id-badge-info">
-                        <span><i class="fa-regular fa-calendar-check"></i> Term: ${item.term}</span>
-                        <span><i class="fa-solid fa-award"></i> ${item.tag}</span>
-                    </div>
+
+                <div class="adviser-header-info">
+                    <h3>${item.name}</h3>
+                    <span class="adviser-designation">${item.role || 'Adviser'}</span>
                 </div>
-            </div>
-        `).join('');
+
+                <div class="adviser-meta-pills">
+                    <span class="adviser-meta-item">
+                        <i class="fa-regular fa-calendar-check"></i>
+                        <span>Term: ${item.term || 'N/A'}</span>
+                    </span>
+                    <span class="adviser-meta-item">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <span>${item.tag || item.education || 'Master in Music'}</span>
+                    </span>
+                </div>
+
+                ${cleanedQuote ? `
+                    <div class="adviser-preview-quote">
+                        <i class="fa-solid fa-quote-left"></i>
+                        <span>&ldquo;${cleanedQuote}&rdquo;</span>
+                    </div>` : ''}
+
+                <span class="adviser-view-more">
+                    <span>Read Full Tribute</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </span>
+            `;
+
+            // Open Detail Modal on Click / Keypress
+            card.addEventListener('click', () => openAdviserModal(item, photoSrc));
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openAdviserModal(item, photoSrc);
+                }
+            });
+
+            advisersGrid.appendChild(card);
+        });
     }
 }
 
-loadAboutData();
+function openAdviserModal(item, photoSrc) {
+    if (!modal) return;
+    if (modalAdvImage) modalAdvImage.src = photoSrc;
+    if (modalAdvFullName) modalAdvFullName.textContent = item.name;
+    if (modalAdvRole) modalAdvRole.textContent = item.role || 'Faculty Adviser & Artistic Mentor';
+    if (modalAdvTerm) modalAdvTerm.textContent = `Term: ${item.term || 'N/A'}`;
+    if (modalAdvTag) modalAdvTag.textContent = item.tag || item.education || 'Master in Music';
+    
+    if (modalAdvBio) {
+        modalAdvBio.textContent = item.bio || 'Dedicated faculty mentor and artistic leader who contributed significantly to the cultural development of the WVSU Panayana Cultural Group.';
+    }
+
+    if (modalAdvQuoteBox && modalAdvQuote) {
+        const cleanQuote = cleanText(item.quote || '');
+        if (cleanQuote.length > 0) {
+            modalAdvQuote.textContent = cleanQuote;
+            modalAdvQuoteBox.style.display = 'flex';
+        } else {
+            modalAdvQuoteBox.style.display = 'none';
+        }
+    }
+
+    modal.classList.add('active');
+    
+    // Reset body scroll to top when opening
+    const modalBody = modal.querySelector('.modal-body');
+    if (modalBody) modalBody.scrollTop = 0;
+}
+
+// Close Modal Controls
+[closeBtn, modalCloseActionBtn].forEach(btn => {
+    btn?.addEventListener('click', () => modal?.classList.remove('active'));
+});
+
+if (modal) {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('active');
+    });
+}
+
+// Keyboard ESC listener
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        modal.classList.remove('active');
+    }
+});
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadAboutData);
+} else {
+    loadAboutData();
+}
