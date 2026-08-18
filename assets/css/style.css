@@ -1408,3 +1408,98 @@ html.sidebar-is-collapsed .sidebar .brand-logo-badge {
     min-height: 130px;
   }
 }
+/* ==========================================================================
+   UNIVERSAL MOBILE AUTO-ADJUST & SAFE-AREA SYSTEM
+   ========================================================================== */
+
+/* 1. Prevent accidental horizontal scroll across all phone viewports */
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-text-size-adjust: 100%;
+  box-sizing: border-box;
+}
+
+/* 2. Responsive containers & media */
+img, svg, video, iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 3. Dynamic Phone Viewport Rules */
+@media (max-width: 768px) {
+  .container {
+    width: 100%;
+    min-height: 100dvh; /* Dynamic viewport height adjusts to browser address bar */
+    padding: 0;
+  }
+
+  /* Universal safe-area paddings for notch & bottom dock */
+  .content-body {
+    width: 100%;
+    padding: 12px 16px calc(90px + env(safe-area-inset-bottom, 20px)) !important;
+    box-sizing: border-box;
+  }
+
+  /* Responsive Grid/Flex Stacks */
+  .metrics,
+  .panayana-dashboard-grid,
+  .heritage-grid,
+  .profile-info-grid {
+    grid-template-columns: 1fr !important;
+    width: 100%;
+    gap: 12px;
+  }
+
+  /* Universal Cards */
+  .card, 
+  .banner-card, 
+  .about-hero-card {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Floating Bottom Dock Safe-Area Adjustment */
+  .bottom-dock {
+    left: 14px !important;
+    right: 14px !important;
+    bottom: calc(10px + env(safe-area-inset-bottom, 8px)) !important;
+    height: 56px;
+  }
+
+  /* Sheet Modals */
+  .modal-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .modal-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 20px 20px 0 0 !important;
+    max-height: 90dvh;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+}
+
+/* Extra Compact Phones (iPhone SE, Galaxy A series <= 380px) */
+@media (max-width: 380px) {
+  .header {
+    padding: 10px 12px !important;
+  }
+  
+  .header-title h1 {
+    font-size: 14px !important;
+  }
+
+  .nav-pill {
+    padding: 6px 10px !important;
+    font-size: 11px !important;
+  }
+
+  .content-body {
+    padding: 8px 12px 110px !important;
+  }
+}
