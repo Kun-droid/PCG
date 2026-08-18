@@ -1,179 +1,114 @@
-import { getCostumes, addCostume, updateCostume, checkoutCostume, returnCostume } from './db.js';
+import { getCostumes } from './db.js';
 
 let costumesData = [];
-const session = JSON.parse(localStorage.getItem('panayana_auth_user') || '{}');
-const isAdmin = session.isLoggedIn && session.role === 'admin';
-
 const costumesGrid = document.getElementById('costumesGrid');
 const searchInput = document.getElementById('costumeSearchInput');
-const totalCostumesCount = document.getElementById('totalCostumesCount');
-const availableCostumesCount = document.getElementById('availableCostumesCount');
-const borrowedCostumesCount = document.getElementById('borrowedCostumesCount');
+const totalCount = document.getElementById('totalCostumesCount');
+const availableCount = document.getElementById('availableCostumesCount');
+const borrowedCount = document.getElementById('borrowedCostumesCount');
 
-const addCostumeModal = document.getElementById('addCostumeModal');
-const openAddCostumeBtn = document.getElementById('openAddCostumeBtn');
-const closeAddCostumeBtn = document.getElementById('closeAddCostumeBtn');
-const cancelAddCostumeBtn = document.getElementById('cancelAddCostumeBtn');
-const costumeManageForm = document.getElementById('costumeManageForm');
-const addCostumeModalTitle = document.getElementById('addCostumeModalTitle');
-
-const qrScannerModal = document.getElementById('qrScannerModal');
-const openInventoryScannerBtn = document.getElementById('openInventoryScannerBtn');
-const closeQrScannerBtn = document.getElementById('closeQrScannerBtn');
-const simBorrowBtn = document.getElementById('simBorrowBtn');
-const simReturnBtn = document.getElementById('simReturnBtn');
-const scannerFeedback = document.getElementById('scannerFeedback');
-
-let activeEditId = null;
+// Modal Elements
+const modal = document.getElementById('costumeModal');
+const closeBtn = document.getElementById('modalCloseBtn');
+const closeAction = document.getElementById('modalCloseAction');
+const modalTitle = document.getElementById('modalCostumeTitle');
+const modalTotal = document.getElementById('modalTotalUnits');
+const modalAvailable = document.getElementById('modalAvailableUnits');
+const modalSuiteBadge = document.getElementById('modalCostumeSuite');
 
 async function loadCostumes() {
-    costumesData = await getCostumes();
-    renderCostumesGrid(searchInput ? searchInput.value : '');
+    try {
+        costumesData = (await getCostumes()) || [];
+    } catch (e) {
+        console.warn('Could not load costumes:', e);
+        costumesData = [];
+    }
+    renderGrid(searchInput ? searchInput.value : '');
 }
 
 function updateMetrics() {
     let total = 0;
     let available = 0;
-
     costumesData.forEach(c => {
         total += parseInt(c.quantity || 0);
         available += parseInt(c.available || 0);
     });
-
-    if (totalCostumesCount) totalCostumesCount.textContent = total;
-    if (availableCostumesCount) availableCostumesCount.textContent = available;
-    if (borrowedCostumesCount) borrowedCostumesCount.textContent = Math.max(0, total - available);
+    if (totalCount) totalCount.textContent = total;
+    if (availableCount) availableCount.textContent = available;
+    if (borrowedCount) borrowedCount.textContent = Math.max(0, total - available);
 }
 
-function renderCostumesGrid(filterText = '') {
+function renderGrid(filter = '') {
     if (!costumesGrid) return;
     costumesGrid.innerHTML = '';
 
-    const filtered = costumesData.filter(item => 
-        item.name.toLowerCase().includes(filterText.toLowerCase())
+    const cleanFilter = filter.trim().toLowerCase();
+    const filtered = costumesData.filter(c => 
+        (c.name || '').toLowerCase().includes(cleanFilter) ||
+        (c.suite || '').toLowerCase().includes(cleanFilter)
     );
 
     if (filtered.length === 0) {
         costumesGrid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align:center; padding: 30px; color: var(--text-muted);">
-                <i class="fa-solid fa-shirt" style="font-size:28px; margin-bottom:6px; display:block;"></i>
-                No matching costumes found.
-            </div>
-        `;
+            <div class="empty-vault-state">
+                <i class="fa-solid fa-shirt"></i>
+                <p>No matching costumes found in vault.</p>
+            </div>`;
         updateMetrics();
         return;
     }
 
-    filtered.forEach(item => {
+    filtered.forEach(c => {
+        const totalUnits = parseInt(c.quantity || 0);
+        const availUnits = parseInt(c.available || 0);
+        const isAvail = availUnits > 0;
+        
         const card = document.createElement('div');
         card.className = 'costume-card';
-        const isAvailable = item.available > 0;
-
         card.innerHTML = `
-            <div class="costume-card-info">
-                <div class="costume-icon-badge">
+            <div class="costume-card-top">
+                <div class="costume-avatar">
                     <i class="fa-solid fa-shirt"></i>
                 </div>
-                <h4>${item.name}</h4>
+                <span class="status-badge ${isAvail ? 'available' : 'reserved'}">
+                    ${isAvail ? `${availUnits} Available` : 'All In Use'}
+                </span>
             </div>
-
-            <div class="costume-card-qty-group">
-                <div class="costume-qty-badge">
-                    <span class="qty-number">${item.available} / ${item.quantity}</span>
-                    <span class="qty-status ${isAvailable ? 'available' : 'unavailable'}">
-                        ${isAvailable ? 'Available' : 'All in Use'}
-                    </span>
+            <div class="costume-card-content">
+                <h4>${c.name || 'Unnamed Attire'}</h4>
+                <div class="costume-meta-row">
+                    <span><i class="fa-solid fa-layer-group"></i> ${totalUnits} Total Units</span>
+                    ${c.suite ? `<span>&bull;</span> <span>${c.suite}</span>` : ''}
                 </div>
-                <button class="edit-costume-btn" data-id="${item.id}" title="Edit Costume">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                </button>
             </div>
         `;
 
-        card.querySelector('.edit-costume-btn').addEventListener('click', () => openEditModal(item));
+        card.addEventListener('click', () => {
+            if (modalTitle) modalTitle.textContent = c.name || 'Costume Details';
+            if (modalTotal) modalTotal.textContent = `${totalUnits} Total Units`;
+            if (modalAvailable) modalAvailable.textContent = `${availUnits} Available Now`;
+            if (modalSuiteBadge) modalSuiteBadge.textContent = c.suite || 'Troupe Vault';
+            if (modal) modal.classList.add('active');
+        });
+
         costumesGrid.appendChild(card);
     });
 
     updateMetrics();
 }
 
-function openEditModal(costume) {
-    activeEditId = costume.id;
-    addCostumeModalTitle.textContent = "Edit Costume";
-    document.getElementById('newCostumeName').value = costume.name;
-    document.getElementById('newCostumeQuantity').value = costume.quantity;
-    addCostumeModal.classList.add('active');
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => renderGrid(e.target.value));
 }
 
-if (openAddCostumeBtn) {
-    openAddCostumeBtn.addEventListener('click', () => {
-        activeEditId = null;
-        addCostumeModalTitle.textContent = "Add New Costume";
-        costumeManageForm.reset();
-        addCostumeModal.classList.add('active');
-    });
-}
-
-if (costumeManageForm) {
-    costumeManageForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('newCostumeName').value.trim();
-        const quantity = parseInt(document.getElementById('newCostumeQuantity').value);
-
-        if (activeEditId) {
-            await updateCostume(activeEditId, name, quantity);
-        } else {
-            await addCostume(name, quantity);
-        }
-
-        await loadCostumes();
-        addCostumeModal.classList.remove('active');
-    });
-}
-
-if (openInventoryScannerBtn && qrScannerModal) {
-    openInventoryScannerBtn.addEventListener('click', () => {
-        scannerFeedback.style.display = 'none';
-        qrScannerModal.classList.add('active');
-    });
-}
-
-if (simBorrowBtn) {
-    simBorrowBtn.addEventListener('click', async () => {
-        const item = costumesData[0];
-        if (item && item.available > 0) {
-            await checkoutCostume('2026-0012', 'Kirk Johnray', item.id, item.name, 'Attire Unit');
-            await loadCostumes();
-            scannerFeedback.style.display = 'block';
-            scannerFeedback.className = 'scanner-feedback-box success';
-            scannerFeedback.innerHTML = `<i class="fa-solid fa-check"></i> Issued 1x <b>${item.name}</b>`;
-        }
-    });
-}
-
-if (simReturnBtn) {
-    simReturnBtn.addEventListener('click', async () => {
-        const item = costumesData[0];
-        if (item) {
-            await returnCostume(null, item.id);
-            await loadCostumes();
-            scannerFeedback.style.display = 'block';
-            scannerFeedback.className = 'scanner-feedback-box success';
-            scannerFeedback.innerHTML = `<i class="fa-solid fa-rotate-left"></i> Returned 1x <b>${item.name}</b>`;
-        }
-    });
-}
-
-[closeAddCostumeBtn, cancelAddCostumeBtn].forEach(btn => {
-    if (btn) btn.addEventListener('click', () => addCostumeModal.classList.remove('active'));
+[closeBtn, closeAction].forEach(b => {
+    if (b) b.addEventListener('click', () => modal?.classList.remove('active'));
 });
 
-if (closeQrScannerBtn && qrScannerModal) {
-    closeQrScannerBtn.addEventListener('click', () => qrScannerModal.classList.remove('active'));
-}
-
-if (searchInput) {
-    searchInput.addEventListener('input', (e) => renderCostumesGrid(e.target.value));
+if (modal) {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('active');
+    });
 }
 
 loadCostumes();

@@ -3,28 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>About Us Editor — Panayana Admin</title>
+    <title>About Us — Panayana Admin</title>
     
+    <!-- Instant Pre-Render State Guard -->
     <script>
+        document.documentElement.classList.add('no-transition');
         if (localStorage.getItem('panayana_sidebar_collapsed') === 'true') {
             document.documentElement.classList.add('sidebar-is-collapsed');
         }
+        if (localStorage.getItem('panayana_dark_mode') === 'true') {
+            document.documentElement.classList.add('dark-theme');
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+            requestAnimationFrame(() => {
+                document.documentElement.classList.remove('no-transition');
+            });
+        });
     </script>
     
     <!-- Browser Favicon -->
-    <link rel="icon" href="../../assets/images/Panayana_logo.jpg" type="image/jpeg">
+    <link rel="icon" href="../../../assets/images/Panayana_logo.jpg" type="image/jpeg">
     
     <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- Core Stylesheets -->
-    <link rel="stylesheet" href="../../assets/css/style.css">
-    <link rel="stylesheet" href="../../assets/css/about-us.css">
-    <link rel="stylesheet" href="../../assets/css/admin-dash.css">
-    <link rel="stylesheet" href="../../assets/css/admin-about.css">
+    <link rel="stylesheet" href="../../../assets/css/style.css">
+    <link rel="stylesheet" href="../../../assets/css/about-us.css">
+    <link rel="stylesheet" href="../../../assets/css/officers.css">
+    <link rel="stylesheet" href="../../../assets/css/admin-about.css">
 </head>
 <body class="admin-view-body">
 
@@ -36,7 +46,10 @@
     <aside class="sidebar admin-sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="brand-logo-badge admin-badge-glow">
-                <img src="../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+                <img src="../../../assets/images/Panayana_logo.jpg" 
+                     alt="Panayana Cultural Group Logo" 
+                     class="brand-logo-img"
+                     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Panayana&background=70131d&color=ffffff&bold=true';">
             </div>
             <div class="brand-info">
                 <span class="brand-title">WVSU Panayana</span>
@@ -53,19 +66,19 @@
             <span class="nav-label">Operations Console</span>
             <a href="admin-dash.html" class="nav-item">
                 <i class="fa-solid fa-gauge-high nav-icon"></i>
-                <span class="nav-text">Dispatch & Logs</span>
-            </a>
-            <a href="costume-cat.html" class="nav-item">
-                <i class="fa-solid fa-shirt nav-icon"></i>
-                <span class="nav-text">Costume Catalog</span>
+                <span class="nav-text">Home</span>
             </a>
             <a href="schedule-master.html" class="nav-item">
                 <i class="fa-regular fa-calendar-days nav-icon"></i>
-                <span class="nav-text">Schedule Master</span>
+                <span class="nav-text">Schedules</span>
+            </a>
+            <a href="costume-cat.html" class="nav-item">
+                <i class="fa-solid fa-shirt nav-icon"></i>
+                <span class="nav-text">Costumes</span>
             </a>
             <a href="archive.html" class="nav-item">
                 <i class="fa-solid fa-music nav-icon"></i>
-                <span class="nav-text">Scores Archive</span>
+                <span class="nav-text">Archive</span>
             </a>
             <a href="page-edit.html" class="nav-item active">
                 <i class="fa-solid fa-circle-info nav-icon"></i>
@@ -90,22 +103,24 @@
          ===================================================== -->
     <main class="main-content">
         
-        <!-- Header -->
         <header class="header admin-header">
             <div class="header-brand-mobile">
                 <div class="brand-logo-badge mobile-only">
-                    <img src="../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+                    <img src="../../../assets/images/Panayana_logo.jpg" 
+                         alt="Panayana Cultural Group Logo" 
+                         class="brand-logo-img"
+                         onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Panayana&background=70131d&color=ffffff&bold=true';">
                 </div>
                 <div class="header-title">
                     <h1>About Us Editor</h1>
-                    <span>Manage Troupe Story, Former Advisers & Public Contacts</span>
+                    <span>Troupe Narratives, History & Leadership Directory</span>
                 </div>
             </div>
             
             <div class="user-profile-top">
                 <div class="profile-info desktop-only">
-                    <strong>Lead Custodian / Officer</strong><br>
-                    <span class="admin-live-badge"><span class="pulse-dot"></span> Content Control</span>
+                    <strong id="adminHeaderName">Lead Custodian / Officer</strong><br>
+                    <span class="admin-live-badge"><span class="pulse-dot"></span> System Live</span>
                 </div>
                 <button class="profile-icon" aria-label="Alerts">
                     <i class="fa-solid fa-shield-halved"></i>
@@ -115,9 +130,9 @@
 
         <!-- Admin Mobile Top Navigation Bar -->
         <nav class="pill-nav admin-pills mobile-only">
-            <a href="admin-dash.html" class="nav-pill"><i class="fa-solid fa-qrcode"></i> Dispatch</a>
-            <a href="costume-cat.html" class="nav-pill"><i class="fa-solid fa-shirt"></i> Catalog</a>
-            <a href="schedule-master.html" class="nav-pill"><i class="fa-regular fa-calendar-days"></i> Schedule</a>
+            <a href="admin-dash.html" class="nav-pill"><i class="fa-solid fa-qrcode"></i> Home</a>
+            <a href="schedule-master.html" class="nav-pill"><i class="fa-regular fa-calendar-days"></i> Schedules</a>
+            <a href="costume-cat.html" class="nav-pill"><i class="fa-solid fa-shirt"></i> Costumes</a>
             <a href="archive.html" class="nav-pill"><i class="fa-solid fa-music"></i> Archive</a>
             <a href="page-edit.html" class="nav-pill active"><i class="fa-solid fa-circle-info"></i> About</a>
             <a href="setting.html" class="nav-pill"><i class="fa-solid fa-gear"></i> Settings</a>
@@ -126,7 +141,7 @@
         <!-- Content Body -->
         <div class="content-body">
             
-            <!-- Quick Save Feedback Banner -->
+            <!-- Save Toast Banner -->
             <div id="saveFeedbackBanner" class="scan-status-alert" style="display: none; background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; margin-bottom: 18px;">
                 <i class="fa-solid fa-circle-check"></i>
                 <div>
@@ -151,28 +166,28 @@
                     <div class="form-grid-2">
                         <div class="form-group">
                             <label for="heroTagInput">Hero Subtitle / Tagline</label>
-                            <input type="text" id="heroTagInput" value="Official Cultural Performing Arts Arm" required>
+                            <input type="text" id="heroTagInput" required>
                         </div>
                         <div class="form-group">
                             <label for="heroTitleInput">Main Heading</label>
-                            <input type="text" id="heroTitleInput" value="West Visayas State University Panayana Cultural Group" required>
+                            <input type="text" id="heroTitleInput" required>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="heroDescInput">Hero Overview Paragraph</label>
-                        <textarea id="heroDescInput" rows="3" required>Preserving, promoting, and staging the rich cultural heritage of Western Visayas and the Philippines through world-class folk dancing, authentic indigenous instrumentation, and theatrical repertoires.</textarea>
+                        <textarea id="heroDescInput" rows="3" required></textarea>
                     </div>
 
                     <div class="form-grid-2">
                         <div class="form-group">
                             <label for="historyDescInput">Our History & Roots</label>
-                            <textarea id="historyDescInput" rows="5" required>Founded at West Visayas State University in Iloilo City, the Panayana Cultural Group has served as a beacon of artistic excellence and Philippine folkloric heritage. From traditional Panay Bukidnon epic chanting and dances to Spanish-influenced suites, Maria Clara court dances, and Cordillera rituals, the troupe brings the authentic stories of the archipelago to university, regional, and national stages.</textarea>
+                            <textarea id="historyDescInput" rows="5" required></textarea>
                         </div>
 
                         <div class="form-group">
                             <label for="missionDescInput">Mission & Vision</label>
-                            <textarea id="missionDescInput" rows="5" required>To cultivate disciplined student performers who embody the cultural soul of Ilonggo tradition and Philippine heritage. We champion cultural preservation by training young artists in accurate dance choreography, live rondalla musicianship, indigenous costume preservation, and dynamic stagecraft.</textarea>
+                            <textarea id="missionDescInput" rows="5" required></textarea>
                         </div>
                     </div>
 
@@ -186,7 +201,7 @@
 
             <!-- Section 2: Former Advisers & Directors Management -->
             <div class="card" style="padding: 24px; margin-bottom: 24px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: gap; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
                     <div class="section-title-combo">
                         <i class="fa-solid fa-user-graduate title-icon"></i>
                         <div>
@@ -218,38 +233,38 @@
                     <div class="form-grid-2">
                         <div class="form-group">
                             <label for="contactEmailInput">Official Email Address</label>
-                            <input type="email" id="contactEmailInput" value="panayana@wvsu.edu.ph" required>
+                            <input type="email" id="contactEmailInput" required>
                         </div>
                         <div class="form-group">
                             <label for="contactPhoneInput">Phone & Extension</label>
-                            <input type="text" id="contactPhoneInput" value="+63 (033) 320 0870 loc. 1145" required>
+                            <input type="text" id="contactPhoneInput" required>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="contactLocationInput">Campus Location</label>
-                        <input type="text" id="contactLocationInput" value="Cultural Center, WVSU Main Campus, Luna St., La Paz, Iloilo City" required>
+                        <input type="text" id="contactLocationInput" required>
                     </div>
 
                     <div class="form-grid-2">
                         <div class="form-group">
                             <label for="socialFbInput">Facebook Page URL</label>
-                            <input type="url" id="socialFbInput" value="https://facebook.com">
+                            <input type="url" id="socialFbInput">
                         </div>
                         <div class="form-group">
                             <label for="socialIgInput">Instagram Profile URL</label>
-                            <input type="url" id="socialIgInput" value="https://instagram.com">
+                            <input type="url" id="socialIgInput">
                         </div>
                     </div>
 
                     <div class="form-grid-2">
                         <div class="form-group">
                             <label for="socialYtInput">YouTube Channel URL</label>
-                            <input type="url" id="socialYtInput" value="https://youtube.com">
+                            <input type="url" id="socialYtInput">
                         </div>
                         <div class="form-group">
                             <label for="socialDriveInput">Google Drive Archive URL</label>
-                            <input type="url" id="socialDriveInput" value="https://drive.google.com">
+                            <input type="url" id="socialDriveInput">
                         </div>
                     </div>
 
@@ -267,8 +282,8 @@
     <!-- Admin Mobile Bottom Dock -->
     <nav class="bottom-dock admin-bottom-dock mobile-only">
         <a href="admin-dash.html" class="dock-item" aria-label="Dispatch"><i class="fa-solid fa-qrcode"></i></a>
-        <a href="costume-cat.html" class="dock-item" aria-label="Catalog"><i class="fa-solid fa-shirt"></i></a>
         <a href="schedule-master.html" class="dock-item" aria-label="Schedule"><i class="fa-regular fa-calendar-days"></i></a>
+        <a href="costume-cat.html" class="dock-item" aria-label="Catalog"><i class="fa-solid fa-shirt"></i></a>
         <a href="archive.html" class="dock-item" aria-label="Archive"><i class="fa-solid fa-music"></i></a>
         <a href="page-edit.html" class="dock-item active" aria-label="About"><i class="fa-solid fa-circle-info"></i></a>
         <a href="setting.html" class="dock-item" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
@@ -292,25 +307,53 @@
 
         <form id="adviserManageForm">
             <div class="modal-body">
+                <!-- Adviser Photo Upload & Preview -->
+                <div class="adviser-avatar-upload-row">
+                    <div class="adviser-avatar-preview">
+                        <img src="../../../assets/images/Panayana_logo.jpg" 
+                             alt="Adviser Preview" 
+                             id="adviserPhotoPreview"
+                             onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Adviser&background=e29532&color=ffffff&bold=true';">
+                    </div>
+                    <div class="adviser-avatar-actions">
+                        <input type="file" id="adviserPhotoInput" accept="image/*" style="display: none;">
+                        <button type="button" class="modal-btn secondary" id="uploadAdviserPhotoBtn">
+                            <i class="fa-solid fa-camera"></i> Upload Photo
+                        </button>
+                        <span class="upload-hint">Recommended square PNG or JPG format</span>
+                        <input type="hidden" id="adviserImageUrl">
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="adviserNameInput">Full Name & Title</label>
-                    <input type="text" id="adviserNameInput" placeholder="e.g. Prof. Corazon S. Solas" required>
+                    <input type="text" id="adviserNameInput" placeholder="e.g. Prof. Ronie Libutaque" required>
                 </div>
 
                 <div class="form-group">
                     <label for="adviserRoleInput">Designation / Troupe Role</label>
-                    <input type="text" id="adviserRoleInput" placeholder="e.g. Faculty Adviser & Artistic Founder" required>
+                    <input type="text" id="adviserRoleInput" placeholder="e.g. Adviser & Artistic Mentor" required>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="adviserTermInput">Tenure Term</label>
-                        <input type="text" id="adviserTermInput" placeholder="e.g. 1998 – 2008" required>
+                        <input type="text" id="adviserTermInput" placeholder="e.g. 2004 – 2026" required>
                     </div>
                     <div class="form-group">
-                        <label for="adviserTagInput">Specialization Award / Tag</label>
-                        <input type="text" id="adviserTagInput" placeholder="e.g. Folk Dance Pioneer" required>
+                        <label for="adviserTagInput">Education / Degree</label>
+                        <input type="text" id="adviserTagInput" placeholder="e.g. Master in Music" required>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="adviserBioInput">Tribute Biography & Impact</label>
+                    <textarea id="adviserBioInput" rows="3" placeholder="Spearheaded the musical direction and cultural repertoire of WVSU Panayana for over two decades..." style="width: 100%; border: 1px solid var(--border-light); border-radius: 10px; padding: 10px; font-family: inherit; font-size: 13px;"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="adviserQuoteInput">Legacy Quote / Motto</label>
+                    <input type="text" id="adviserQuoteInput" placeholder="e.g. Guiding generations of student-artists in cultural heritage...">
                 </div>
             </div>
 
@@ -322,7 +365,8 @@
     </div>
 </div>
 
-<script type="module" src="../../assets/js/sidebar.js"></script>
-<script type="module" src="../../assets/js/admin-about.js"></script>
+<script type="module" src="../../../assets/js/sidebar.js"></script>
+<script type="module" src="../../../assets/js/auth.js"></script>
+<script type="module" src="../../../assets/js/admin-about.js"></script>
 </body>
 </html>

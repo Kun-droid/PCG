@@ -135,127 +135,153 @@
   background: #eae9ee;
 }
 
-/* ==========================================================================
-   MODAL OVERLAY & POPUP HIDDEN STATE
-   ========================================================================== */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(14, 8, 10, 0.65);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.25s ease, visibility 0.25s ease;
-  padding: 20px;
-}
-
-.modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-.modal-card {
-  background: var(--bg-surface, #ffffff);
-  border-radius: 18px;
-  width: 100%;
-  max-width: 480px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--border-light, #e8e7ec);
-  overflow: hidden;
-  transform: scale(0.94) translateY(10px);
-  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
-}
-
-.modal-overlay.active .modal-card {
-  transform: scale(1) translateY(0);
-}
-
-.modal-header {
-  padding: 18px 22px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  border-bottom: 1px solid var(--border-light, #e8e7ec);
-}
-
-.modal-badge {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--sunset-gold, #e29532);
-  background: #fef6eb;
-  padding: 3px 8px;
-  border-radius: 12px;
-  display: inline-block;
-  margin-bottom: 4px;
-}
-
-.modal-header h3 {
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--text-dark, #1c1a24);
-  margin: 0;
-}
-
-.modal-close-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid var(--border-light, #e8e7ec);
-  background: var(--bg-canvas, #f6f5f8);
-  color: var(--text-dark, #1c1a24);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.2s ease;
-}
-
-.modal-close-btn:hover {
-  background: #eae9ee;
-}
-
-.modal-body {
-  padding: 20px 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.modal-footer {
-  padding: 14px 22px 18px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  border-top: 1px solid var(--border-light, #e8e7ec);
-}
-
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .form-row,
   .form-grid-2 {
     grid-template-columns: 1fr;
   }
+}
+/* ==========================================================================
+   ADVISER AVATAR UPLOAD & CARD STYLES
+   ========================================================================== */
 
-  .modal-overlay {
-    align-items: flex-end;
-    padding: 0;
-  }
+/* Modal Avatar Upload Block */
+.adviser-avatar-upload-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
 
-  .modal-card {
-    max-width: 100%;
-    border-radius: 24px 24px 0 0;
-    transform: translateY(100%);
-  }
+.adviser-avatar-preview {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--sunset-gold, #e29532);
+  flex-shrink: 0;
+  background: var(--bg-canvas, #f6f5f8);
+}
 
-  .modal-overlay.active .modal-card {
-    transform: translateY(0);
-  }
+.adviser-avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.adviser-avatar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.adviser-avatar-actions .upload-hint {
+  font-size: 11px;
+  color: var(--text-muted, #72707e);
+}
+
+/* Directory Grid Card Presentation */
+.adviser-id-card {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-light, #e8e7ec);
+  border-radius: var(--radius-md, 14px);
+  padding: 20px 16px 16px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.id-card-top-strip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-maroon, #70131d), var(--sunset-gold, #e29532));
+}
+
+.id-photo-frame {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--sunset-gold, #e29532);
+  position: relative;
+  background: var(--bg-canvas, #f6f5f8);
+}
+
+.id-photo-frame .adviser-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.id-photo-frame .id-role-chip {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: 700;
+  background: var(--primary-maroon, #70131d);
+  color: #ffffff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.adviser-card-details {
+  text-align: center;
+}
+
+.adviser-card-details h4 {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-dark, #1c1a24);
+  margin-bottom: 2px;
+}
+
+.adviser-card-details .id-title {
+  color: var(--sunset-gold, #e29532);
+  font-size: 12px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.adviser-card-details .id-badge-info {
+  font-size: 11.5px;
+  color: var(--text-muted, #72707e);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.adviser-card-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  border-top: 1px solid var(--border-light, #e8e7ec);
+  padding-top: 12px;
+  margin-top: 14px;
+}
+
+.adviser-btn-edit {
+  padding: 5px 12px;
+  font-size: 11.5px;
+}
+
+.adviser-btn-delete {
+  padding: 5px 12px;
+  font-size: 11.5px;
+  color: #b91c1c !important;
+  border-color: #f9d8dd !important;
+}
+
+.adviser-btn-delete:hover {
+  background: #fbebee !important;
 }

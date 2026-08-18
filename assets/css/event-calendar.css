@@ -1,5 +1,5 @@
 /* ==========================================================================
-   PANAYANA EVENT CALENDAR — READ-ONLY STYLES & YEAR PICKER
+   PANAYANA EVENT CALENDAR — STYLES & DESIGN SYNC
    ========================================================================== */
 
 .full-calendar-card {
@@ -40,24 +40,24 @@
 .cal-year-select-btn span {
   font-size: 20px;
   font-weight: 800;
-  color: var(--text-dark);
+  color: var(--text-dark, #1c1a24);
 }
 
 .year-dropdown-icon {
   font-size: 13px;
-  color: var(--text-muted);
+  color: var(--text-muted, #71717a);
   transition: transform 0.25s ease;
 }
 
 .cal-year-select-btn.active .year-dropdown-icon {
   transform: rotate(180deg);
-  color: var(--primary-maroon);
+  color: var(--primary-maroon, #70131d);
 }
 
 .cal-status-badge {
   font-size: 11px;
   font-weight: 700;
-  color: var(--primary-maroon);
+  color: var(--primary-maroon, #70131d);
   background: #fbebee;
   padding: 4px 10px;
   border-radius: 20px;
@@ -73,9 +73,9 @@
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  background: var(--bg-canvas);
-  border: 1px solid var(--border-light);
-  color: var(--text-dark);
+  background: var(--bg-canvas, #f3f2f5);
+  border: 1px solid var(--border-light, #e8e7ec);
+  color: var(--text-dark, #1c1a24);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -93,9 +93,9 @@
   font-size: 12px;
   font-weight: 700;
   border-radius: 8px;
-  background: var(--bg-canvas);
-  border: 1px solid var(--border-light);
-  color: var(--text-dark);
+  background: var(--bg-canvas, #f3f2f5);
+  border: 1px solid var(--border-light, #e8e7ec);
+  color: var(--text-dark, #1c1a24);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -110,11 +110,11 @@
   text-align: center;
   font-size: 12px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--text-muted, #71717a);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding-bottom: 12px;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light, #e8e7ec);
   margin-bottom: 12px;
 }
 
@@ -124,11 +124,13 @@
   gap: 10px;
 }
 
+/* Base Calendar Day Tile (Current Month Active) */
 .cal-cell {
-  min-height: 86px;
-  background: var(--bg-canvas);
+  min-height: 94px;
+  background: #ffffff;
+  border: 1px solid var(--border-light, #e8e7ec);
   border-radius: 12px;
-  padding: 8px 10px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -137,18 +139,22 @@
 }
 
 .cal-cell:hover {
-  background: #eae9ee;
+  border-color: rgba(112, 19, 29, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 .cal-cell .cell-num {
   font-size: 14px;
   font-weight: 700;
-  color: var(--text-dark);
+  color: var(--text-dark, #1c1a24);
 }
 
+/* Inactive Previous & Next Month Days */
 .cal-cell.inactive {
   background: transparent;
+  border: 1px solid transparent;
   cursor: default;
+  box-shadow: none;
 }
 
 .cal-cell.inactive .cell-num {
@@ -157,49 +163,63 @@
 }
 
 .cal-cell.inactive:hover {
+  border-color: transparent;
   background: transparent;
+  box-shadow: none;
 }
 
-/* Today Cell */
+/* Active "Today" Cell */
 .cal-cell.today {
-  background: var(--primary-maroon);
-  box-shadow: 0 4px 14px rgba(112, 19, 29, 0.25);
+  background: var(--primary-maroon, #70131d) !important;
+  border-color: var(--primary-maroon, #70131d) !important;
+  box-shadow: 0 6px 16px rgba(112, 19, 29, 0.35);
 }
 
 .cal-cell.today .cell-num {
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
-/* Calendar Event Badges */
+/* Side-by-Side Pill Tags (Title + Time) */
 .cal-tag {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 6px;
-  text-align: center;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.cal-tag strong {
+  font-weight: 800;
+}
+
+.cal-tag .tag-time {
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
 .cal-tag.maroon {
   background: #fbebee;
-  color: var(--primary-maroon);
+  color: var(--primary-maroon, #70131d);
 }
 
 .cal-tag.gold {
   background: #fef6eb;
-  color: var(--sunset-gold);
+  color: var(--sunset-gold, #b45309);
 }
 
 .cal-tag.white {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.22);
   color: #ffffff;
+  backdrop-filter: blur(4px);
 }
 
-/* ==========================================================================
-   YEAR PICKER GRID VIEW
-   ========================================================================== */
+/* Year Picker Grid View */
 .years-picker-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -211,10 +231,10 @@
   padding: 20px 12px;
   font-size: 15px;
   font-weight: 700;
-  background: var(--bg-canvas);
-  border: 1px solid var(--border-light);
+  background: var(--bg-canvas, #f3f2f5);
+  border: 1px solid var(--border-light, #e8e7ec);
   border-radius: 14px;
-  color: var(--text-dark);
+  color: var(--text-dark, #1c1a24);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -225,110 +245,20 @@
 }
 
 .year-pick-btn.active {
-  background: var(--primary-maroon);
+  background: var(--primary-maroon, #70131d);
   color: #ffffff;
-  border-color: var(--primary-maroon);
+  border-color: var(--primary-maroon, #70131d);
   box-shadow: 0 4px 12px rgba(112, 19, 29, 0.3);
 }
 
-/* ==========================================================================
-   READ-ONLY DETAILS MODAL
-   ========================================================================== */
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(14, 8, 10, 0.55);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.25s ease, visibility 0.25s ease;
-  padding: 20px;
-}
-
-.modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-.modal-card {
-  background: var(--bg-surface);
-  border-radius: var(--radius-lg);
-  width: 100%;
-  max-width: 440px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--border-light);
-  overflow: hidden;
-  transform: scale(0.94) translateY(10px);
-  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
-}
-
-.modal-overlay.active .modal-card {
-  transform: scale(1) translateY(0);
-}
-
-.modal-header {
-  padding: 20px 22px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  border-bottom: 1px solid var(--border-light);
-}
-
-.modal-badge {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--sunset-gold);
-  background: #fef6eb;
-  padding: 3px 8px;
-  border-radius: 12px;
-  display: inline-block;
-  margin-bottom: 4px;
-}
-
-.modal-header h3 {
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--text-dark);
-}
-
-.modal-close-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid var(--border-light);
-  background: var(--bg-canvas);
-  color: var(--text-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.2s ease;
-}
-
-.modal-close-btn:hover {
-  background: #eae9ee;
-}
-
-.modal-body {
-  padding: 20px 22px;
-}
-
+/* Modal Event Details */
 .event-detail-box {
   display: flex;
   gap: 14px;
   padding: 14px;
-  background: var(--bg-canvas);
+  background: var(--bg-canvas, #f3f2f5);
   border-radius: 14px;
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border-light, #e8e7ec);
 }
 
 .event-detail-icon {
@@ -336,7 +266,7 @@
   height: 40px;
   border-radius: 10px;
   background: #fbebee;
-  color: var(--primary-maroon);
+  color: var(--primary-maroon, #70131d);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -347,13 +277,13 @@
 .event-detail-text strong {
   display: block;
   font-size: 14px;
-  color: var(--text-dark);
+  color: var(--text-dark, #1c1a24);
   margin-bottom: 3px;
 }
 
 .event-detail-text p {
   font-size: 12px;
-  color: var(--text-muted);
+  color: var(--text-muted, #71717a);
   line-height: 1.4;
   margin-bottom: 8px;
 }
@@ -364,13 +294,13 @@
   gap: 6px;
   font-size: 11px;
   font-weight: 600;
-  color: var(--primary-maroon);
+  color: var(--primary-maroon, #70131d);
 }
 
 .no-event-state {
   text-align: center;
   padding: 20px 10px;
-  color: var(--text-muted);
+  color: var(--text-muted, #71717a);
 }
 
 .no-event-state i {
@@ -383,35 +313,7 @@
   font-size: 13px;
 }
 
-.modal-footer {
-  padding: 14px 22px 20px;
-  display: flex;
-  justify-content: flex-end;
-  border-top: 1px solid var(--border-light);
-}
-
-.modal-btn {
-  padding: 9px 18px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.modal-btn.secondary {
-  background: var(--bg-canvas);
-  border: 1px solid var(--border-light);
-  color: var(--text-dark);
-}
-
-.modal-btn.secondary:hover {
-  background: #eae9ee;
-}
-
-/* ==========================================================================
-   MOBILE RESPONSIVENESS (<= 768px)
-   ========================================================================== */
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
   .full-calendar-card {
     padding: 16px;
@@ -447,7 +349,7 @@
     width: 4px;
     height: 4px;
     border-radius: 50%;
-    background: var(--sunset-gold);
+    background: var(--sunset-gold, #b45309);
     position: absolute;
     bottom: 5px;
   }
@@ -461,19 +363,201 @@
     padding: 16px 8px;
     font-size: 14px;
   }
+}
 
-  .modal-overlay {
-    align-items: flex-end;
-    padding: 0;
-  }
+/* ==========================================================================
+   SCHEDULE MASTER MODAL & FORM STYLES
+   ========================================================================== */
 
-  .modal-card {
-    max-width: 100%;
-    border-radius: 24px 24px 0 0;
-    transform: translateY(100%);
-  }
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 26, 36, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  padding: 16px;
+}
 
-  .modal-overlay.active .modal-card {
-    transform: translateY(0);
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: #ffffff;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalPop {
+  from {
+    transform: scale(0.95) translateY(10px);
+    opacity: 0;
   }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  padding: 22px 24px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border-light, #e8e7ec);
+}
+
+.modal-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-badge {
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sunset-gold, #b45309);
+  background: #fef6eb;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.modal-header h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-dark, #1c1a24);
+  margin: 0;
+}
+
+.modal-close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #f3f2f5;
+  color: #71717a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: #e4e2e8;
+  color: var(--text-dark, #1c1a24);
+}
+
+.modal-body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-dark, #1c1a24);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-light, #e8e7ec);
+  background: #fdfdfd;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text-dark, #1c1a24);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--primary-maroon, #70131d);
+  box-shadow: 0 0 0 3px rgba(112, 19, 29, 0.1);
+  background: #ffffff;
+}
+
+.form-group select {
+  cursor: pointer;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  background: #faf9fb;
+  border-top: 1px solid var(--border-light, #e8e7ec);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.modal-btn.secondary {
+  background: #ffffff;
+  border: 1px solid var(--border-light, #e8e7ec);
+  color: var(--text-dark, #1c1a24);
+}
+
+.modal-btn.secondary:hover {
+  background: #f3f2f5;
+}
+
+.modal-btn.primary {
+  background: var(--primary-maroon, #70131d);
+  color: #ffffff;
+}
+
+.modal-btn.primary:hover {
+  background: #590f17;
+  box-shadow: 0 4px 12px rgba(112, 19, 29, 0.25);
 }

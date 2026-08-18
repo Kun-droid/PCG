@@ -3,39 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Scores Archive — WVSU Panayana Admin</title>
+    <title>Archive — WVSU Panayana Admin</title>
 
+    <!-- Instant Pre-Render State Guard -->
     <script>
+        document.documentElement.classList.add('no-transition');
         if (localStorage.getItem('panayana_sidebar_collapsed') === 'true') {
             document.documentElement.classList.add('sidebar-is-collapsed');
         }
+        if (localStorage.getItem('panayana_dark_mode') === 'true') {
+            document.documentElement.classList.add('dark-theme');
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+            requestAnimationFrame(() => {
+                document.documentElement.classList.remove('no-transition');
+            });
+        });
     </script>
     
     <!-- Browser Favicon -->
-    <link rel="icon" href="../../assets/images/Panayana_logo.jpg" type="image/jpeg">
+    <link rel="icon" href="../../../assets/images/Panayana_logo.jpg" type="image/jpeg">
     
     <!-- Google Fonts & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- Core Stylesheets -->
-    <link rel="stylesheet" href="../../assets/css/style.css">
-    <link rel="stylesheet" href="../../assets/css/repertoire.css">
-    <link rel="stylesheet" href="../../assets/css/admin-dash.css">
+    <link rel="stylesheet" href="../../../assets/css/style.css">
+    <link rel="stylesheet" href="../../../assets/css/repertoire.css">
+    <link rel="stylesheet" href="../../../assets/css/officers.css">
 </head>
 <body class="admin-view-body">
 
 <div class="container" id="appContainer">
 
     <!-- =====================================================
-         DESKTOP SAAS SIDEBAR
+         ADMIN-EXCLUSIVE SIDEBAR
          ===================================================== -->
     <aside class="sidebar admin-sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="brand-logo-badge admin-badge-glow">
-                <img src="../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+                <img src="../../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
             </div>
             <div class="brand-info">
                 <span class="brand-title">WVSU Panayana</span>
@@ -48,23 +58,24 @@
             </button>
         </div>
 
+        
         <div class="sidebar-nav">
             <span class="nav-label">Operations Console</span>
             <a href="admin-dash.html" class="nav-item">
                 <i class="fa-solid fa-gauge-high nav-icon"></i>
-                <span class="nav-text">Dispatch & Logs</span>
+                <span class="nav-text">Home</span>
+            </a>
+             <a href="schedule-master.html" class="nav-item">
+                <i class="fa-regular fa-calendar-days nav-icon"></i>
+                <span class="nav-text">Schedules</span>
             </a>
             <a href="costume-cat.html" class="nav-item">
                 <i class="fa-solid fa-shirt nav-icon"></i>
-                <span class="nav-text">Costume Catalog</span>
-            </a>
-            <a href="schedule-master.html" class="nav-item">
-                <i class="fa-regular fa-calendar-days nav-icon"></i>
-                <span class="nav-text">Schedule Master</span>
+                <span class="nav-text">Costumes</span>
             </a>
             <a href="archive.html" class="nav-item active">
                 <i class="fa-solid fa-music nav-icon"></i>
-                <span class="nav-text">Scores Archive</span>
+                <span class="nav-text">Archive</span>
             </a>
             <a href="page-edit.html" class="nav-item">
                 <i class="fa-solid fa-circle-info nav-icon"></i>
@@ -92,7 +103,7 @@
         <header class="header admin-header">
             <div class="header-brand-mobile">
                 <div class="brand-logo-badge mobile-only">
-                    <img src="../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
+                    <img src="../../../assets/images/Panayana_logo.jpg" alt="Panayana Cultural Group Logo" class="brand-logo-img">
                 </div>
                 <div class="header-title">
                     <h1>Scores Archive</h1>
@@ -100,23 +111,22 @@
                 </div>
             </div>
             
-           <!-- AFTER -->
-                <div class="user-profile-top">
-                    <div class="profile-info desktop-only">
-                        <strong>Lead Custodian / Officer</strong><br>
-                        <span class="admin-live-badge"><span class="pulse-dot"></span> System Live</span>
-                    </div>
-                    <button class="profile-icon" aria-label="Alerts">
-                        <i class="fa-solid fa-shield-halved"></i>
-                    </button>
+            <div class="user-profile-top">
+                <div class="profile-info desktop-only">
+                    <strong>Lead Custodian / Officer</strong><br>
+                    <span class="admin-live-badge"><span class="pulse-dot"></span> System Live</span>
                 </div>
+                <button class="profile-icon" aria-label="Alerts">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </button>
+            </div>
         </header>
 
         <!-- Admin Mobile Top Navigation Bar -->
         <nav class="pill-nav admin-pills mobile-only">
-            <a href="admin-dash.html" class="nav-pill"><i class="fa-solid fa-qrcode"></i> Dispatch</a>
-            <a href="costume-cat.html" class="nav-pill"><i class="fa-solid fa-shirt"></i> Catalog</a>
-            <a href="schedule-master.html" class="nav-pill"><i class="fa-regular fa-calendar-days"></i> Schedule</a>
+            <a href="admin-dash.html" class="nav-pill"><i class="fa-solid fa-qrcode"></i> Home</a>
+            <a href="schedule-master.html" class="nav-pill"><i class="fa-regular fa-calendar-days"></i> Schedules</a>
+            <a href="costume-cat.html" class="nav-pill"><i class="fa-solid fa-shirt"></i> Costume</a>
             <a href="archive.html" class="nav-pill active"><i class="fa-solid fa-music"></i> Archive</a>
             <a href="page-edit.html" class="nav-pill"><i class="fa-solid fa-circle-info"></i> About</a>
             <a href="setting.html" class="nav-pill"><i class="fa-solid fa-gear"></i> Settings</a>
@@ -139,61 +149,6 @@
                     <span>Open in Google Drive</span>
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </a>
-            </div>
-
-            <!-- Suite Category Folders Grid -->
-            <div class="drive-folders-grid">
-                <div class="folder-card" data-folder="singkil">
-                    <div class="folder-header">
-                        <div class="folder-icon maroon"><i class="fa-solid fa-fan"></i></div>
-                        <span class="folder-tag">Muslim Suite</span>
-                    </div>
-                    <h4>Singkil & Kulintang Pieces</h4>
-                    <p>Agong rhythms, Kulintang notation, and live staging track cuts.</p>
-                    <div class="folder-footer">
-                        <span><i class="fa-regular fa-file-audio"></i> 8 Audio Tracks</span>
-                        <a href="https://drive.google.com" target="_blank" class="folder-link"><i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </div>
-
-                <div class="folder-card" data-folder="maria-clara">
-                    <div class="folder-header">
-                        <div class="folder-icon gold"><i class="fa-solid fa-feather-pointed"></i></div>
-                        <span class="folder-tag">Maria Clara</span>
-                    </div>
-                    <h4>Spanish-Filipino Suites</h4>
-                    <p>Banduria 1 & 2 notation, Laud, Octavina, and Bajo de Uñas arrangements.</p>
-                    <div class="folder-footer">
-                        <span><i class="fa-regular fa-file-pdf"></i> 14 Sheet Scores</span>
-                        <a href="https://drive.google.com" target="_blank" class="folder-link"><i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </div>
-
-                <div class="folder-card" data-folder="cordillera">
-                    <div class="folder-header">
-                        <div class="folder-icon purple"><i class="fa-solid fa-mountain"></i></div>
-                        <span class="folder-tag">Cordillera</span>
-                    </div>
-                    <h4>Ganza & Highland Chants</h4>
-                    <p>Bendian patterns, Pattong ensemble tracks, and traditional rhythmic counts.</p>
-                    <div class="folder-footer">
-                        <span><i class="fa-regular fa-file-audio"></i> 6 Audio Files</span>
-                        <a href="https://drive.google.com" target="_blank" class="folder-link"><i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </div>
-
-                <div class="folder-card" data-folder="rural">
-                    <div class="folder-header">
-                        <div class="folder-icon maroon"><i class="fa-solid fa-guitar"></i></div>
-                        <span class="folder-tag">Rural / Barrio</span>
-                    </div>
-                    <h4>Tinikling & Fiesta Songs</h4>
-                    <p>Fast tempo rondalla chords, bamboo count click tracks, and festival suites.</p>
-                    <div class="folder-footer">
-                        <span><i class="fa-regular fa-file-lines"></i> 10 Resources</span>
-                        <a href="https://drive.google.com" target="_blank" class="folder-link"><i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </div>
             </div>
 
             <!-- Embedded Google Drive Frame -->
@@ -233,15 +188,16 @@
     <!-- Admin Mobile Bottom Dock -->
     <nav class="bottom-dock admin-bottom-dock mobile-only">
         <a href="admin-dash.html" class="dock-item" aria-label="Dispatch"><i class="fa-solid fa-qrcode"></i></a>
-        <a href="costume-cat.html" class="dock-item" aria-label="Catalog"><i class="fa-solid fa-shirt"></i></a>
         <a href="schedule-master.html" class="dock-item" aria-label="Schedule"><i class="fa-regular fa-calendar-days"></i></a>
+        <a href="costume-cat.html" class="dock-item" aria-label="Catalog"><i class="fa-solid fa-shirt"></i></a>
         <a href="archive.html" class="dock-item active" aria-label="Archive"><i class="fa-solid fa-music"></i></a>
         <a href="page-edit.html" class="dock-item" aria-label="About"><i class="fa-solid fa-circle-info"></i></a>
         <a href="setting.html" class="dock-item" aria-label="Settings"><i class="fa-solid fa-gear"></i></a>
     </nav>
 </div>
 
-<script type="module" src="../../assets/js/sidebar.js"></script>
-<script type="module" src="../../assets/js/repertoire.js"></script>
+<script type="module" src="../../../assets/js/sidebar.js"></script>
+<script type="module" src="../../../assets/js/repertoire.js"></script>
+<script type="module" src="../../../assets/js/auth.js"></script>
 </body>
 </html>

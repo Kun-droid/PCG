@@ -389,3 +389,150 @@
   }
 }
 
+/* ==========================================================================
+   PANAYANA COSTUME INVENTORY GRID & CARD STYLES
+   ========================================================================== */
+
+/* Search & Toolbar Header */
+.costume-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-input-wrapper i {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted, #828292);
+  font-size: 14px;
+}
+
+.costume-search-field {
+  width: 100%;
+  height: 42px;
+  padding: 0 14px 0 40px;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-light, #e8e7ec);
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--text-dark, #1e1e24);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.costume-search-field:focus {
+  border-color: var(--primary-maroon, #70131d);
+  box-shadow: 0 0 0 3px rgba(112, 19, 29, 0.08);
+}
+
+/* Costumes 3-Column Responsive Grid */
+.costumes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+/* Individual Costume Card Tile */
+.costume-card {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-light, #e8e7ec);
+  border-radius: var(--radius-md, 14px);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  cursor: pointer;
+  box-shadow: var(--neumorphic-light, 0 4px 14px rgba(0, 0, 0, 0.04));
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.costume-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(112, 19, 29, 0.25);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.costume-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.costume-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #fbebee;
+  color: var(--primary-maroon, #70131d);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.costume-card-content h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark, #1e1e24);
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.costume-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted, #828292);
+}
+
+/* Availability Status Badges */
+.status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.status-badge.available {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.status-badge.reserved {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* Empty Vault State */
+.empty-vault-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--text-muted, #828292);
+}
+
+.empty-vault-state i {
+  font-size: 36px;
+  margin-bottom: 10px;
+  color: #c4c3cb;
+}
+
+.empty-vault-state p {
+  font-size: 13px;
+  margin: 0;
+}
