@@ -1,13 +1,23 @@
 // ==========================================================================
-// VERCEL SERVERLESS ICALENDAR SUBSCRIBER ENDPOINT
+// PANAYANA ICALENDAR FEED & EXPORT CONTROLLER
 // Serves live .ics feed for Apple Calendar, Google Calendar & Outlook
 // ==========================================================================
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-// Initialize Supabase client using environment variables
-const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+// 1. Safe Environment Extraction (Never throws ReferenceError if process is undefined)
+const getEnvVar = (key) => {
+    if (typeof process !== 'undefined' && process && process.env) {
+        return process.env[key] || process.env[`VITE_${key}`] || null;
+    }
+    if (typeof window !== 'undefined' && window.__ENV__) {
+        return window.__ENV__[key] || null;
+    }
+    return null;
+};
+
+const supabaseUrl = getEnvVar('SUPABASE_URL');
+const supabaseKey = getEnvVar('SUPABASE_ANON_KEY');
 
 function parseIcsDateRange(dateStr, timeStr) {
     const cleanDate = (dateStr || '').replace(/-/g, '');
@@ -39,16 +49,20 @@ function parseIcsDateRange(dateStr, timeStr) {
     };
 }
 
-export default async function handler(req, res) {
+export async function generateIcsString() {
     let schedulesData = {};
 
     if (supabaseUrl && supabaseKey) {
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        const { data } = await supabase.from('schedules').select('*');
-        if (data && Array.isArray(data)) {
-            data.forEach(item => {
-                schedulesData[item.date || item.id] = item;
-            });
+        try {
+            const supabase = createClient(supabaseUrl, supabaseKey);
+            const { data, error } = await supabase.from('schedules').select('*');
+            if (!error && data && Array.isArray(data)) {
+                data.forEach(item => {
+                    schedulesData[item.date || item.id] = item;
+                });
+            }
+        } catch (err) {
+            console.warn('Supabase fetch fallback:', err);
         }
     }
 
@@ -80,7 +94,7 @@ export default async function handler(req, res) {
         ].join("\r\n");
     });
 
-    const icsContent = [
+    return [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
         "PRODID:-//WVSU Panayana Cultural Group//EN",
@@ -91,14 +105,25 @@ export default async function handler(req, res) {
         vEvents.join("\r\n"),
         "END:VCALENDAR"
     ].join("\r\n");
+}
 
-    // Security & Direct HTTPS Headers for iOS / Google Calendar
-    res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
-    res.setHeader('Content-Disposition', 'inline; filename="panayana_events.ics"');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
-    res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=300, stale-while-revalidate=600');
+export default async function handler(req, res) {
+    const icsContent = await generateIcsString();
 
-    res.status(200).send(icsContent);
+    // If executed as a Serverless API endpoint with response stream
+    if (res && typeof res.setHeader === 'function') {
+        res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+        res.setHeader('Content-Disposition', 'inline; filename="panayana_events.ics"');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+        res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+        res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=300, stale-while-revalidate=600');
+
+        if (typeof res.status === 'function') {
+            return res.status(200).send(icsContent);
+        }
+        return res.end(icsContent);
+    }
+
+    return icsContent;
 }
