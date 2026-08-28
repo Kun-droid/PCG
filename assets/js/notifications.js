@@ -92,8 +92,13 @@ export default async function handler(req, res) {
         "END:VCALENDAR"
     ].join("\r\n");
 
+    // Security & Direct HTTPS Headers for iOS / Google Calendar
     res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
     res.setHeader('Content-Disposition', 'inline; filename="panayana_events.ics"');
-    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+    res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=300, stale-while-revalidate=600');
+
     res.status(200).send(icsContent);
 }
