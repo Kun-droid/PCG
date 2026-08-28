@@ -1,333 +1,237 @@
-// ==========================================================================
-// PANAYANA MEMBER CALENDAR CONTROLLER & PHONE SYNC ENGINE
-// ==========================================================================
+import { supabase } from './supabaseClient.js';
 
-import { getSchedules } from './db.js';
-
-let eventsData = {};
-const today = new Date();
-let currentNavDate = new Date();
-let isYearPickerOpen = false;
-
-const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-];
-
-// DOM Elements
-const monthYearLabel = document.getElementById('currentMonthYear');
-const badgeLabel = document.getElementById('calendarBadge');
-const daysGrid = document.getElementById('calendarDaysGrid');
-const weekdaysHeader = document.getElementById('calendarWeekdays');
-const yearsPickerGrid = document.getElementById('yearsPickerGrid');
-const yearSelectorBtn = document.getElementById('yearSelectorBtn');
-
-const prevBtn = document.getElementById('prevMonthBtn');
-const nextBtn = document.getElementById('nextMonthBtn');
-const todayBtn = document.getElementById('todayBtn');
-const subscribeBtn = document.getElementById('subscribePhoneCalendarBtn');
-
-// Modal Elements
-const modal = document.getElementById('eventModal');
-const closeBtn = document.getElementById('modalCloseBtn');
-const closeAction = document.getElementById('modalCloseAction');
-const modalDateTitle = document.getElementById('modalDateTitle');
-const eventBox = document.getElementById('eventDetailBox');
-const noEventBox = document.getElementById('noEventState');
-const eventTitle = document.getElementById('modalEventTitle');
-const eventDesc = document.getElementById('modalEventDesc');
-const eventTime = document.getElementById('modalEventTime');
-
-export async function initCalendar() {
-    try {
-        eventsData = (await getSchedules()) || {};
-    } catch (e) {
-        console.warn('Could not load schedules:', e);
-        eventsData = {};
-    }
-    renderCalendar();
-}
-
-function renderCalendar() {
-    const year = currentNavDate.getFullYear();
-    const month = currentNavDate.getMonth();
-
-    if (monthYearLabel) monthYearLabel.textContent = `${monthNames[month]} ${year}`;
-
-    const isCurrentMonth = (year === today.getFullYear() && month === today.getMonth());
-    if (badgeLabel) {
-        badgeLabel.textContent = isCurrentMonth ? "Current Month" : `${year}`;
-    }
-
-    if (!daysGrid) return;
-    daysGrid.innerHTML = '';
-
-    const firstDayIndex = new Date(year, month, 1).getDay();
-    const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
-    const prevMonthTotalDays = new Date(year, month, 0).getDate();
-
-    // Previous Month Inactive Slots
-    for (let i = firstDayIndex; i > 0; i--) {
-        const dayNum = prevMonthTotalDays - i + 1;
-        const cell = document.createElement('div');
-        cell.className = 'cal-cell inactive';
-        cell.innerHTML = `<span class="cell-num">${dayNum}</span>`;
-        daysGrid.appendChild(cell);
-    }
-
-    // Current Month Active Days
-    for (let day = 1; day <= totalDaysInMonth; day++) {
-        const cell = document.createElement('div');
-        cell.className = 'cal-cell';
-
-        const formattedMonth = String(month + 1).padStart(2, '0');
-        const formattedDay = String(day).padStart(2, '0');
-        const dateKey = `${year}-${formattedMonth}-${formattedDay}`;
-
-        const isToday = (isCurrentMonth && day === today.getDate());
-        if (isToday) cell.classList.add('today');
-
-        const event = eventsData ? eventsData[dateKey] : null;
-        let tagHTML = '';
-
-        if (event) {
-            cell.classList.add('has-event');
-            const tagColor = isToday ? 'white' : (event.tag || 'maroon');
-            const timeSnippet = event.time ? `<span class="tag-time">${event.time}</span>` : '';
-            tagHTML = `<span class="cal-tag ${tagColor}"><strong>${event.title}</strong> ${timeSnippet}</span>`;
-        } else if (isToday) {
-            tagHTML = `<span class="cal-tag white">Today</span>`;
-        }
-
-        cell.innerHTML = `
-            <span class="cell-num">${day}</span>
-            ${tagHTML}
-        `;
-
-        cell.addEventListener('click', () => openModal(dateKey, `${monthNames[month]} ${day}, ${year}`));
-        daysGrid.appendChild(cell);
-    }
-
-    // Next Month Inactive Slots
-    const totalRenderedSlots = firstDayIndex + totalDaysInMonth;
-    const remainingSlots = (totalRenderedSlots % 7 === 0) ? 0 : (7 - (totalRenderedSlots % 7));
-
-    for (let nextDay = 1; nextDay <= remainingSlots; nextDay++) {
-        const cell = document.createElement('div');
-        cell.className = 'cal-cell inactive';
-        cell.innerHTML = `<span class="cell-num">${nextDay}</span>`;
-        daysGrid.appendChild(cell);
-    }
-}
-
-function toggleYearPicker() {
-    isYearPickerOpen = !isYearPickerOpen;
-    if (isYearPickerOpen) {
-        renderYearPicker();
-        if (weekdaysHeader) weekdaysHeader.style.display = 'none';
-        if (daysGrid) daysGrid.style.display = 'none';
-        if (yearsPickerGrid) yearsPickerGrid.style.display = 'grid';
-        if (yearSelectorBtn) yearSelectorBtn.classList.add('active');
-    } else {
-        closeYearPicker();
-    }
-}
-
-function closeYearPicker() {
-    isYearPickerOpen = false;
-    if (weekdaysHeader) weekdaysHeader.style.display = 'grid';
-    if (daysGrid) daysGrid.style.display = 'grid';
-    if (yearsPickerGrid) yearsPickerGrid.style.display = 'none';
-    if (yearSelectorBtn) yearSelectorBtn.classList.remove('active');
-    renderCalendar();
-}
-
-function renderYearPicker() {
-    if (!yearsPickerGrid) return;
-    yearsPickerGrid.innerHTML = '';
-    const currentYear = currentNavDate.getFullYear();
-    for (let yr = currentYear - 6; yr <= currentYear + 5; yr++) {
-        const yearCard = document.createElement('button');
-        yearCard.type = 'button';
-        yearCard.className = `year-pick-btn ${yr === currentYear ? 'active' : ''}`;
-        yearCard.textContent = yr;
-        yearCard.addEventListener('click', () => {
-            currentNavDate.setFullYear(yr);
-            closeYearPicker();
-        });
-        yearsPickerGrid.appendChild(yearCard);
-    }
-}
-
-function openModal(dateKey, readableDate) {
-    if (modalDateTitle) modalDateTitle.textContent = readableDate;
-    const event = eventsData ? eventsData[dateKey] : null;
-
-    if (event) {
-        if (eventTitle) eventTitle.textContent = event.title;
-        if (eventDesc) eventDesc.textContent = event.desc || 'No additional rehearsal notes.';
-        if (eventTime) eventTime.textContent = event.time || 'Schedule TBA';
-        if (eventBox) eventBox.style.display = 'flex';
-        if (noEventBox) noEventBox.style.display = 'none';
-    } else {
-        if (eventBox) eventBox.style.display = 'none';
-        if (noEventBox) noEventBox.style.display = 'block';
-    }
-
-    if (modal) modal.classList.add('active');
-}
-
-function closeModal() {
-    if (modal) modal.classList.remove('active');
-}
-
-// ==========================================================================
-// 4. CLIENT-SIDE CROSS-PLATFORM CALENDAR EXPORT (NO NODE/SERVER ERRORS)
 // ==========================================
-function parseIcsDateRange(dateStr, timeStr) {
-    const cleanDate = (dateStr || '').replace(/-/g, '');
-    let startHour = "16", startMin = "00";
-    let endHour = "19", endMin = "00";
+// 1. PROFILES & MEMBERS
+// ==========================================
+export async function getTotalMembersCount() {
+    const { count, error } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+    
+    if (error) {
+        console.error('Error fetching member count:', error);
+        return 0;
+    }
+    return count || 0;
+}
 
-    if (timeStr && timeStr.includes('–')) {
-        const [startPart, endPart] = timeStr.split('–').map(s => s.trim());
-        const parseTime = (t) => {
-            const match = t.match(/(\d+):?(\d+)?\s*(AM|PM)?/i);
-            if (!match) return { h: "16", m: "00" };
-            let h = parseInt(match[1], 10);
-            let m = match[2] || "00";
-            const ampm = (match[3] || '').toUpperCase();
-            if (ampm === 'PM' && h < 12) h += 12;
-            if (ampm === 'AM' && h === 12) h = 0;
-            return { h: String(h).padStart(2, '0'), m: String(m).padStart(2, '0') };
+// ==========================================
+// 2. COSTUME INVENTORY
+// ==========================================
+export async function getCostumes() {
+    const { data, error } = await supabase
+        .from('costumes')
+        .select('*')
+        .order('name', { ascending: true });
+    if (error) console.error('Error fetching costumes:', error);
+    return data || [];
+}
+
+export async function addCostume(name, quantity) {
+    const { data, error } = await supabase
+        .from('costumes')
+        .insert([{ name, quantity, available: quantity }])
+        .select();
+    if (error) console.error('Error adding costume:', error);
+    return { data, error };
+}
+
+export async function updateCostume(id, name, quantity) {
+    const { data, error } = await supabase
+        .from('costumes')
+        .update({ name, quantity })
+        .eq('id', id)
+        .select();
+    if (error) console.error('Error updating costume:', error);
+    return { data, error };
+}
+
+// ==========================================
+// 3. CIRCULATION & LOANS
+// ==========================================
+export async function getActiveLoans() {
+    const { data, error } = await supabase
+        .from('loans')
+        .select('*')
+        .eq('returned', false)
+        .order('created_at', { ascending: false });
+    if (error) console.error('Error fetching loans:', error);
+    return data || [];
+}
+
+export async function checkActiveLoanByStudentId(studentId) {
+    const { data, error } = await supabase
+        .from('loans')
+        .select('*')
+        .eq('student_id', studentId.trim())
+        .eq('returned', false)
+        .maybeSingle();
+    if (error) console.error('Error checking loan:', error);
+    return data;
+}
+
+export async function checkoutCostume(studentId, borrowerName, costumeId, costumeName, suite) {
+    const { data, error } = await supabase
+        .from('loans')
+        .insert([{
+            student_id: studentId,
+            borrower_name: borrowerName,
+            costume_id: costumeId,
+            costume_name: costumeName,
+            suite: suite,
+            issued_date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        }])
+        .select();
+
+    if (!error && costumeId) {
+        const { data: c } = await supabase.from('costumes').select('available').eq('id', costumeId).single();
+        if (c && c.available > 0) {
+            await supabase.from('costumes').update({ available: c.available - 1 }).eq('id', costumeId);
+        }
+    }
+    return { data, error };
+}
+
+export async function returnCostume(loanId, costumeId) {
+    const { data, error } = await supabase
+        .from('loans')
+        .update({ returned: true, returned_at: new Date().toISOString() })
+        .eq('id', loanId)
+        .select();
+
+    if (!error && costumeId) {
+        const { data: c } = await supabase.from('costumes').select('available, quantity').eq('id', costumeId).single();
+        if (c && c.available < c.quantity) {
+            await supabase.from('costumes').update({ available: c.available + 1 }).eq('id', costumeId);
+        }
+    }
+    return { data, error };
+}
+
+// ==========================================
+// 4. SCHEDULE MASTER & CALENDAR
+// ==========================================
+export async function getSchedules() {
+    const { data, error } = await supabase
+        .from('schedules')
+        .select('*')
+        .order('event_date', { ascending: true });
+    if (error) console.error('Error loading schedules:', error);
+    
+    const scheduleMap = {};
+    (data || []).forEach(item => {
+        scheduleMap[item.event_date] = {
+            id: item.id,
+            title: item.title,
+            time: item.time_window,
+            tag: item.tag,
+            desc: item.location_details
         };
+    });
+    return scheduleMap;
+}
 
-        const parsedStart = parseTime(startPart);
-        const parsedEnd = parseTime(endPart);
-        startHour = parsedStart.h; startMin = parsedStart.m;
-        endHour = parsedEnd.h; endMin = parsedEnd.m;
-    }
+export async function saveSchedule(eventDate, title, timeWindow, tag, locationDetails) {
+    const { data, error } = await supabase
+        .from('schedules')
+        .upsert([{
+            event_date: eventDate,
+            title,
+            time_window: timeWindow,
+            tag,
+            location_details: locationDetails
+        }], { onConflict: 'event_date' })
+        .select();
+    return { data, error };
+}
 
-    return {
-        dtStart: `${cleanDate}T${startHour}${startMin}00`,
-        dtEnd: `${cleanDate}T${endHour}${endMin}00`
+export async function deleteSchedule(eventDate) {
+    const { data, error } = await supabase
+        .from('schedules')
+        .delete()
+        .eq('event_date', eventDate);
+    return { data, error };
+}
+
+// ==========================================
+// 5. ABOUT US CONTENT & ADVISERS
+// ==========================================
+export async function getAboutContent() {
+    const { data, error } = await supabase.from('site_content').select('*');
+    if (error) console.error('Error fetching site_content:', error);
+    const content = {};
+    (data || []).forEach(row => {
+        content[row.key] = row.data;
+    });
+    return content;
+}
+
+export async function saveAboutContent(key, dataObj) {
+    const { data, error } = await supabase
+        .from('site_content')
+        .upsert([{ key, data: dataObj, updated_at: new Date().toISOString() }], { onConflict: 'key' })
+        .select();
+    if (error) console.error('Error saving site_content:', error);
+    return { data, error };
+}
+
+export async function getAdvisers() {
+    const { data, error } = await supabase
+        .from('advisers')
+        .select('*')
+        .order('created_at', { ascending: true });
+    if (error) console.error('Error fetching advisers:', error);
+    return data || [];
+}
+
+export async function addAdviser(name, role, term, tag, image_url = null, bio = '', quote = '') {
+    const payload = {
+        name,
+        role: role || 'Adviser',
+        designation: role || 'Adviser & Artistic Mentor',
+        term: term || '2004–2026',
+        education: tag || 'Master in Music',
+        tag: tag || 'Master in Music',
+        image_url: image_url || '../../../assets/images/libutaque.jpg',
+        bio: bio || '',
+        quote: quote || ''
     };
+
+    const { data, error } = await supabase
+        .from('advisers')
+        .insert([payload])
+        .select();
+    if (error) console.error('Error adding adviser:', error);
+    return { data, error };
 }
 
-async function handleAutoCalendarSync() {
-    const dateKeys = Object.keys(eventsData || {});
-    if (dateKeys.length === 0) {
-        alert("No scheduled rehearsals or events found to sync.");
-        return;
-    }
+export async function updateAdviser(id, name, role, term, tag, image_url = null, bio = '', quote = '') {
+    const payload = {
+        name,
+        role: role || 'Adviser',
+        designation: role || 'Adviser & Artistic Mentor',
+        term: term || '2004–2026',
+        education: tag || 'Master in Music',
+        tag: tag || 'Master in Music',
+        image_url: image_url || '../../../assets/images/libutaque.jpg',
+        bio: bio || '',
+        quote: quote || ''
+    };
 
-    const vEvents = dateKeys.map(dateKey => {
-        const ev = eventsData[dateKey];
-        const { dtStart, dtEnd } = parseIcsDateRange(dateKey, ev.time || '');
-        const cleanSummary = (ev.title || 'WVSU Panayana Rehearsal').replace(/,/g, '\\,');
-        const cleanDesc = (ev.desc || 'Troupe Call').replace(/,/g, '\\,');
-        const cleanLoc = cleanDesc.includes('Auditorium') ? cleanDesc : 'WVSU Cultural Center / Stage';
-
-        return [
-            "BEGIN:VEVENT",
-            `UID:panayana-${dateKey.replace(/-/g, '')}@wvsu.edu.ph`,
-            `DTSTAMP:${dateKey.replace(/-/g, '')}T000000Z`,
-            `DTSTART;TZID=Asia/Manila:${dtStart}`,
-            `DTEND;TZID=Asia/Manila:${dtEnd}`,
-            `SUMMARY:WVSU Panayana: ${cleanSummary}`,
-            `DESCRIPTION:${cleanDesc} | Time: ${ev.time || 'TBA'}`,
-            `LOCATION:${cleanLoc}`,
-            "STATUS:CONFIRMED",
-            "BEGIN:VALARM",
-            "TRIGGER:-PT1H", // Device alarm 1 hour before event
-            "ACTION:DISPLAY",
-            "DESCRIPTION:Panayana Rehearsal Call Reminder",
-            "END:VALARM",
-            "END:VEVENT"
-        ].join("\r\n");
-    });
-
-    const icsContent = [
-        "BEGIN:VCALENDAR",
-        "VERSION:2.0",
-        "PRODID:-//WVSU Panayana Cultural Group//EN",
-        "CALSCALE:GREGORIAN",
-        "METHOD:PUBLISH",
-        "X-WR-CALNAME:WVSU Panayana Troupe Calendar",
-        "X-WR-TIMEZONE:Asia/Manila",
-        vEvents.join("\r\n"),
-        "END:VCALENDAR"
-    ].join("\r\n");
-
-    // Create a data blob URL that iOS Safari & Android open directly
-    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-    const fileUrl = window.URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = fileUrl;
-    a.download = 'WVSU_Panayana_Schedule.ics';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => window.URL.revokeObjectURL(fileUrl), 2000);
+    const { data, error } = await supabase
+        .from('advisers')
+        .update(payload)
+        .eq('id', id)
+        .select();
+    if (error) console.error('Error updating adviser:', error);
+    return { data, error };
 }
 
-if (subscribeBtn) {
-    subscribeBtn.addEventListener('click', handleAutoCalendarSync);
-}
-
-if (yearSelectorBtn) yearSelectorBtn.addEventListener('click', toggleYearPicker);
-
-if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-        if (isYearPickerOpen) {
-            currentNavDate.setFullYear(currentNavDate.getFullYear() - 12);
-            renderYearPicker();
-        } else {
-            currentNavDate.setMonth(currentNavDate.getMonth() - 1);
-            renderCalendar();
-        }
-    });
-}
-
-if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-        if (isYearPickerOpen) {
-            currentNavDate.setFullYear(currentNavDate.getFullYear() + 12);
-            renderYearPicker();
-        } else {
-            currentNavDate.setMonth(currentNavDate.getMonth() + 1);
-            renderCalendar();
-        }
-    });
-}
-
-if (todayBtn) {
-    todayBtn.addEventListener('click', () => {
-        currentNavDate = new Date();
-        if (isYearPickerOpen) closeYearPicker();
-        else renderCalendar();
-    });
-}
-
-[closeBtn, closeAction].forEach(btn => {
-    btn?.addEventListener('click', closeModal);
-});
-
-if (modal) {
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
-    });
-}
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal?.classList.contains('active')) {
-        closeModal();
-    }
-});
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCalendar);
-} else {
-    initCalendar();
+export async function deleteAdviser(id) {
+    const { data, error } = await supabase
+        .from('advisers')
+        .delete()
+        .eq('id', id);
+    if (error) console.error('Error deleting adviser:', error);
+    return { data, error };
 }
