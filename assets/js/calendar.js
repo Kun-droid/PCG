@@ -182,12 +182,12 @@ function closeModal() {
 }
 
 // ==========================================================================
-// 4. CLIENT-SIDE CALENDAR SYNC ENGINE
+// 4. CLIENT-SIDE CALENDAR SYNC ENGINE (PHILIPPINES UTC+8 COMPATIBLE)
 // ==========================================================================
-function parseIcsTime(dateStr, timeStr) {
-    const cleanDate = (dateStr || '').replace(/-/g, '');
-    let startHour = 16, startMin = 0;
-    let endHour = 19, endMin = 0;
+function parseIcsPstToUtc(dateStr, timeStr) {
+    const [year, month, day] = (dateStr || '').split('-').map(Number);
+    let startH = 16, startM = 0;
+    let endH = 19, endM = 0;
 
     if (timeStr) {
         const parts = timeStr.split(/[-–—]|to/i).map(s => s.trim());
@@ -195,36 +195,41 @@ function parseIcsTime(dateStr, timeStr) {
             const match = t.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
             if (!match) return null;
             let h = parseInt(match[1], 10);
-            let m = match[2] ? parseInt(match[2], 10) : 0;
+            let min = match[2] ? parseInt(match[2], 10) : 0;
             const ampm = (match[3] || '').toUpperCase();
 
             if (ampm === 'PM' && h < 12) h += 12;
             if (ampm === 'AM' && h === 12) h = 0;
-            return { h, m };
+            return { h, min };
         };
 
-        if (parts.length >= 1) {
+        if (parts[0]) {
             const parsedStart = parseSingleTime(parts[0]);
             if (parsedStart) {
-                startHour = parsedStart.h;
-                startMin = parsedStart.m;
-                endHour = (startHour + 2) % 24;
-                endMin = startMin;
+                startH = parsedStart.h;
+                startM = parsedStart.min;
+                endH = (startH + 2) % 24;
+                endM = startM;
             }
         }
-        if (parts.length >= 2) {
+        if (parts[1]) {
             const parsedEnd = parseSingleTime(parts[1]);
             if (parsedEnd) {
-                endHour = parsedEnd.h;
-                endMin = parsedEnd.m;
+                endH = parsedEnd.h;
+                endM = parsedEnd.min;
             }
         }
     }
 
-    const pad = (n) => String(n).padStart(2, '0');
+    // Convert local Manila time (UTC+8) to UTC date object
+    const startUtcDate = new Date(Date.UTC(year, month - 1, day, startH - 8, startM, 0));
+    const endUtcDate = new Date(Date.UTC(year, month - 1, day, endH - 8, endM, 0));
+
+    const toUtcIso = (d) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+
     return {
-        dtStart: `${cleanDate}T${pad(startHour)}${pad(startMin)}00`,
-        dtEnd: `${cleanDate}T${pad(endHour)}${pad(endMin)}00`
+        dtStart: toUtcIso(startUtcDate),
+        dtEnd: toUtcIso(endUtcDate)
     };
 }
 
@@ -239,7 +244,7 @@ async function handleAutoCalendarSync() {
 
     const vEvents = dateKeys.map((dateKey, index) => {
         const ev = eventsData[dateKey];
-        const { dtStart, dtEnd } = parseIcsTime(dateKey, ev.time || '');
+        const { dtStart, dtEnd } = parseIcsPstToUtc(dateKey, ev.time || '');
         const cleanSummary = (ev.title || 'WVSU Panayana Rehearsal').replace(/,/g, '\\,');
         const cleanDesc = (ev.desc || 'Troupe Call').replace(/,/g, '\\,');
         const cleanLoc = cleanDesc.includes('Auditorium') ? cleanDesc : 'WVSU Cultural Center / Stage';
