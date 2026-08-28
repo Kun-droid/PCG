@@ -3,7 +3,7 @@
 // Serves live .ics feed for Apple Calendar, Google Calendar & Outlook
 // ==========================================================================
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 // Initialize Supabase client using environment variables
 const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
