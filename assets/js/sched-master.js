@@ -295,31 +295,114 @@ if (deleteEventBtn) {
     });
 }
 
-// ==========================================================================
-// 5. ONE-TIME NATIVE CALENDAR SUBSCRIPTION ROUTER
-// ==========================================================================
-function handleOneTimeCalendarSubscription() {
-    const host = window.location.host;
-    const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
+// ==========================================
+// 5. ADMIN AUTO CALENDAR SYNC
+// ==========================================
+function parseIcsTime(dateStr, timeStr) {
+    const cleanDate = (dateStr || '').replace(/-/g, '');
+    let startHour = 16, startMin = 0;
+    let endHour = 19, endMin = 0;
 
-    if (isLocalhost) {
-        alert("Live Calendar Subscription requires deployment on Vercel so mobile calendars can pull the live feed URL.");
+    if (timeStr) {
+        const parts = timeStr.split(/[-–—]|to/i).map(s => s.trim());
+        const parseSingleTime = (t) => {
+            const match = t.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
+            if (!match) return null;
+            let h = parseInt(match[1], 10);
+            let m = match[2] ? parseInt(match[2], 10) : 0;
+            const ampm = (match[3] || '').toUpperCase();
+
+            if (ampm === 'PM' && h < 12) h += 12;
+            if (ampm === 'AM' && h === 12) h = 0;
+            return { h, m };
+        };
+
+        if (parts.length >= 1) {
+            const parsedStart = parseSingleTime(parts[0]);
+            if (parsedStart) {
+                startHour = parsedStart.h;
+                startMin = parsedStart.m;
+                endHour = (startHour + 2) % 24;
+                endMin = startMin;
+            }
+        }
+        if (parts.length >= 2) {
+            const parsedEnd = parseSingleTime(parts[1]);
+            if (parsedEnd) {
+                endHour = parsedEnd.h;
+                endMin = parsedEnd.m;
+            }
+        }
+    }
+
+    const pad = (n) => String(n).padStart(2, '0');
+    return {
+        dtStart: `${cleanDate}T${pad(startHour)}${pad(startMin)}00`,
+        dtEnd: `${cleanDate}T${pad(endHour)}${pad(endMin)}00`
+    };
+}
+
+async function handleAdminCalendarSync() {
+    const dateKeys = Object.keys(schedulesData || {});
+    if (dateKeys.length === 0) {
+        alert("No scheduled rehearsals or events found to sync.");
         return;
     }
 
-    const webcalUrl = `webcal://${host}/api/calendar.ics`;
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const nowUtc = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 
-    if (isIOS) {
-        window.location.href = webcalUrl;
-    } else {
-        const gcalSubscribeUrl = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`;
-        window.open(gcalSubscribeUrl, '_blank');
-    }
+    const vEvents = dateKeys.map((dateKey, index) => {
+        const ev = schedulesData[dateKey];
+        const { dtStart, dtEnd } = parseIcsTime(dateKey, ev.time || '');
+        const cleanSummary = (ev.title || 'WVSU Panayana Schedule').replace(/,/g, '\\,');
+        const cleanDesc = (ev.desc || 'Troupe Call').replace(/,/g, '\\,');
+        const cleanLoc = cleanDesc.includes('Auditorium') ? cleanDesc : 'WVSU Cultural Center / Stage';
+
+        return [
+            "BEGIN:VEVENT",
+            `UID:panayana-${dateKey.replace(/-/g, '')}-${index}@wvsu.edu.ph`,
+            `DTSTAMP:${nowUtc}`,
+            `DTSTART:${dtStart}`,
+            `DTEND:${dtEnd}`,
+            `SUMMARY:WVSU Panayana: ${cleanSummary}`,
+            `DESCRIPTION:${cleanDesc}\\nCall Time: ${ev.time || 'TBA'}`,
+            `LOCATION:${cleanLoc}`,
+            "STATUS:CONFIRMED",
+            "TRANSP:OPAQUE",
+            "BEGIN:VALARM",
+            "TRIGGER:-PT1H",
+            "ACTION:DISPLAY",
+            "DESCRIPTION:Panayana Rehearsal Call Reminder",
+            "END:VALARM",
+            "END:VEVENT"
+        ].join("\r\n");
+    });
+
+    const icsContent = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//WVSU Panayana Cultural Group//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH",
+        "X-WR-CALNAME:WVSU Panayana Troupe Calendar",
+        vEvents.join("\r\n"),
+        "END:VCALENDAR"
+    ].join("\r\n");
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const fileUrl = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = fileUrl;
+    a.download = 'WVSU_Panayana_Master_Schedule.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => window.URL.revokeObjectURL(fileUrl), 2000);
 }
 
 if (subscribeBtn) {
-    subscribeBtn.addEventListener('click', handleOneTimeCalendarSubscription);
+    subscribeBtn.addEventListener('click', handleAdminCalendarSync);
 }
 
 // Navigation & Trigger Listeners
