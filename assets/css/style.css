@@ -21,28 +21,41 @@
   --radius-md: 14px;
 }
 
+/* 1. Global Viewport & Document Root */
 html {
+  height: 100%;
   overflow-y: scroll;
   scrollbar-gutter: stable;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-canvas);
+  color: var(--text-dark);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  box-sizing: border-box;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  -webkit-tap-highlight-color: transparent;
 }
 
-body {
-  background-color: var(--bg-canvas);
-  color: var(--text-dark);
-  min-height: 100vh;
+img, svg, video, iframe {
+  max-width: 100%;
+  height: auto;
 }
 
+/* 2. Container & Main Content Flow */
 .container {
   display: flex;
-  position: relative;
+  align-items: stretch; /* Allows sidebar to stick along full page height */
+  width: 100%;
   min-height: 100vh;
 }
 
@@ -51,7 +64,7 @@ body {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  position: relative;
+  min-height: 100vh;
 }
 
 /* Circular Logo Badge */
@@ -77,31 +90,50 @@ body {
   display: block;
 }
 
-/* Universal Header */
+/* Universal Header & Overlap Protection */
 .header {
   background: var(--bg-surface);
-  padding: 16px 28px;
+  padding: 14px 28px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--border-light);
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .header-brand-mobile {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex: 1;
+  min-width: 0; /* Crucial for text truncation */
+}
+
+.header-title {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
 }
 
 .header-title h1 {
   font-size: 18px;
   font-weight: 800;
   color: var(--text-dark);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header-title span {
   font-size: 12px;
   color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ==========================================================================
@@ -111,7 +143,8 @@ body {
 .user-profile-top {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+  flex-shrink: 0; /* Prevents button collapsing */
 }
 
 .profile-trigger-btn {
@@ -128,6 +161,8 @@ body {
   transition: background-color 0.2s ease;
   pointer-events: auto;
   position: relative;
+  max-width: 160px;
+  min-width: 0;
   z-index: 15;
 }
 
@@ -141,6 +176,11 @@ body {
   color: var(--text-dark, #1e1e24);
   letter-spacing: -0.01em;
   pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
 }
 
 .profile-trigger-btn span {
@@ -148,6 +188,11 @@ body {
   font-weight: 600;
   color: var(--sunset-gold, #e29532);
   pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
 }
 
 .profile-icon {
@@ -165,6 +210,7 @@ body {
   outline: none;
   font-size: 16px;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .profile-icon:hover {
@@ -857,7 +903,7 @@ body {
 }
 
 /* ==========================================================================
-   DESKTOP SAAS SIDEBAR
+   DESKTOP STICKY SAAS SIDEBAR (PERMANENTLY LOCKED TO VIEWPORT)
    ========================================================================== */
 
 .sidebar {
@@ -865,6 +911,7 @@ body {
   height: 100vh;
   position: sticky;
   top: 0;
+  left: 0;
   background-color: var(--sidebar-bg);
   border-right: 1px solid var(--sidebar-border);
   display: flex;
@@ -873,6 +920,7 @@ body {
   transition: width 0.3s cubic-bezier(0.2, 0, 0, 1);
   flex-shrink: 0;
   z-index: 100;
+  box-sizing: border-box;
 }
 
 .sidebar.collapsed {
@@ -1015,138 +1063,6 @@ body {
 
 .mobile-only {
   display: none !important;
-}
-
-/* ==========================================================================
-   RESPONSIVENESS (<= 768px)
-   ========================================================================== */
-
-@media (max-width: 900px) {
-  .banner-content-left {
-    max-width: 100%;
-  }
-  .banner-content-right {
-    display: none !important;
-  }
-  .banner-card.hero-banner {
-    padding: 24px;
-  }
-}
-
-@media (max-width: 768px) {
-  .sidebar,
-  .desktop-only {
-    display: none !important;
-  }
-
-  .mobile-only {
-    display: flex !important;
-  }
-
-  .container {
-    flex-direction: column;
-    min-height: 100vh;
-  }
-
-  .header {
-    padding: 16px 20px 10px;
-    background: transparent;
-    border-bottom: none;
-  }
-
-  .pill-nav {
-    display: flex !important;
-    gap: 8px;
-    padding: 6px 20px 12px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .pill-nav::-webkit-scrollbar {
-    display: none;
-  }
-
-  .nav-pill {
-    padding: 8px 16px;
-    border-radius: 30px;
-    border: none;
-    background: rgba(255, 255, 255, 0.7);
-    color: var(--text-muted);
-    font-size: 12px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  .nav-pill.active {
-    background: var(--primary-maroon);
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(112, 19, 29, 0.25);
-  }
-
-  .content-body {
-    padding: 0 20px 100px;
-  }
-
-  .panayana-dashboard-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .metrics {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .bottom-dock {
-    position: fixed;
-    bottom: 16px;
-    left: 20px;
-    right: 20px;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-radius: 30px;
-    display: flex !important;
-    justify-content: space-around;
-    align-items: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    z-index: 1000;
-  }
-
-  .dock-item {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-size: 18px;
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  .dock-item.active {
-    color: var(--primary-maroon);
-  }
-
-  .modal-overlay {
-    align-items: flex-end;
-    padding: 0;
-  }
-
-  .modal-card {
-    max-width: 100%;
-    border-radius: 24px 24px 0 0;
-    transform: translateY(100%);
-  }
-
-  .modal-overlay.active .modal-card {
-    transform: translateY(0);
-  }
 }
 
 /* Persistent Collapsed Pre-render State */
@@ -1304,91 +1220,192 @@ html.sidebar-is-collapsed .sidebar .brand-logo-badge {
   word-break: break-all;
 }
 
-@media (max-width: 480px) {
-  .profile-info-grid {
-    grid-template-columns: 1fr;
-  }
-}
 /* ==========================================================================
-   MOBILE PROFILE TRIGGER & MODAL RESPONSIVENESS
+   RESPONSIVENESS & UNIVERSAL MOBILE AUTO-ADJUST SYSTEM (<= 768px)
    ========================================================================== */
 
+@media (max-width: 900px) {
+  .banner-content-left {
+    max-width: 100%;
+  }
+  .banner-content-right {
+    display: none !important;
+  }
+  .banner-card.hero-banner {
+    padding: 24px;
+  }
+}
+
 @media (max-width: 768px) {
+  .sidebar,
+  .desktop-only {
+    display: none !important;
+  }
+
+  .mobile-only {
+    display: flex !important;
+  }
+
+  .container {
+    flex-direction: column;
+    min-height: 100dvh;
+    width: 100%;
+    padding: 0;
+  }
+
+  /* Responsive Mobile Header with zero overlapping */
   .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    gap: 10px;
+    padding: 10px 14px !important;
+    gap: 8px !important;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-light);
   }
 
   .header-brand-mobile {
+    gap: 8px !important;
     flex: 1;
     min-width: 0;
   }
 
-  .header-title h1 {
-    font-size: 15px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .brand-logo-badge.mobile-only {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
   }
 
+  .header-title h1 {
+    font-size: 14px !important;
+  }
+
+  /* Hides long secondary subtitle on narrow phones */
   .header-title span {
-    font-size: 11px;
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: none !important;
   }
 
   .user-profile-top {
-    flex-shrink: 0;
-    gap: 8px;
+    gap: 6px !important;
   }
 
-  /* Make profile clickable button compact and touch-friendly */
   .profile-trigger-btn {
-    padding: 4px 6px;
-    max-width: 120px;
+    max-width: 115px !important;
+    padding: 2px 4px !important;
   }
 
   .profile-trigger-btn strong {
-    font-size: 12px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    max-width: 110px;
+    font-size: 12px !important;
   }
 
   .profile-trigger-btn span {
-    font-size: 10px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    max-width: 110px;
+    font-size: 10px !important;
   }
 
   .profile-icon {
-    width: 34px;
-    height: 34px;
-    font-size: 14px;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 13px !important;
   }
 
-  /* Mobile Sheet Modal for Profile & QR Pass */
+  .pill-nav {
+    display: flex !important;
+    gap: 8px;
+    padding: 8px 16px 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .pill-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-pill {
+    padding: 6px 14px;
+    border-radius: 30px;
+    border: none;
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    cursor: pointer;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .nav-pill.active {
+    background: var(--primary-maroon);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(112, 19, 29, 0.25);
+  }
+
+  /* Universal Safe Area Content Padding */
+  .content-body {
+    width: 100%;
+    padding: 12px 16px calc(96px + env(safe-area-inset-bottom, 20px)) !important;
+    box-sizing: border-box;
+  }
+
+  .panayana-dashboard-grid,
+  .metrics,
+  .heritage-grid,
+  .profile-info-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px;
+  }
+
+  .bottom-dock {
+    position: fixed;
+    bottom: calc(12px + env(safe-area-inset-bottom, 8px)) !important;
+    left: 16px !important;
+    right: 16px !important;
+    height: 58px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 30px;
+    display: flex !important;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    z-index: 1000;
+  }
+
+  .dock-item {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 18px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .dock-item.active {
+    color: var(--primary-maroon);
+  }
+
+  /* Mobile Bottom Sheet Modal */
   .modal-overlay {
     align-items: flex-end;
     padding: 0;
   }
 
-  .modal-overlay.active .modal-card {
-    border-radius: 20px 20px 0 0;
-    max-height: 88vh;
+  .modal-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 20px 20px 0 0 !important;
+    max-height: 88dvh;
     display: flex;
     flex-direction: column;
-    width: 100%;
+    transform: translateY(100%);
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+
+  .modal-overlay.active .modal-card {
+    transform: translateY(0);
   }
 
   .profile-modal-card .modal-body {
@@ -1408,90 +1425,15 @@ html.sidebar-is-collapsed .sidebar .brand-logo-badge {
     min-height: 130px;
   }
 }
-/* ==========================================================================
-   UNIVERSAL MOBILE AUTO-ADJUST & SAFE-AREA SYSTEM
-   ========================================================================== */
 
-/* 1. Prevent accidental horizontal scroll across all phone viewports */
-html, body {
-  width: 100%;
-  max-width: 100vw;
-  overflow-x: hidden;
-  position: relative;
-  -webkit-text-size-adjust: 100%;
-  box-sizing: border-box;
-}
-
-/* 2. Responsive containers & media */
-img, svg, video, iframe {
-  max-width: 100%;
-  height: auto;
-}
-
-/* 3. Dynamic Phone Viewport Rules */
-@media (max-width: 768px) {
-  .container {
-    width: 100%;
-    min-height: 100dvh; /* Dynamic viewport height adjusts to browser address bar */
-    padding: 0;
-  }
-
-  /* Universal safe-area paddings for notch & bottom dock */
-  .content-body {
-    width: 100%;
-    padding: 12px 16px calc(90px + env(safe-area-inset-bottom, 20px)) !important;
-    box-sizing: border-box;
-  }
-
-  /* Responsive Grid/Flex Stacks */
-  .metrics,
-  .panayana-dashboard-grid,
-  .heritage-grid,
-  .profile-info-grid {
-    grid-template-columns: 1fr !important;
-    width: 100%;
-    gap: 12px;
-  }
-
-  /* Universal Cards */
-  .card, 
-  .banner-card, 
-  .about-hero-card {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  /* Floating Bottom Dock Safe-Area Adjustment */
-  .bottom-dock {
-    left: 14px !important;
-    right: 14px !important;
-    bottom: calc(10px + env(safe-area-inset-bottom, 8px)) !important;
-    height: 56px;
-  }
-
-  /* Sheet Modals */
-  .modal-overlay {
-    padding: 0;
-    align-items: flex-end;
-  }
-
-  .modal-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    border-radius: 20px 20px 0 0 !important;
-    max-height: 90dvh;
-    padding-bottom: env(safe-area-inset-bottom, 16px);
-  }
-}
-
-/* Extra Compact Phones (iPhone SE, Galaxy A series <= 380px) */
+/* Extra Compact Phones (<= 380px) */
 @media (max-width: 380px) {
   .header {
-    padding: 10px 12px !important;
+    padding: 8px 10px !important;
   }
   
   .header-title h1 {
-    font-size: 14px !important;
+    font-size: 13px !important;
   }
 
   .nav-pill {
@@ -1500,6 +1442,6 @@ img, svg, video, iframe {
   }
 
   .content-body {
-    padding: 8px 12px 110px !important;
+    padding: 8px 12px calc(96px + env(safe-area-inset-bottom, 20px)) !important;
   }
 }
