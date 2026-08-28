@@ -26,6 +26,7 @@ const prevMonthBtn = document.getElementById('prevMonthBtn');
 const nextMonthBtn = document.getElementById('nextMonthBtn');
 const todayBtn = document.getElementById('todayBtn');
 const openAddEventBtn = document.getElementById('openAddEventBtn');
+const subscribeBtn = document.getElementById('subscribePhoneCalendarBtn');
 
 // Read / Detail Modal DOM
 const eventModal = document.getElementById('eventModal');
@@ -292,6 +293,33 @@ if (deleteEventBtn) {
             if (eventModal) eventModal.classList.remove('active');
         }
     });
+}
+
+// ==========================================================================
+// 5. ONE-TIME NATIVE CALENDAR SUBSCRIPTION ROUTER
+// ==========================================================================
+function handleOneTimeCalendarSubscription() {
+    const host = window.location.host;
+    const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
+
+    if (isLocalhost) {
+        alert("Live Calendar Subscription requires deployment on Vercel so mobile calendars can pull the live feed URL.");
+        return;
+    }
+
+    const webcalUrl = `webcal://${host}/api/calendar.ics`;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+    if (isIOS) {
+        window.location.href = webcalUrl;
+    } else {
+        const gcalSubscribeUrl = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`;
+        window.open(gcalSubscribeUrl, '_blank');
+    }
+}
+
+if (subscribeBtn) {
+    subscribeBtn.addEventListener('click', handleOneTimeCalendarSubscription);
 }
 
 // Navigation & Trigger Listeners

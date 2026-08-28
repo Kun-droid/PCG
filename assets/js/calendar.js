@@ -21,6 +21,7 @@ const yearSelectorBtn = document.getElementById('yearSelectorBtn');
 const prevBtn = document.getElementById('prevMonthBtn');
 const nextBtn = document.getElementById('nextMonthBtn');
 const todayBtn = document.getElementById('todayBtn');
+const subscribeBtn = document.getElementById('subscribePhoneCalendarBtn');
 
 // Modal Elements
 const modal = document.getElementById('eventModal');
@@ -174,6 +175,35 @@ function openModal(dateKey, readableDate) {
 
 function closeModal() {
     if (modal) modal.classList.remove('active');
+}
+
+// ==========================================================================
+// ONE-TIME NATIVE CALENDAR SUBSCRIPTION ROUTER
+// ==========================================================================
+function handleOneTimeCalendarSubscription() {
+    const host = window.location.host;
+    const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
+
+    if (isLocalhost) {
+        alert("Live Calendar Subscription requires deployment on Vercel so mobile calendars can pull the live feed URL.");
+        return;
+    }
+
+    const webcalUrl = `webcal://${host}/api/calendar.ics`;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+    if (isIOS) {
+        // Apple Calendar on iOS natively intercepts webcal://
+        window.location.href = webcalUrl;
+    } else {
+        // Android / Desktop Google Calendar subscription link
+        const gcalSubscribeUrl = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`;
+        window.open(gcalSubscribeUrl, '_blank');
+    }
+}
+
+if (subscribeBtn) {
+    subscribeBtn.addEventListener('click', handleOneTimeCalendarSubscription);
 }
 
 if (yearSelectorBtn) yearSelectorBtn.addEventListener('click', toggleYearPicker);

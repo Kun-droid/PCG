@@ -1,6 +1,6 @@
 // ==========================================================================
 // PANAYANA ADMIN DISPATCH & WORKSTATION CONTROLLER
-// ==========================================================================
+// ==========================================
 
 import { 
     getActiveLoans, 
@@ -83,11 +83,14 @@ function renderRegistry(filter = '') {
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    const filtered = activeLoans.filter(item => 
-        item.borrower_name.toLowerCase().includes(filter.toLowerCase()) ||
-        item.student_id.toLowerCase().includes(filter.toLowerCase()) ||
-        item.costume_name.toLowerCase().includes(filter.toLowerCase())
-    );
+    const filtered = activeLoans.filter(item => {
+        const borrower = (item.borrower_name || '').toLowerCase();
+        const studentId = (item.student_id || '').toLowerCase();
+        const costume = (item.costume_name || '').toLowerCase();
+        const q = filter.toLowerCase();
+
+        return borrower.includes(q) || studentId.includes(q) || costume.includes(q);
+    });
 
     if (filtered.length === 0) {
         tbody.innerHTML = `<tr><td colspan="4" class="table-empty-state"><i class="fa-regular fa-folder-open"></i><p>No active costume loans found.</p></td></tr>`;
@@ -95,11 +98,27 @@ function renderRegistry(filter = '') {
     }
 
     filtered.forEach(item => {
+        // Extract clean student name if JSON payload was previously stored
+        let displayName = item.borrower_name || 'Member';
+        if (displayName.startsWith('{')) {
+            try {
+                const parsed = JSON.parse(displayName);
+                displayName = parsed.name || parsed.full_name || displayName;
+            } catch (_) {}
+        }
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><strong>${item.borrower_name}</strong><br><code style="font-size:11px; color: var(--text-muted);">${item.student_id}</code></td>
+            <!-- 1. BORROWER: ONLY THE STUDENT NAME -->
+            <td><strong>${displayName}</strong></td>
+            
+            <!-- 2. ATTIRE SET -->
             <td><span>${item.costume_name}</span><br><small style="color: var(--sunset-gold, #e29532); font-weight: 700;">${item.suite || 'Attire Unit'}</small></td>
+            
+            <!-- 3. ISSUED DATE -->
             <td>${item.issued_date}</td>
+            
+            <!-- 4. ACTION -->
             <td class="text-right">
                 <button type="button" class="quick-return-btn" data-id="${item.id}" data-costume="${item.costume_id}">
                     <i class="fa-solid fa-rotate-left"></i> Return
@@ -125,7 +144,14 @@ if (studentIdInput) {
         if (val.length >= 3) {
             const activeLoan = await checkActiveLoanByStudentId(val);
             if (activeLoan) {
-                memberNameInput.value = activeLoan.borrower_name;
+                let activeName = activeLoan.borrower_name;
+                if (activeName.startsWith('{')) {
+                    try {
+                        const parsed = JSON.parse(activeName);
+                        activeName = parsed.name || parsed.full_name || activeName;
+                    } catch (_) {}
+                }
+                memberNameInput.value = activeName;
                 costumeSelectGroup.style.display = 'none';
                 costumeSelect.removeAttribute('required');
                 
@@ -233,8 +259,24 @@ function handleScannedPayload(payload) {
     stopLiveCamera();
     if (mobileScannerModal) mobileScannerModal.classList.remove('active');
 
+    let parsedStudentId = payload.trim();
+    let parsedName = '';
+
+    // If scanned code is a JSON payload from the member QR generator
+    try {
+        const data = JSON.parse(payload);
+        parsedStudentId = data.studentId || data.student_id || data.id || parsedStudentId;
+        parsedName = data.name || data.full_name || '';
+    } catch (_) {
+        // Plain text fallback
+    }
+
+    if (memberNameInput && parsedName) {
+        memberNameInput.value = parsedName;
+    }
+
     if (studentIdInput) {
-        studentIdInput.value = payload.trim();
+        studentIdInput.value = parsedStudentId;
         studentIdInput.dispatchEvent(new Event('input'));
     }
 }
@@ -269,7 +311,7 @@ if (mobileScannerModal) {
 if (simulateScanNewBtn) {
     simulateScanNewBtn.addEventListener('click', () => {
         const randomId = `2024-CICT-${Math.floor(1000 + Math.random() * 9000)}`;
-        if (memberNameInput) memberNameInput.value = "John Doe (Test Artist)";
+        if (memberNameInput) memberNameInput.value = "John Doe";
         handleScannedPayload(randomId);
     });
 }
