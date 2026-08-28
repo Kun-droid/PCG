@@ -1,5 +1,5 @@
 // ==========================================================================
-// PANAYANA MEMBER CALENDAR CONTROLLER & PHONE SYNC ENGINE
+// PANAYANA MEMBER CALENDAR CONTROLLER & WEBCAL SYNC ENGINE
 // ==========================================================================
 
 import { getSchedules } from './db.js';
@@ -182,118 +182,35 @@ function closeModal() {
 }
 
 // ==========================================================================
-// 4. CLIENT-SIDE CALENDAR SYNC ENGINE (PHILIPPINES UTC+8 COMPATIBLE)
+// 4. ONE-TIME WEBCAL LIVE SUBSCRIPTION ROUTER
 // ==========================================================================
-function parseIcsPstToUtc(dateStr, timeStr) {
-    const [year, month, day] = (dateStr || '').split('-').map(Number);
-    let startH = 16, startM = 0;
-    let endH = 19, endM = 0;
+function handleWebcalSubscription() {
+    const host = window.location.host;
+    const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
 
-    if (timeStr) {
-        const parts = timeStr.split(/[-–—]|to/i).map(s => s.trim());
-        const parseSingleTime = (t) => {
-            const match = t.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
-            if (!match) return null;
-            let h = parseInt(match[1], 10);
-            let min = match[2] ? parseInt(match[2], 10) : 0;
-            const ampm = (match[3] || '').toUpperCase();
-
-            if (ampm === 'PM' && h < 12) h += 12;
-            if (ampm === 'AM' && h === 12) h = 0;
-            return { h, min };
-        };
-
-        if (parts[0]) {
-            const parsedStart = parseSingleTime(parts[0]);
-            if (parsedStart) {
-                startH = parsedStart.h;
-                startM = parsedStart.min;
-                endH = (startH + 2) % 24;
-                endM = startM;
-            }
-        }
-        if (parts[1]) {
-            const parsedEnd = parseSingleTime(parts[1]);
-            if (parsedEnd) {
-                endH = parsedEnd.h;
-                endM = parsedEnd.min;
-            }
-        }
-    }
-
-    // Convert local Manila time (UTC+8) to UTC date object
-    const startUtcDate = new Date(Date.UTC(year, month - 1, day, startH - 8, startM, 0));
-    const endUtcDate = new Date(Date.UTC(year, month - 1, day, endH - 8, endM, 0));
-
-    const toUtcIso = (d) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-
-    return {
-        dtStart: toUtcIso(startUtcDate),
-        dtEnd: toUtcIso(endUtcDate)
-    };
-}
-
-async function handleAutoCalendarSync() {
-    const dateKeys = Object.keys(eventsData || {});
-    if (dateKeys.length === 0) {
-        alert("No scheduled rehearsals or events found to sync.");
+    if (isLocalhost) {
+        alert("Live Calendar Subscription requires deployment on Vercel so mobile calendar apps can connect to the public feed URL.");
         return;
     }
 
-    const nowUtc = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    const feedPath = `${host}/api/calendar.ics`;
+    const webcalUrl = `webcal://${feedPath}`;
+    const httpsUrl = `https://${feedPath}`;
 
-    const vEvents = dateKeys.map((dateKey, index) => {
-        const ev = eventsData[dateKey];
-        const { dtStart, dtEnd } = parseIcsPstToUtc(dateKey, ev.time || '');
-        const cleanSummary = (ev.title || 'WVSU Panayana Rehearsal').replace(/,/g, '\\,');
-        const cleanDesc = (ev.desc || 'Troupe Call').replace(/,/g, '\\,');
-        const cleanLoc = cleanDesc.includes('Auditorium') ? cleanDesc : 'WVSU Cultural Center / Stage';
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-        return [
-            "BEGIN:VEVENT",
-            `UID:panayana-${dateKey.replace(/-/g, '')}-${index}@wvsu.edu.ph`,
-            `DTSTAMP:${nowUtc}`,
-            `DTSTART:${dtStart}`,
-            `DTEND:${dtEnd}`,
-            `SUMMARY:WVSU Panayana: ${cleanSummary}`,
-            `DESCRIPTION:${cleanDesc}\\nCall Time: ${ev.time || 'TBA'}`,
-            `LOCATION:${cleanLoc}`,
-            "STATUS:CONFIRMED",
-            "TRANSP:OPAQUE",
-            "BEGIN:VALARM",
-            "TRIGGER:-PT1H",
-            "ACTION:DISPLAY",
-            "DESCRIPTION:Panayana Rehearsal Call Reminder",
-            "END:VALARM",
-            "END:VEVENT"
-        ].join("\r\n");
-    });
-
-    const icsContent = [
-        "BEGIN:VCALENDAR",
-        "VERSION:2.0",
-        "PRODID:-//WVSU Panayana Cultural Group//EN",
-        "CALSCALE:GREGORIAN",
-        "METHOD:PUBLISH",
-        "X-WR-CALNAME:WVSU Panayana Troupe Calendar",
-        vEvents.join("\r\n"),
-        "END:VCALENDAR"
-    ].join("\r\n");
-
-    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-    const fileUrl = window.URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = fileUrl;
-    a.download = 'WVSU_Panayana_Schedule.ics';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => window.URL.revokeObjectURL(fileUrl), 2000);
+    if (isIOS) {
+        // Direct Apple Calendar subscription dialog without file download
+        window.location.href = webcalUrl;
+    } else {
+        // Google Calendar direct web subscription
+        const gcalUrl = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(httpsUrl)}`;
+        window.open(gcalUrl, '_blank');
+    }
 }
 
 if (subscribeBtn) {
-    subscribeBtn.addEventListener('click', handleAutoCalendarSync);
+    subscribeBtn.addEventListener('click', handleWebcalSubscription);
 }
 
 if (yearSelectorBtn) yearSelectorBtn.addEventListener('click', toggleYearPicker);
