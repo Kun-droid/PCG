@@ -9,8 +9,8 @@ const getEnv = (key) => {
     return '';
 };
 
-const SUPABASE_URL = getEnv('SUPABASE_URL') || 'https://lwegonnsuywzhytacdmf.supabase.co';
-const SUPABASE_KEY = getEnv('SUPABASE_ANON_KEY');
+const SUPABASE_URL = getEnv('https://lwegonnsuywzhytacdmf.supabase.co') || 'https://lwegonnsuywzhytacdmf.supabase.co';
+const SUPABASE_KEY = getEnv('eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3ZWdvbm5zdXl3emh5dGFjZG1mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5NzIwOTcsImV4cCI6MjEwMjU0ODA5N30');
 
 function parseTimeRange(dateStr, timeStr) {
     if (!dateStr) return { dtStart: '', dtEnd: '' };
