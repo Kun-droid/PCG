@@ -1,8 +1,6 @@
 // ==========================================================================
-// VERCEL SERVERLESS WEBCAL FEED ENDPOINT (/api/calendar)
+// VERCEL SERVERLESS ICALENDAR SUBSCRIBER ENDPOINT (/api/calendar)
 // ==========================================================================
-
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const getEnvVar = (key) => {
     if (typeof process !== 'undefined' && process && process.env) {
@@ -11,7 +9,7 @@ const getEnvVar = (key) => {
     return null;
 };
 
-const supabaseUrl = getEnvVar('SUPABASE_URL');
+const supabaseUrl = getEnvVar('SUPABASE_URL') || 'https://lwegonnsuywzhytacdmf.supabase.co';
 const supabaseKey = getEnvVar('SUPABASE_ANON_KEY');
 
 function parseIcsPstToUtc(dateStr, timeStr) {
@@ -66,26 +64,32 @@ export default async function handler(req, res) {
 
     if (supabaseUrl && supabaseKey) {
         try {
-            const supabase = createClient(supabaseUrl, supabaseKey);
-            const { data, error } = await supabase
-                .from('schedules')
-                .select('event_date, title, time_window, location_details, tag')
-                .order('event_date', { ascending: true });
+            // Direct REST API query without external npm packages
+            const endpoint = `${supabaseUrl.replace(/\/$/, '')}/rest/v1/schedules?select=event_date,title,time_window,location_details,tag&order=event_date.asc`;
+            const response = await fetch(endpoint, {
+                headers: {
+                    'apikey': supabaseKey,
+                    'Authorization': `Bearer ${supabaseKey}`
+                }
+            });
 
-            if (!error && data && Array.isArray(data)) {
-                data.forEach(item => {
-                    if (item.event_date) {
-                        schedulesData[item.event_date] = {
-                            title: item.title,
-                            time: item.time_window,
-                            desc: item.location_details,
-                            tag: item.tag
-                        };
-                    }
-                });
+            if (response.ok) {
+                const data = await response.json();
+                if (Array.isArray(data)) {
+                    data.forEach(item => {
+                        if (item.event_date) {
+                            schedulesData[item.event_date] = {
+                                title: item.title,
+                                time: item.time_window,
+                                desc: item.location_details,
+                                tag: item.tag
+                            };
+                        }
+                    });
+                }
             }
         } catch (err) {
-            console.warn('Supabase fetch error:', err);
+            console.error('REST fetch error:', err);
         }
     }
 
@@ -137,5 +141,5 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=300, stale-while-revalidate=600');
 
-    res.status(200).send(icsContent);
+    return res.status(200).send(icsContent);
 }
