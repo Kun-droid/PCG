@@ -151,15 +151,28 @@
                     </div>
 
                     <div class="cal-controls">
-                        <button class="modal-btn primary" id="openAddEventBtn" style="padding: 7px 14px;">
-                            <i class="fa-solid fa-plus"></i> Add Event
-                        </button>
-                        <button type="button" class="modal-btn" id="subscribePhoneCalendarBtn" style="background: var(--sunset-gold); color: #ffffff; padding: 7px 14px; border: none; font-size: 12px; cursor: pointer;">
-                            <i class="fa-solid fa-arrows-rotate"></i> Auto-Sync to Phone
-                        </button>
-                        <button class="cal-nav-btn" id="prevMonthBtn" aria-label="Previous Month"><i class="fa-solid fa-chevron-left"></i></button>
-                        <button class="cal-today-btn" id="todayBtn">Today</button>
-                        <button class="cal-nav-btn" id="nextMonthBtn" aria-label="Next Month"><i class="fa-solid fa-chevron-right"></i></button>
+                        <!-- Primary Action Buttons Group -->
+                        <div class="cal-action-group">
+                            <button class="cal-btn-primary" id="openAddEventBtn">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>Add Event</span>
+                            </button>
+                            <button type="button" class="cal-btn-sync" id="subscribePhoneCalendarBtn" title="Sync live calendar feed to device">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                                <span>Auto-Sync to Phone</span>
+                            </button>
+                        </div>
+
+                        <!-- Date Navigation Segmented Pill Group -->
+                        <div class="cal-nav-group">
+                            <button class="cal-nav-btn prev" id="prevMonthBtn" aria-label="Previous Month">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+                            <button class="cal-today-btn" id="todayBtn">Today</button>
+                            <button class="cal-nav-btn next" id="nextMonthBtn" aria-label="Next Month">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
