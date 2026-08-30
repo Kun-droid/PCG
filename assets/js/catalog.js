@@ -2,7 +2,7 @@
 // PANAYANA COSTUME CATALOG (SUPABASE CONNECTED)
 // ==========================================================================
 
-import { getCostumes, addCostume, updateCostume, checkoutCostume, returnCostume } from './db.js';
+import { getCostumes, addCostume, updateCostume, deleteCostume, checkoutCostume, returnCostume } from './db.js';
 
 let costumesData = [];
 const session = JSON.parse(localStorage.getItem('panayana_auth_user') || '{}');
@@ -88,13 +88,36 @@ function renderCostumesGrid(filterText = '') {
                         ${isAvailable ? 'Available' : 'All in Use'}
                     </span>
                 </div>
-                <button class="edit-costume-btn" data-id="${item.id}" title="Edit Costume">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                </button>
+                <div class="costume-card-actions">
+                    <button type="button" class="edit-costume-btn" data-id="${item.id}" title="Edit Costume">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button type="button" class="delete-costume-btn" data-id="${item.id}" title="Remove Costume">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
             </div>
         `;
 
+        // Edit Handler
         card.querySelector('.edit-costume-btn').addEventListener('click', () => openEditModal(item));
+
+        // Delete Handler
+        card.querySelector('.delete-costume-btn').addEventListener('click', async () => {
+            const confirmed = confirm(`Are you sure you want to delete "${item.name}" from inventory?`);
+            if (!confirmed) return;
+
+            try {
+                if (typeof deleteCostume === 'function') {
+                    await deleteCostume(item.id);
+                }
+                await loadCostumes();
+            } catch (err) {
+                console.error('Failed to remove costume:', err);
+                alert(`Could not remove costume: ${err.message}`);
+            }
+        });
+
         costumesGrid.appendChild(card);
     });
 
