@@ -1,83 +1,156 @@
 /* ==========================================================================
-   PANAYANA COSTUME INVENTORY STYLES
+   PANAYANA COSTUME INVENTORY (NAME & QUANTITY VIEW)
    ========================================================================== */
 
+/* Admin Custodian Control Banner */
+.admin-management-bar {
+  background: linear-gradient(135deg, #2b1115, var(--primary-maroon, #70131d));
+  border: 1px solid rgba(226, 149, 50, 0.3);
+  border-radius: var(--radius-lg, 16px);
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 18px rgba(112, 19, 29, 0.15);
+}
+
+.management-text {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #ffffff;
+}
+
+.management-text i {
+  font-size: 24px;
+  color: var(--sunset-gold, #e29532);
+}
+
+.management-text strong {
+  font-size: 14px;
+  display: block;
+}
+
+.management-text p {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.management-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.add-costume-btn,
+.launch-qr-scanner-btn {
+  padding: 9px 16px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.add-costume-btn {
+  background: var(--sunset-gold, #e29532);
+  color: #ffffff;
+}
+
+.add-costume-btn:hover {
+  background: #c57d23;
+  transform: translateY(-2px);
+}
+
+.launch-qr-scanner-btn {
+  background: #ffffff;
+  color: var(--primary-maroon, #70131d);
+}
+
+.launch-qr-scanner-btn:hover {
+  background: #fdf5e8;
+  transform: translateY(-2px);
+}
+
+/* Main Catalog Card */
 .inventory-main-card {
   padding: 24px;
 }
 
-/* Search Bar */
 .inventory-controls {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .search-input-box {
   position: relative;
   width: 100%;
-  max-width: 440px;
 }
 
 .search-icon {
   position: absolute;
-  left: 16px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-muted, #828292);
+  color: var(--text-muted, #72707e);
   font-size: 14px;
 }
 
 .search-input-box input {
   width: 100%;
-  height: 42px;
-  padding: 0 16px 0 42px;
+  padding: 12px 14px 12px 42px;
   background: var(--bg-canvas, #f6f5f8);
   border: 1px solid var(--border-light, #e8e7ec);
-  border-radius: var(--radius-md, 14px);
-  color: var(--text-dark, #1e1e24);
+  border-radius: 12px;
   font-size: 13px;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  color: var(--text-dark, #1c1a24);
 }
 
 .search-input-box input:focus {
   border-color: var(--primary-maroon, #70131d);
-  box-shadow: 0 0 0 3px rgba(112, 19, 29, 0.08);
+  background: #ffffff;
 }
 
-/* Costumes Grid Layout */
+/* Minimal Grid Layout */
 .costumes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
 }
 
+/* Clean Costume Card: Name & Quantity Only */
 .costume-card {
   background: var(--bg-surface, #ffffff);
   border: 1px solid var(--border-light, #e8e7ec);
   border-radius: var(--radius-md, 14px);
-  padding: 18px;
+  padding: 18px 20px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: space-between;
   gap: 14px;
-  cursor: pointer;
-  box-shadow: var(--neumorphic-light, 0 4px 14px rgba(0, 0, 0, 0.04));
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .costume-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(112, 19, 29, 0.25);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 }
 
-.costume-card-top {
+.costume-card-info {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 14px;
 }
 
-.costume-avatar {
+.costume-icon-badge {
   width: 44px;
   height: 44px;
   border-radius: 12px;
@@ -90,107 +163,132 @@
   flex-shrink: 0;
 }
 
-.costume-card-content h4 {
+.costume-card-info h4 {
   font-size: 15px;
-  font-weight: 700;
-  color: var(--text-dark, #1e1e24);
-  margin: 0 0 4px 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-weight: 800;
+  color: var(--text-dark, #1c1a24);
+  line-height: 1.3;
 }
 
-.costume-meta-row {
+.costume-card-qty-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.costume-qty-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.qty-number {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-dark, #1c1a24);
+}
+
+.qty-status {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.qty-status.available {
+  color: #15803d;
+}
+
+.qty-status.unavailable {
+  color: #b91c1c;
+}
+
+.costume-card-actions {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
-  color: var(--text-muted, #828292);
 }
 
-/* Modal Content Structure */
-.costume-detail-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border-light, #e8e7ec);
-  margin-bottom: 16px;
-}
-
-.costume-modal-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
-  background: #fbebee;
-  color: var(--primary-maroon, #70131d);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  flex-shrink: 0;
-}
-
-.costume-modal-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.stat-pill {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-dark, #1e1e24);
-  background: var(--bg-canvas, #f6f5f8);
-  padding: 5px 10px;
+.edit-costume-btn,
+.delete-costume-btn {
+  width: 32px;
+  height: 32px;
   border-radius: 8px;
-  border: 1px solid var(--border-light, #e8e7ec);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.costume-info-section strong {
-  display: block;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted, #828292);
-  margin-bottom: 4px;
+.edit-costume-btn {
+  background: #fef6eb;
+  border: 1px solid #fde7cb;
+  color: var(--sunset-gold, #e29532);
 }
 
-.costume-info-section p {
-  font-size: 13px;
-  color: var(--text-dark, #1e1e24);
-  line-height: 1.5;
+.edit-costume-btn:hover {
+  background: var(--sunset-gold, #e29532);
+  color: #ffffff;
+  transform: translateY(-1px);
 }
 
-.empty-vault-state {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 48px 20px;
-  color: var(--text-muted, #828292);
+.delete-costume-btn {
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  color: #ef4444;
 }
 
-.empty-vault-state i {
-  font-size: 36px;
-  margin-bottom: 10px;
-  color: #c4c3cb;
+.delete-costume-btn:hover {
+  background: #ef4444;
+  color: #ffffff;
+  transform: translateY(-1px);
 }
 
-.empty-vault-state p {
-  font-size: 13px;
-  margin: 0;
+/* Scanner Simulation Group */
+.scan-simulate-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.return-sim-btn {
+  border-color: #f9d8dd !important;
+  color: var(--primary-maroon, #70131d) !important;
+}
+
+.scanner-feedback-box {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.scanner-feedback-box.success {
+  background: #dcfce7;
+  color: #15803d;
 }
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
-  .inventory-main-card {
-    padding: 16px;
+  .admin-management-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .management-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .add-costume-btn,
+  .launch-qr-scanner-btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .costumes-grid {
     grid-template-columns: 1fr;
-    gap: 12px;
   }
 }

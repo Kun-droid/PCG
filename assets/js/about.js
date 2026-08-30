@@ -1,3 +1,7 @@
+// ==========================================================================
+// PANAYANA MEMBER ABOUT US CONTROLLER (DYNAMIC CMS + ADVISER MODAL)
+// ==========================================================================
+
 import { getAboutContent, getAdvisers } from './db.js';
 
 const FALLBACK_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e29532'%3E%3Cpath d='M12 2a5 5 0 1 0 5 5 5 5 0 0 0-5-5zm0 12c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z'/%3E%3C/svg%3E";
@@ -30,33 +34,49 @@ export async function loadAboutData() {
         const heroTag = document.getElementById('aboutHeroTag');
         const heroTitle = document.getElementById('aboutHeroTitle');
         const heroDesc = document.getElementById('aboutHeroDesc');
+        
         if (heroTag && content.about_hero.tag) heroTag.textContent = content.about_hero.tag;
         if (heroTitle && content.about_hero.title) heroTitle.textContent = content.about_hero.title;
         if (heroDesc && content.about_hero.desc) heroDesc.textContent = content.about_hero.desc;
     }
 
-    // 2. Narratives
+    // 2. Narratives (History & Mission)
     if (content.about_narratives) {
         const historyText = document.getElementById('aboutHistoryText');
         const missionText = document.getElementById('aboutMissionText');
-        if (historyText && content.about_narratives.history) historyText.innerHTML = content.about_narratives.history;
-        if (missionText && content.about_narratives.mission) missionText.innerHTML = content.about_narratives.mission;
+        
+        if (historyText && content.about_narratives.history) {
+            historyText.innerHTML = content.about_narratives.history.replace(/\n/g, '<br>');
+        }
+        if (missionText && content.about_narratives.mission) {
+            missionText.innerHTML = content.about_narratives.mission.replace(/\n/g, '<br>');
+        }
     }
 
-    // 3. Contacts & Channels
+    // 3. Contacts & Social Media Links
     if (content.about_contacts) {
         const loc = document.getElementById('aboutLocationText');
         const emailLink = document.getElementById('aboutEmailLink');
         const phone = document.getElementById('aboutPhoneText');
+        const fbLink = document.getElementById('aboutFbLink');
+        const igLink = document.getElementById('aboutIgLink');
+        const ytLink = document.getElementById('aboutYtLink');
+        const driveLink = document.getElementById('aboutDriveLink');
+
         if (loc && content.about_contacts.location) loc.textContent = content.about_contacts.location;
         if (emailLink && content.about_contacts.email) {
             emailLink.textContent = content.about_contacts.email;
             emailLink.href = `mailto:${content.about_contacts.email}`;
         }
         if (phone && content.about_contacts.phone) phone.textContent = content.about_contacts.phone;
+
+        if (fbLink && content.about_contacts.facebook) fbLink.href = content.about_contacts.facebook;
+        if (igLink && content.about_contacts.instagram) igLink.href = content.about_contacts.instagram;
+        if (ytLink && content.about_contacts.youtube) ytLink.href = content.about_contacts.youtube;
+        if (driveLink && content.about_contacts.drive) driveLink.href = content.about_contacts.drive;
     }
 
-    // 4. Former Advisers Grid
+    // 4. Advisers Grid
     const advisersGrid = document.getElementById('aboutAdvisersGrid') || document.getElementById('memberAdvisersGrid');
     if (advisersGrid) {
         if (!advisers || advisers.length === 0) {

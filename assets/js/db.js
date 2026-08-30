@@ -46,6 +46,15 @@ export async function updateCostume(id, name, quantity) {
     return { data, error };
 }
 
+export async function deleteCostume(id) {
+    const { data, error } = await supabase
+        .from('costumes')
+        .delete()
+        .eq('id', id);
+    if (error) console.error('Error deleting costume:', error);
+    return { data, error };
+}
+
 // ==========================================
 // 3. CIRCULATION & LOANS
 // ==========================================
