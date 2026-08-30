@@ -108,7 +108,7 @@
                 </div>
                 <div class="header-title">
                     <h1>Costume Catalog</h1>
-                    <span>Attire Vault Management & QR Circulation</span>
+                    <span>Costume Management</span>
                 </div>
             </div>
             
@@ -140,25 +140,25 @@
                 <div class="card metric-card admin-metric">
                     <div class="metric-icon maroon"><i class="fa-solid fa-vest"></i></div>
                     <div class="metric-info">
-                        <span class="metric-label">Total Units</span>
+                        <span class="metric-label">Total Costumes</span>
                         <div class="value" id="totalCostumesCount">0</div>
-                        <span class="metric-subtitle">Across all suites</span>
+                        <span class="metric-subtitle">All costumes</span>
                     </div>
                 </div>
                 <div class="card metric-card admin-metric">
                     <div class="metric-icon gold"><i class="fa-solid fa-circle-check"></i></div>
                     <div class="metric-info">
-                        <span class="metric-label">Available in Vault</span>
+                        <span class="metric-label">Available Costumes</span>
                         <div class="value" id="availableCostumesCount">0</div>
-                        <span class="metric-subtitle">Ready for staging</span>
+                        <span class="metric-subtitle">Ready to use</span>
                     </div>
                 </div>
                 <div class="card metric-card admin-metric">
                     <div class="metric-icon purple"><i class="fa-solid fa-user-tag"></i></div>
                     <div class="metric-info">
-                        <span class="metric-label">Active Loans</span>
+                        <span class="metric-label">Active Borrowers</span>
                         <div class="value" id="borrowedCostumesCount">0</div>
-                        <span class="metric-subtitle">In active rehearsal</span>
+                        <span class="metric-subtitle">Currently borrowed costume</span>
                     </div>
                 </div>
             </div>
@@ -168,8 +168,8 @@
                 <div class="management-text">
                     <i class="fa-solid fa-shield-halved"></i>
                     <div>
-                        <strong>Custodian Workstation Active</strong>
-                        <p>You have permissions to add costumes, edit stock counts, and scan member passes.</p>
+                        <strong>Custodian</strong>
+                        <p>You have permissions to add costumes, edit stock counts, and scan borrower QR codes.</p>
                     </div>
                 </div>
                 <div class="management-actions">
@@ -177,7 +177,7 @@
                         <i class="fa-solid fa-plus"></i> Add New Costume
                     </button>
                     <button class="launch-qr-scanner-btn" id="openInventoryScannerBtn">
-                        <i class="fa-solid fa-qrcode"></i> Scan Member Pass
+                        <i class="fa-solid fa-qrcode"></i> Scan Borrower QR
                     </button>
                 </div>
             </div>
@@ -268,14 +268,14 @@
 
             <div id="scannerFeedback" class="scanner-feedback-box" style="display: none;"></div>
 
-            <div class="scan-simulate-group">
+            <!-- <div class="scan-simulate-group">
                 <button type="button" class="modal-btn secondary" id="simBorrowBtn">
                     <i class="fa-solid fa-arrow-up-from-bracket"></i> Simulate: Issue Costume (Borrow)
                 </button>
                 <button type="button" class="modal-btn secondary return-sim-btn" id="simReturnBtn">
                     <i class="fa-solid fa-rotate-left"></i> Simulate: Return Costume
                 </button>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
